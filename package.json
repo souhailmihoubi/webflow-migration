@@ -57,16 +57,20 @@
     "@nestjs/core": "^11.0.0",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/platform-express": "^11.1.11",
+    "@nestjs/serve-static": "^5.0.4",
     "@types/bcrypt": "^6.0.0",
+    "@types/multer": "^2.0.0",
     "@types/nodemailer": "^7.0.4",
     "@types/passport-jwt": "^4.0.1",
     "axios": "^1.6.0",
     "bcrypt": "^6.0.0",
+    "multer": "^2.0.2",
     "nodemailer": "^7.0.12",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "~7.8.0"
+    "rxjs": "~7.8.0",
+    "sharp": "^0.34.5"
   }
 }

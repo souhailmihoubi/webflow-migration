@@ -51,3 +51,8 @@ __screenshots__/
 .env
 .env.local
 .env*.local
+# Prisma migrations (optional, remove if you want to track them)
+prisma/migrations/
+
+# Uploads directory for local image storage
+uploads/
