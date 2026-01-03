@@ -99,3 +99,23 @@ export class UpdateProductDto {
   videoLink?: string;
   categoryId?: string;
 }
+
+// Cart & Order DTOs
+export class AddToCartDto {
+  productId!: string;
+  quantity!: number;
+}
+
+export class UpdateCartItemDto {
+  quantity!: number;
+}
+
+export class PlaceOrderDto {
+  firstName!: string;
+  lastName!: string;
+  phone!: string;
+  email!: string;
+  shippingAddress!: string;
+  city!: string;
+  remarks?: string;
+}
