@@ -2,6 +2,7 @@ export interface Message {
   message: string;
 }
 
+// Auth DTOs
 export class RegisterDto {
   firstName!: string;
   lastName!: string;
@@ -51,4 +52,50 @@ export interface AuthResponse {
     lastName: string;
     role: string;
   };
+}
+
+// Category DTOs
+export class CreateCategoryDto {
+  name!: string;
+  slug!: string;
+  image?: string;
+  showInHomePage?: boolean;
+}
+
+export class UpdateCategoryDto {
+  name?: string;
+  slug?: string;
+  image?: string;
+  showInHomePage?: boolean;
+}
+
+// Product DTOs
+export class CreateProductDto {
+  name!: string;
+  slug!: string;
+  mainImage!: string;
+  multiImages?: string[];
+  priceDetails?: string;
+  productDescription!: string;
+  caracteristiques?: string;
+  price!: number;
+  discountPrice?: number;
+  showInMenu?: boolean;
+  videoLink?: string;
+  categoryId!: string;
+}
+
+export class UpdateProductDto {
+  name?: string;
+  slug?: string;
+  mainImage?: string;
+  multiImages?: string[];
+  priceDetails?: string;
+  productDescription?: string;
+  caracteristiques?: string;
+  price?: number;
+  discountPrice?: number;
+  showInMenu?: boolean;
+  videoLink?: string;
+  categoryId?: string;
 }
