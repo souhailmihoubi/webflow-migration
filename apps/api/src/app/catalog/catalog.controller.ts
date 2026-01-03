@@ -23,7 +23,9 @@ import { AdminGuard } from '../auth/admin.guard';
 export class CatalogController {
   constructor(private readonly catalogService: CatalogService) {}
 
-  // ========== Categories ========== @Get('categories')
+  // ========== Categories ==========
+
+  @Get('categories')
   getAllCategories() {
     return this.catalogService.getAllCategories();
   }
