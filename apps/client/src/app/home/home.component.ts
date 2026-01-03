@@ -5,6 +5,8 @@ import {
   computed,
   signal,
   OnDestroy,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -21,6 +23,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   private categoryService = inject(CategoryService);
   private productService = inject(ProductService);
 
+  @ViewChild('productSlider') productSlider!: ElementRef<HTMLDivElement>;
+
   // Computed signal to get only categories for home page
   featuredCategories = computed(() =>
     this.categoryService.categories().filter((cat) => cat.showInHomePage),
@@ -35,14 +39,25 @@ export class HomeComponent implements OnInit, OnDestroy {
   countdown = signal({ days: '00', hours: '00', minutes: '00', seconds: '00' });
   private timerInterval: ReturnType<typeof setInterval> | undefined;
 
+  // Slider auto-scroll logic
+  private autoScrollInterval: ReturnType<typeof setInterval> | undefined;
+  isPaused = false;
+
+  // Drag-to-scroll logic
+  private isDown = false;
+  private startX = 0;
+  private scrollLeft = 0;
+
   ngOnInit() {
     this.categoryService.fetchCategories().subscribe();
     this.productService.fetchProducts().subscribe();
     this.startCountdown();
+    this.startAutoScroll();
   }
 
   ngOnDestroy() {
     if (this.timerInterval) clearInterval(this.timerInterval);
+    if (this.autoScrollInterval) clearInterval(this.autoScrollInterval);
   }
 
   private startCountdown() {
@@ -88,5 +103,75 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     updateTimer();
     this.timerInterval = setInterval(updateTimer, 1000);
+  }
+
+  private startAutoScroll() {
+    this.autoScrollInterval = setInterval(() => {
+      if (!this.isPaused && this.productSlider) {
+        const el = this.productSlider.nativeElement;
+        const scrollAmount = el.clientWidth / 2;
+
+        if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 10) {
+          el.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        }
+      }
+    }, 3000);
+  }
+
+  // --- Drag-to-scroll Handlers ---
+  onMouseDown(e: MouseEvent) {
+    this.isDown = true;
+    this.isPaused = true;
+    const el = this.productSlider.nativeElement;
+
+    // Disable snapping and smooth scroll during drag
+    el.style.scrollSnapType = 'none';
+    el.style.scrollBehavior = 'auto';
+    el.classList.add('cursor-grabbing');
+    el.classList.remove('cursor-grab');
+
+    this.startX = e.pageX - el.offsetLeft;
+    this.scrollLeft = el.scrollLeft;
+  }
+
+  onMouseLeave() {
+    if (!this.isDown) return;
+    this.stopDragging();
+  }
+
+  onMouseUp() {
+    if (!this.isDown) return;
+    this.stopDragging();
+  }
+
+  onMouseMove(e: MouseEvent) {
+    if (!this.isDown) return;
+    e.preventDefault();
+    const el = this.productSlider.nativeElement;
+    const x = e.pageX - el.offsetLeft;
+    const walk = (x - this.startX) * 2; // Scroll speed
+    el.scrollLeft = this.scrollLeft - walk;
+  }
+
+  private stopDragging() {
+    this.isDown = false;
+    this.isPaused = false;
+    const el = this.productSlider.nativeElement;
+    el.classList.remove('cursor-grabbing');
+    el.classList.add('cursor-grab');
+
+    // Re-enable snapping and smooth scroll
+    el.style.scrollSnapType = 'x mandatory';
+    el.style.scrollBehavior = 'smooth';
+  }
+
+  onMouseEnter() {
+    this.isPaused = true;
+  }
+
+  onMouseOver() {
+    this.isPaused = true;
   }
 }

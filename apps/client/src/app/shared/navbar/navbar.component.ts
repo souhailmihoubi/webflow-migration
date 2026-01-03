@@ -18,6 +18,7 @@ export class NavbarComponent implements OnInit {
   isAuthModalOpen = false;
   isUserDropdownOpen = false;
   isCategoriesDropdownOpen = false;
+  isMobileMenuOpen = false;
 
   // Expose signals from services
   currentUser = this.authService.currentUser;
@@ -25,6 +26,18 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.categoryService.fetchCategories().subscribe();
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    if (this.isMobileMenuOpen) {
+      this.isUserDropdownOpen = false;
+      this.isCategoriesDropdownOpen = false;
+    }
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
   }
 
   openAuthModal() {
