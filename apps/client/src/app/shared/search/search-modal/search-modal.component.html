@@ -1,0 +1,202 @@
+<div
+  class="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh] px-4"
+  (keydown)="onKeydown($event)"
+  tabindex="-1"
+>
+  <!-- Backdrop with Blur -->
+  <div
+    class="fixed inset-0 bg-primary/40 backdrop-blur-md transition-opacity duration-300 cursor-pointer"
+    (click)="onClose()"
+    (keydown.enter)="onClose()"
+    tabindex="0"
+    role="button"
+    aria-label="Fermer la recherche"
+  ></div>
+
+  <!-- Modal Content -->
+  <div
+    class="relative w-full max-w-2xl bg-white shadow-2xl overflow-hidden transform transition-all duration-300 scale-100 opacity-100"
+  >
+    <!-- Search Input Area -->
+    <div class="relative flex items-center p-6 border-b border-gray-100">
+      <div class="relative flex items-center flex-1">
+        @if (isSearching()) {
+          <div class="absolute left-0">
+            <div
+              class="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin"
+            ></div>
+          </div>
+        } @else {
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6 text-gray-400"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+            />
+          </svg>
+        }
+        <input
+          #searchInput
+          type="text"
+          placeholder="Rechercher un article, une collection..."
+          class="w-full ml-8 text-xl font-heading text-primary placeholder-gray-300 focus:outline-none bg-transparent"
+          (input)="onSearch($event)"
+        />
+      </div>
+      <button
+        (click)="$event.stopPropagation(); onClose()"
+        class="ml-4 p-2 text-gray-400 hover:text-primary transition-colors font-sans text-xs uppercase tracking-widest font-bold"
+      >
+        Fermer
+      </button>
+    </div>
+
+    <!-- Results Area -->
+    <div class="max-h-[70vh] overflow-y-auto bg-white">
+      @if (!hasSearched()) {
+        <!-- Initial View: Suggestions -->
+        <div class="p-8 space-y-10">
+          <div>
+            <h3
+              class="text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-accent mb-6"
+            >
+              Collections Populaires
+            </h3>
+            <div class="flex flex-wrap gap-2">
+              <button
+                class="px-4 py-2 bg-cream-light hover:bg-cream text-[10px] font-bold uppercase tracking-widest text-primary transition-colors"
+              >
+                Salons
+              </button>
+              <button
+                class="px-4 py-2 bg-cream-light hover:bg-cream text-[10px] font-bold uppercase tracking-widest text-primary transition-colors"
+              >
+                Chambres
+              </button>
+              <button
+                class="px-4 py-2 bg-cream-light hover:bg-cream text-[10px] font-bold uppercase tracking-widest text-primary transition-colors"
+              >
+                Décoration
+              </button>
+              <button
+                class="px-4 py-2 bg-cream-light hover:bg-cream text-[10px] font-bold uppercase tracking-widest text-primary transition-colors"
+              >
+                Accessoires
+              </button>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <div class="p-8 space-y-10">
+          @if (searchResults().categories.length > 0) {
+            <div>
+              <h3
+                class="text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-accent mb-6"
+              >
+                Catégories trouvées
+              </h3>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                @for (cat of searchResults().categories; track cat.id) {
+                  <a
+                    [routerLink]="['/category', cat.slug]"
+                    (click)="onClose()"
+                    class="flex items-center space-x-3 p-3 bg-cream-light hover:bg-cream transition-colors group"
+                  >
+                    <span
+                      class="text-xs font-bold uppercase tracking-widest text-primary group-hover:text-accent"
+                      >{{ cat.name }}</span
+                    >
+                  </a>
+                }
+              </div>
+            </div>
+          }
+
+          @if (searchResults().products.length > 0) {
+            <div>
+              <h3
+                class="text-[10px] font-heading font-bold uppercase tracking-[0.2em] text-accent mb-6"
+              >
+                Produits trouvés
+              </h3>
+              <div class="space-y-4">
+                @for (product of searchResults().products; track product.id) {
+                  <a
+                    [routerLink]="['/product', product.slug]"
+                    (click)="onClose()"
+                    class="flex items-center group p-2 hover:bg-gray-50 transition-colors"
+                  >
+                    <div
+                      class="w-16 h-16 bg-gray-100 flex-shrink-0 overflow-hidden"
+                    >
+                      <img
+                        [src]="product.mainImage"
+                        [alt]="product.name"
+                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                    <div class="ml-4 flex-1">
+                      <h4
+                        class="text-sm font-heading font-bold text-primary group-hover:text-accent transition-colors leading-tight"
+                      >
+                        {{ product.name }}
+                      </h4>
+                      <p
+                        class="text-[10px] text-gray-400 uppercase tracking-tighter mt-1"
+                      >
+                        {{ product.category.name }}
+                      </p>
+                    </div>
+                    <div class="text-sm font-bold text-primary">
+                      {{ product.price }}€
+                    </div>
+                  </a>
+                }
+              </div>
+            </div>
+          }
+
+          @if (
+            searchResults().products.length === 0 &&
+            searchResults().categories.length === 0 &&
+            !isSearching()
+          ) {
+            <div class="py-12 text-center">
+              <p class="text-gray-400 text-sm italic">
+                Aucun résultat trouvé pour votre recherche.
+              </p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Footer / Keyboard shortcuts -->
+    <div
+      class="bg-gray-50 px-8 py-3 flex items-center justify-between text-[10px] text-gray-400 uppercase tracking-widest"
+    >
+      <div class="flex items-center space-x-4">
+        <span
+          ><kbd class="bg-white px-1.5 py-0.5 rounded border border-gray-200"
+            >ENTER</kbd
+          >
+          pour sélectionner</span
+        >
+        <span
+          ><kbd class="bg-white px-1.5 py-0.5 rounded border border-gray-200"
+            >ESC</kbd
+          >
+          pour fermer</span
+        >
+      </div>
+      <div>Recherche par L'Artistou</div>
+    </div>
+  </div>
+</div>

@@ -36,4 +36,10 @@ export class ProductService {
       .get<Product[]>(url)
       .pipe(tap((products) => this.products.set(products)));
   }
+
+  searchProducts(query: string): Observable<Product[]> {
+    return this.http.get<Product[]>(
+      `${this.apiUrl}?search=${query}&visible=true`,
+    );
+  }
 }

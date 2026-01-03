@@ -26,8 +26,8 @@ export class CatalogController {
   // ========== Categories ==========
 
   @Get('categories')
-  getAllCategories() {
-    return this.catalogService.getAllCategories();
+  getAllCategories(@Query('search') search?: string) {
+    return this.catalogService.getAllCategories(search);
   }
 
   @Get('categories/:id')

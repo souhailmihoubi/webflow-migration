@@ -4,11 +4,17 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { AuthModalComponent } from '../auth/auth-modal/auth-modal.component';
 import { CategoryService } from '../services/category.service';
+import { SearchModalComponent } from '../search/search-modal/search-modal.component';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule, AuthModalComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    AuthModalComponent,
+    SearchModalComponent,
+  ],
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent implements OnInit {
@@ -19,6 +25,7 @@ export class NavbarComponent implements OnInit {
   isUserDropdownOpen = false;
   isCategoriesDropdownOpen = false;
   isMobileMenuOpen = false;
+  isSearchModalOpen = false;
 
   // Expose signals from services
   currentUser = this.authService.currentUser;
@@ -33,11 +40,21 @@ export class NavbarComponent implements OnInit {
     if (this.isMobileMenuOpen) {
       this.isUserDropdownOpen = false;
       this.isCategoriesDropdownOpen = false;
+      this.isSearchModalOpen = false;
     }
   }
 
   closeMobileMenu() {
     this.isMobileMenuOpen = false;
+  }
+
+  openSearchModal() {
+    this.isSearchModalOpen = true;
+    this.isMobileMenuOpen = false;
+  }
+
+  closeSearchModal() {
+    this.isSearchModalOpen = false;
   }
 
   openAuthModal() {

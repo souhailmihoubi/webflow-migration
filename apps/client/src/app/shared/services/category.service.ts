@@ -27,4 +27,8 @@ export class CategoryService {
       .get<Category[]>(this.apiUrl)
       .pipe(tap((categories) => this.categories.set(categories)));
   }
+
+  searchCategories(query: string): Observable<Category[]> {
+    return this.http.get<Category[]>(`${this.apiUrl}?search=${query}`);
+  }
 }

@@ -11,6 +11,7 @@ import {
   UpdateProductDto,
 } from '@my-org/api-interfaces';
 import { Decimal } from '@prisma/client/runtime/library';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CatalogService {
@@ -37,8 +38,14 @@ export class CatalogService {
     });
   }
 
-  async getAllCategories() {
+  async getAllCategories(search?: string) {
+    const where: Prisma.CategoryWhereInput = {};
+    if (search) {
+      where.name = { contains: search, mode: 'insensitive' };
+    }
+
     return this.db.category.findMany({
+      where,
       include: {
         _count: {
           select: { products: true },
@@ -193,7 +200,7 @@ export class CatalogService {
     maxPrice?: number;
     visible?: boolean;
   }) {
-    const where: any = {};
+    const where: Prisma.ProductWhereInput = {};
 
     // Search by name or description
     if (filters?.search) {

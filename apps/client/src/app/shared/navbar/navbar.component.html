@@ -127,10 +127,11 @@
       </div>
 
       <!-- Icons & Mobile Menu Button -->
-      <div class="flex items-center space-x-4 md:space-x-6">
+      <div class="flex items-center space-x-5 md:space-x-6">
         <!-- Search -->
         <button
-          class="hidden md:block text-primary hover:text-accent transition-colors"
+          (click)="openSearchModal()"
+          class="text-primary hover:text-accent transition-colors"
         >
           <span class="sr-only">Search</span>
           <svg
@@ -383,4 +384,8 @@
 
 @if (isAuthModalOpen) {
   <app-auth-modal (closeModal)="closeAuthModal()"></app-auth-modal>
+}
+
+@if (isSearchModalOpen) {
+  <app-search-modal (closeModal)="closeSearchModal()"></app-search-modal>
 }
