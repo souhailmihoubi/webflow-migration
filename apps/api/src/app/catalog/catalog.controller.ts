@@ -23,9 +23,7 @@ import { AdminGuard } from '../auth/admin.guard';
 export class CatalogController {
   constructor(private readonly catalogService: CatalogService) {}
 
-  // ========== Categories ==========
-
-  @Get('categories')
+  // ========== Categories ========== @Get('categories')
   getAllCategories() {
     return this.catalogService.getAllCategories();
   }
@@ -61,9 +59,21 @@ export class CatalogController {
   // ========== Products ==========
 
   @Get('products')
-  getAllProducts(@Query('visible') visible?: string) {
-    const showOnlyVisible = visible === 'true';
-    return this.catalogService.getAllProducts(showOnlyVisible);
+  getAllProducts(
+    @Query('search') search?: string,
+    @Query('categoryId') categoryId?: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+    @Query('visible') visible?: string,
+  ) {
+    return this.catalogService.getAllProducts({
+      search,
+      categoryId,
+      minPrice: minPrice ? parseFloat(minPrice) : undefined,
+      maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
+      visible:
+        visible === 'true' ? true : visible === 'false' ? false : undefined,
+    });
   }
 
   @Get('products/:id')

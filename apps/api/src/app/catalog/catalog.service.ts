@@ -186,11 +186,56 @@ export class CatalogService {
     });
   }
 
-  async getAllProducts(showOnlyVisible = false) {
+  async getAllProducts(filters?: {
+    search?: string;
+    categoryId?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    visible?: boolean;
+  }) {
+    const where: any = {};
+
+    // Search by name or description
+    if (filters?.search) {
+      where.OR = [
+        { name: { contains: filters.search, mode: 'insensitive' } },
+        {
+          productDescription: { contains: filters.search, mode: 'insensitive' },
+        },
+      ];
+    }
+
+    // Filter by category
+    if (filters?.categoryId) {
+      where.categoryId = filters.categoryId;
+    }
+
+    // Filter by visibility
+    if (filters?.visible !== undefined) {
+      where.showInMenu = filters.visible;
+    }
+
+    // Filter by price range
+    if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
+      where.price = {};
+      if (filters?.minPrice !== undefined) {
+        where.price.gte = filters.minPrice;
+      }
+      if (filters?.maxPrice !== undefined) {
+        where.price.lte = filters.maxPrice;
+      }
+    }
+
     return this.db.product.findMany({
-      where: showOnlyVisible ? { showInMenu: true } : undefined,
+      where,
       include: {
-        category: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });

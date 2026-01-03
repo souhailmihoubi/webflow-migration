@@ -149,15 +149,49 @@ Authorization: Bearer <admin-jwt-token>
 
 ## Products
 
-### 1. Get All Products
+### 1. Get All Products (with Search & Filters)
 
 **GET** `/products`
 
 **Query Parameters:**
 
-- `visible` (optional): Set to `"true"` to show only visible products (showInMenu=true)
+- `search` (optional): Search by product name or description
+- `categoryId` (optional): Filter by category UUID
+- `minPrice` (optional): Minimum price filter
+- `maxPrice` (optional): Maximum price filter
+- `visible` (optional): `true` to show only visible products (showInMenu=true), `false` for hidden only
 
-**Example:** `/products?visible=true`
+**Examples:**
+
+Search for "painting":
+
+```
+GET /api/catalog/products?search=painting
+```
+
+Filter by category:
+
+```
+GET /api/catalog/products?categoryId=uuid-here
+```
+
+Price range (100-500):
+
+```
+GET /api/catalog/products?minPrice=100&maxPrice=500
+```
+
+Visible products only:
+
+```
+GET /api/catalog/products?visible=true
+```
+
+Combined filters:
+
+```
+GET /api/catalog/products?search=abstract&categoryId=uuid&minPrice=200&visible=true
+```
 
 **Response:**
 
@@ -168,7 +202,7 @@ Authorization: Bearer <admin-jwt-token>
     "name": "Abstract Art Painting",
     "slug": "abstract-art-painting",
     "mainImage": "https://example.com/main.jpg",
-    "multiImages": ["https://example.com/img1.jpg", "https://example.com/img2.jpg"],
+    "multiImages": ["https://example.com/img1.jpg"],
     "priceDetails": "Original artwork on canvas",
     "productDescription": "Beautiful abstract painting...",
     "caracteristiques": "Size: 60x80cm, Medium: Acrylic",
