@@ -5,6 +5,7 @@ import { AuthService } from '../auth/auth.service';
 import { AuthModalComponent } from '../auth/auth-modal/auth-modal.component';
 import { CategoryService } from '../services/category.service';
 import { SearchModalComponent } from '../search/search-modal/search-modal.component';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -20,6 +21,7 @@ import { SearchModalComponent } from '../search/search-modal/search-modal.compon
 export class NavbarComponent implements OnInit {
   private authService = inject(AuthService);
   private categoryService = inject(CategoryService);
+  private cartService = inject(CartService);
 
   isAuthModalOpen = false;
   isUserDropdownOpen = false;
@@ -30,6 +32,7 @@ export class NavbarComponent implements OnInit {
   // Expose signals from services
   currentUser = this.authService.currentUser;
   categories = this.categoryService.categories;
+  cartCount = this.cartService.cartCount;
 
   ngOnInit() {
     this.categoryService.fetchCategories().subscribe();

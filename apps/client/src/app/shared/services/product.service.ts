@@ -13,6 +13,7 @@ export interface Product {
   productDescription: string;
   showInMenu: boolean;
   category: {
+    id: string;
     name: string;
     slug: string;
   };
@@ -41,5 +42,9 @@ export class ProductService {
     return this.http.get<Product[]>(
       `${this.apiUrl}?search=${query}&visible=true`,
     );
+  }
+
+  getProductBySlug(slug: string): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}/slug/${slug}`);
   }
 }
