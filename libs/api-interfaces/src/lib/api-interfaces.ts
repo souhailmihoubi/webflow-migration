@@ -118,4 +118,5 @@ export class PlaceOrderDto {
   shippingAddress!: string;
   city!: string;
   remarks?: string;
+  items?: { productId: string; quantity: number }[];
 }

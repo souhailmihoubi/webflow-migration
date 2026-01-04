@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CartService, CartItem } from '../shared/services/cart.service';
+import { AuthService } from '../shared/auth/auth.service';
 
 @Component({
   selector: 'app-cart',
@@ -11,10 +12,16 @@ import { CartService, CartItem } from '../shared/services/cart.service';
 })
 export class CartComponent {
   private cartService = inject(CartService);
+  private authService = inject(AuthService);
 
   cartItems = this.cartService.cartItems;
   cartCount = this.cartService.cartCount;
   cartTotal = this.cartService.cartTotal;
+  currentUser = this.authService.currentUser;
+
+  openAuthModal() {
+    this.authService.openAuthModal();
+  }
 
   getItemTotal(item: CartItem): number {
     const price =

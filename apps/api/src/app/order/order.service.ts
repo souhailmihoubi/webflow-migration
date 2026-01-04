@@ -216,33 +216,60 @@ export class OrderService {
   // ========== Order Management ==========
 
   async placeOrder(userId: string, dto: PlaceOrderDto) {
-    // Get cart with items
-    const cart = await this.db.cart.findUnique({
-      where: { userId },
-      include: {
-        items: {
-          include: {
-            product: true,
+    let orderItems: any[] = [];
+    let totalPrice = new Decimal(0);
+
+    if (dto.items && dto.items.length > 0) {
+      // Use items from DTO
+      for (const item of dto.items) {
+        const product = await this.db.product.findUnique({
+          where: { id: item.productId },
+        });
+        if (!product) continue;
+        const price = product.discountPrice || product.price;
+        totalPrice = totalPrice.add(new Decimal(price).mul(item.quantity));
+        orderItems.push({
+          productId: item.productId,
+          quantity: item.quantity,
+          priceAtTime: price,
+        });
+      }
+    } else {
+      // Fallback: Get cart from DB
+      const cart = await this.db.cart.findUnique({
+        where: { userId },
+        include: {
+          items: {
+            include: {
+              product: true,
+            },
           },
         },
-      },
-    });
+      });
 
-    if (!cart || cart.items.length === 0) {
-      throw new BadRequestException('Cart is empty');
+      if (!cart || cart.items.length === 0) {
+        throw new BadRequestException('Cart is empty');
+      }
+
+      orderItems = cart.items.map((item) => {
+        const price = item.product.discountPrice || item.product.price;
+        totalPrice = totalPrice.add(new Decimal(price).mul(item.quantity));
+        return {
+          productId: item.productId,
+          quantity: item.quantity,
+          priceAtTime: price,
+        };
+      });
+
+      // Clear DB cart if we used it
+      await this.db.cartItem.deleteMany({
+        where: { cartId: cart.id },
+      });
     }
 
-    // Calculate total
-    let totalPrice = new Decimal(0);
-    const orderItems = cart.items.map((item) => {
-      const price = item.product.discountPrice || item.product.price;
-      totalPrice = totalPrice.add(new Decimal(price).mul(item.quantity));
-      return {
-        productId: item.productId,
-        quantity: item.quantity,
-        priceAtTime: price,
-      };
-    });
+    if (orderItems.length === 0) {
+      throw new BadRequestException('No items provided for order');
+    }
 
     // Create order
     const order = await this.db.order.create({
@@ -272,11 +299,6 @@ export class OrderService {
           },
         },
       },
-    });
-
-    // Clear cart after successful order
-    await this.db.cartItem.deleteMany({
-      where: { cartId: cart.id },
     });
 
     return order;
@@ -324,6 +346,35 @@ export class OrderService {
     }
 
     return order;
+  }
+
+  async cancelOrder(userId: string, orderId: string) {
+    const order = await this.db.order.findFirst({
+      where: {
+        id: orderId,
+        userId,
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    if (order.status !== 'PENDING') {
+      throw new BadRequestException('Only pending orders can be cancelled');
+    }
+
+    return this.db.order.update({
+      where: { id: orderId },
+      data: { status: 'CANCELLED' },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
   }
 
   // ========== Admin Order Management ==========

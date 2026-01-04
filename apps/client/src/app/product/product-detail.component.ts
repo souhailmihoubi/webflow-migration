@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ProductService, Product } from '../shared/services/product.service';
 import { CartService } from '../shared/services/cart.service';
+import { AuthService } from '../shared/auth/auth.service';
 import { switchMap, tap, of, map } from 'rxjs';
 
 @Component({
@@ -15,8 +16,10 @@ export class ProductDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private productService = inject(ProductService);
   private cartService = inject(CartService);
+  private authService = inject(AuthService);
 
   product = signal<Product | null>(null);
+
   relatedProducts = signal<Product[]>([]);
   isLoading = signal(true);
   activeImage = signal<string>('');
@@ -72,12 +75,9 @@ export class ProductDetailComponent implements OnInit {
     return [p.mainImage, ...(p.multiImages || [])];
   }
 
-  addToCart() {
-    const p = this.product();
-    if (p) {
-      this.cartService.addToCart(p);
-      this.showSuccess.set(true);
-      setTimeout(() => this.showSuccess.set(false), 3000);
-    }
+  addToCart(product: Product) {
+    this.cartService.addToCart(product);
+    this.showSuccess.set(true);
+    setTimeout(() => this.showSuccess.set(false), 3000);
   }
 }

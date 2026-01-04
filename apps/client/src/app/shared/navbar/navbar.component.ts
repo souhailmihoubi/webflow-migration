@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { AuthModalComponent } from '../auth/auth-modal/auth-modal.component';
 import { CategoryService } from '../services/category.service';
@@ -22,17 +22,18 @@ export class NavbarComponent implements OnInit {
   private authService = inject(AuthService);
   private categoryService = inject(CategoryService);
   private cartService = inject(CartService);
+  private router = inject(Router);
 
-  isAuthModalOpen = false;
+  // Expose signals from services
+  currentUser = this.authService.currentUser;
+  isAuthModalOpen = this.authService.isAuthModalOpen;
+  categories = this.categoryService.categories;
+  cartCount = this.cartService.cartCount;
+
   isUserDropdownOpen = false;
   isCategoriesDropdownOpen = false;
   isMobileMenuOpen = false;
   isSearchModalOpen = false;
-
-  // Expose signals from services
-  currentUser = this.authService.currentUser;
-  categories = this.categoryService.categories;
-  cartCount = this.cartService.cartCount;
 
   ngOnInit() {
     this.categoryService.fetchCategories().subscribe();
@@ -61,11 +62,11 @@ export class NavbarComponent implements OnInit {
   }
 
   openAuthModal() {
-    this.isAuthModalOpen = true;
+    this.authService.openAuthModal();
   }
 
   closeAuthModal() {
-    this.isAuthModalOpen = false;
+    this.authService.closeAuthModal();
   }
 
   toggleUserDropdown() {
@@ -87,5 +88,6 @@ export class NavbarComponent implements OnInit {
   logout() {
     this.authService.logout();
     this.isUserDropdownOpen = false;
+    this.router.navigate(['/']);
   }
 }

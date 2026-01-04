@@ -79,6 +79,12 @@ export class OrderController {
     return this.orderService.getOrderById(user.userId, id);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Patch(':id/cancel')
+  cancelOrder(@CurrentUser() user: any, @Param('id') id: string) {
+    return this.orderService.cancelOrder(user.userId, id);
+  }
+
   // ========== Admin Order Management ==========
 
   @UseGuards(JwtAuthGuard, AdminGuard)

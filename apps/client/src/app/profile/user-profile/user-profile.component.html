@@ -1,0 +1,266 @@
+<div class="bg-cream-light min-h-screen py-20 px-4">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="mb-12">
+      <h1
+        class="text-3xl md:text-4xl font-heading font-bold text-primary uppercase tracking-[0.2em] mb-2"
+      >
+        Mon Profil
+      </h1>
+      <p class="text-[10px] uppercase tracking-widest text-accent font-bold">
+        Gérez vos informations personnelles et votre sécurité
+      </p>
+    </div>
+
+    @if (isLoading()) {
+      <div
+        class="flex flex-col items-center justify-center py-32 space-y-4 bg-white shadow-sm border border-gray-100"
+      >
+        <div
+          class="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin"
+        ></div>
+        <p class="text-xs uppercase tracking-widest text-gray-400 font-bold">
+          Chargement de votre profil...
+        </p>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Sidebar Navigation -->
+        <div class="lg:col-span-1 space-y-4">
+          <div class="bg-white p-6 shadow-sm border border-gray-100 space-y-2">
+            <a
+              routerLink="/profile"
+              routerLinkActive="text-accent border-accent"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="flex items-center space-x-3 p-3 text-[10px] font-bold uppercase tracking-widest border-l-2 border-transparent hover:bg-cream-light/30 transition-all"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+                />
+              </svg>
+              <span>Mon Profil</span>
+            </a>
+            <a
+              routerLink="/profile/orders"
+              class="flex items-center space-x-3 p-3 text-[10px] font-bold uppercase tracking-widest border-l-2 border-transparent hover:bg-cream-light/30 transition-all"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                class="w-4 h-4"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                />
+              </svg>
+              <span>Mes Commandes</span>
+            </a>
+          </div>
+
+          <!-- Help Box -->
+          <div class="bg-primary p-6 text-white shadow-xl">
+            <h3 class="text-xs font-bold uppercase tracking-widest mb-2">
+              Besoin d'aide ?
+            </h3>
+            <p class="text-[9px] text-white/70 uppercase leading-relaxed mb-4">
+              Notre équipe est à votre disposition pour toute question relative
+              à votre compte.
+            </p>
+            <a
+              href="tel:+21611111111"
+              class="text-accent text-[10px] font-bold uppercase tracking-widest hover:underline"
+              >+216 11 111 111</a
+            >
+          </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- Personal Info Card -->
+          <div class="bg-white p-8 md:p-10 shadow-sm border border-gray-100">
+            <h2
+              class="text-xs uppercase tracking-[0.3em] text-accent font-bold border-b border-accent/10 pb-4 mb-8"
+            >
+              Informations Personnelles
+            </h2>
+
+            <form
+              [formGroup]="profileForm"
+              (ngSubmit)="updateProfile()"
+              class="space-y-6"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label
+                    class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                    >Prénom</label
+                  >
+                  <input
+                    type="text"
+                    formControlName="firstName"
+                    class="w-full bg-cream-light/30 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label
+                    class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                    >Nom</label
+                  >
+                  <input
+                    type="text"
+                    formControlName="lastName"
+                    class="w-full bg-cream-light/30 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <label
+                  class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                  >Adresse Email</label
+                >
+                <input
+                  type="email"
+                  formControlName="email"
+                  class="w-full bg-gray-50 border border-gray-100 p-3 text-[11px] font-bold text-gray-400 cursor-not-allowed"
+                />
+                <p class="text-[8px] text-gray-300 italic">
+                  Contactez le support pour modifier votre email.
+                </p>
+              </div>
+
+              <div class="space-y-2">
+                <label
+                  class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                  >Téléphone</label
+                >
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  class="w-full bg-cream-light/30 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                />
+              </div>
+
+              @if (profileMessage()) {
+                <div
+                  [class]="
+                    'p-4 text-[10px] font-bold uppercase tracking-widest ' +
+                    (profileMessage()?.type === 'success'
+                      ? 'bg-green-50 text-green-600'
+                      : 'bg-red-50 text-red-600')
+                  "
+                >
+                  {{ profileMessage()?.text }}
+                </div>
+              }
+
+              <button
+                type="submit"
+                [disabled]="isSavingProfile() || profileForm.invalid"
+                class="bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-10 py-4 hover:bg-accent disabled:opacity-50 transition-all duration-300"
+              >
+                {{
+                  isSavingProfile()
+                    ? 'Enregistrement...'
+                    : 'Enregistrer les modifications'
+                }}
+              </button>
+            </form>
+          </div>
+
+          <!-- Security Card -->
+          <div class="bg-white p-8 md:p-10 shadow-sm border border-gray-100">
+            <h2
+              class="text-xs uppercase tracking-[0.3em] text-accent font-bold border-b border-accent/10 pb-4 mb-8"
+            >
+              Sécurité (Changer le mot de passe)
+            </h2>
+
+            <form
+              [formGroup]="passwordForm"
+              (ngSubmit)="changePassword()"
+              class="space-y-6"
+            >
+              <div class="space-y-2">
+                <label
+                  class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                  >Mot de passe actuel</label
+                >
+                <input
+                  type="password"
+                  formControlName="oldPassword"
+                  class="w-full bg-cream-light/30 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                />
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                  <label
+                    class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                    >Nouveau mot de passe</label
+                  >
+                  <input
+                    type="password"
+                    formControlName="newPassword"
+                    class="w-full bg-cream-light/30 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                  />
+                </div>
+                <div class="space-y-2">
+                  <label
+                    class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                    >Confirmer le mot de passe</label
+                  >
+                  <input
+                    type="password"
+                    formControlName="confirmPassword"
+                    class="w-full bg-cream-light/30 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              @if (passwordMessage()) {
+                <div
+                  [class]="
+                    'p-4 text-[10px] font-bold uppercase tracking-widest ' +
+                    (passwordMessage()?.type === 'success'
+                      ? 'bg-green-50 text-green-600'
+                      : 'bg-red-50 text-red-600')
+                  "
+                >
+                  {{ passwordMessage()?.text }}
+                </div>
+              }
+
+              <button
+                type="submit"
+                [disabled]="isChangingPassword() || passwordForm.invalid"
+                class="bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-10 py-4 hover:bg-accent disabled:opacity-50 transition-all duration-300"
+              >
+                {{
+                  isChangingPassword()
+                    ? 'Modification...'
+                    : 'Changer le mot de passe'
+                }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -221,16 +221,16 @@
                   </div>
 
                   <a
-                    routerLink="/client/orders"
-                    class="block px-6 py-2 text-sm text-gray-600 hover:text-accent hover:bg-cream-light transition-colors"
+                    routerLink="/profile"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-cream-light transition-colors font-bold uppercase tracking-widest text-[10px]"
                   >
-                    Espace Client
+                    Mon Profil
                   </a>
                   <a
-                    routerLink="/client/settings"
-                    class="block px-6 py-2 text-sm text-gray-600 hover:text-accent hover:bg-cream-light transition-colors"
+                    routerLink="/profile/orders"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-cream-light transition-colors font-bold uppercase tracking-widest text-[10px]"
                   >
-                    Paramètres
+                    Mes Commandes
                   </a>
 
                   <div class="border-t border-gray-100 mt-2 pt-2">
@@ -385,7 +385,7 @@
   </div>
 </nav>
 
-@if (isAuthModalOpen) {
+@if (isAuthModalOpen()) {
   <app-auth-modal (closeModal)="closeAuthModal()"></app-auth-modal>
 }
 
