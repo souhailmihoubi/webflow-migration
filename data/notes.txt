@@ -1,0 +1,46 @@
+user:
+-fist name
+-last name
+-phone
+-email
+-password
+-role
+-orders[]
+-cart
+
+Order:
+-fist name
+-last name
+-phone
+-email
+-shipping Address
+-city (depending on the city there is and adding price for the shipping)
+-total price
+-remarks
+-items
+-status
+(after that when we receive the order we can call the costumer and proceed the payement and the shipping)
+
+Product: 
+-name
+-slug
+-main image
+-multi images
+-category
+-price details (its like description for price)
+-product description
+-caractéristiques
+-price
+-discountPrice
+-showInMenu (boolean) (use it when the product exists in stock or not its variable)
+-video link (link to redirect to a reel on our instagram)
+
+Category:
+-name
+-image
+-slug
+-showInHomePage
+-products
+
+
+cmd /c "npm run db:import"

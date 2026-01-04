@@ -1,0 +1,362 @@
+<div class="space-y-8">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xs uppercase tracking-[0.3em] text-accent font-bold">
+      Gestion des Produits
+    </h2>
+    <div class="flex space-x-4">
+      <!-- Search/Filter TBD -->
+      <button
+        (click)="openCreateModal()"
+        class="bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-6 py-3 transition-all hover:bg-accent"
+      >
+        Ajouter un produit
+      </button>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-20">
+      <div
+        class="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"
+      ></div>
+    </div>
+  } @else {
+    <div class="bg-white border border-gray-100 shadow-sm overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-gray-50 border-b border-gray-100">
+          <tr>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+            >
+              Produit
+            </th>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+            >
+              Catégorie
+            </th>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+            >
+              Prix
+            </th>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+            >
+              Statut
+            </th>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold text-right"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @for (product of products(); track product.id) {
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4">
+                <div class="flex items-center space-x-4">
+                  <div
+                    class="w-12 h-12 bg-gray-50 border border-gray-100 overflow-hidden"
+                  >
+                    <img
+                      [src]="product.mainImage"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <p class="text-[11px] font-bold text-primary">
+                      {{ product.name }}
+                    </p>
+                    <p class="text-[9px] text-gray-400 font-mono">
+                      {{ product.slug }}
+                    </p>
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <span class="text-[10px] uppercase font-bold text-primary">{{
+                  product.category?.name
+                }}</span>
+              </td>
+              <td class="px-6 py-4">
+                <p class="text-[11px] font-bold text-primary">
+                  {{ product.price }} DT
+                </p>
+                @if (product.discountPrice) {
+                  <p class="text-[9px] text-accent font-bold">
+                    PROMO: {{ product.discountPrice }} DT
+                  </p>
+                }
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex flex-col space-y-1">
+                  <span
+                    [class]="
+                      'w-fit px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest ' +
+                      (product.visible
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700')
+                    "
+                  >
+                    {{ product.visible ? 'Visible' : 'Masqué' }}
+                  </span>
+                  @if (product.showInMenu) {
+                    <span class="text-[8px] text-indigo-500 font-bold"
+                      >EN VEDETTE</span
+                    >
+                  }
+                </div>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <div class="flex items-center justify-end space-x-3">
+                  <button
+                    (click)="openEditModal(product)"
+                    class="text-blue-500 hover:text-blue-700 font-bold text-[10px] uppercase tracking-widest"
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    (click)="deleteProduct(product.id)"
+                    class="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase tracking-widest"
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  <!-- Modal -->
+  @if (showModal()) {
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div
+        class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        (click)="closeModal()"
+      ></div>
+
+      <div
+        class="relative bg-white w-full max-w-2xl shadow-2xl border border-gray-50 overflow-hidden animate-in fade-in zoom-in duration-300"
+      >
+        <div
+          class="p-8 border-b border-gray-100 flex items-center justify-between"
+        >
+          <h3 class="text-xs uppercase tracking-[0.3em] text-primary font-bold">
+            {{ editingProduct() ? 'Modifier le produit' : 'Nouveau produit' }}
+          </h3>
+          <button
+            (click)="closeModal()"
+            class="text-gray-400 hover:text-primary transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <form
+          [formGroup]="productForm"
+          (ngSubmit)="onSubmit()"
+          class="p-8 overflow-y-auto max-h-[70vh] space-y-6"
+        >
+          <!-- Main Info -->
+          <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <label
+                class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >Nom du produit</label
+              >
+              <input
+                type="text"
+                formControlName="name"
+                (input)="generateSlug()"
+                class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >Slug (URL)</label
+              >
+              <input
+                type="text"
+                formControlName="slug"
+                class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label
+              class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+              >Description</label
+            >
+            <textarea
+              formControlName="description"
+              rows="3"
+              class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all resize-none"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-3 gap-6">
+            <div class="space-y-2">
+              <label
+                class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >Prix (DT)</label
+              >
+              <input
+                type="number"
+                formControlName="price"
+                class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >Prix Promo (Optionnel)</label
+              >
+              <input
+                type="number"
+                formControlName="discountPrice"
+                class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >Catégorie</label
+              >
+              <select
+                formControlName="categoryId"
+                class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all appearance-none"
+              >
+                <option value="">Sélectionner</option>
+                @for (cat of categories(); track cat.id) {
+                  <option [value]="cat.id">{{ cat.name }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <!-- Images -->
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <label
+                class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >Image Principale (URL)</label
+              >
+              <input
+                type="text"
+                formControlName="mainImage"
+                class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+              />
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <label
+                  class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                  >Images Supplémentaires</label
+                >
+                <button
+                  type="button"
+                  (click)="addImage()"
+                  class="text-accent text-[9px] font-bold uppercase tracking-widest"
+                >
+                  + Ajouter
+                </button>
+              </div>
+
+              <div formArrayName="multiImages" class="space-y-2">
+                @for (img of multiImages.controls; track $index) {
+                  <div class="flex space-x-2">
+                    <input
+                      [formControlName]="$index"
+                      class="flex-1 bg-gray-50 border border-gray-100 p-3 text-[10px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                    />
+                    <button
+                      type="button"
+                      (click)="removeImage($index)"
+                      class="text-red-400 hover:text-red-600"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Toggles -->
+          <div class="flex space-x-12 pt-4">
+            <label class="flex items-center space-x-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                formControlName="visible"
+                class="form-checkbox h-4 w-4 text-accent border-gray-100 rounded focus:ring-accent"
+              />
+              <span
+                class="text-[10px] uppercase font-bold text-primary group-hover:text-accent transition-colors"
+                >Visible sur le site</span
+              >
+            </label>
+            <label class="flex items-center space-x-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                formControlName="showInMenu"
+                class="form-checkbox h-4 w-4 text-accent border-gray-100 rounded focus:ring-accent"
+              />
+              <span
+                class="text-[10px] uppercase font-bold text-primary group-hover:text-accent transition-colors"
+                >Mettre en avant</span
+              >
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="isSaving() || productForm.invalid"
+            class="w-full bg-primary text-white text-[10px] font-bold uppercase tracking-widest py-5 hover:bg-accent disabled:opacity-50 transition-all duration-300"
+          >
+            {{
+              isSaving()
+                ? 'Enregistrement...'
+                : editingProduct()
+                  ? 'Enregistrer les modifications'
+                  : 'Créer le produit'
+            }}
+          </button>
+        </form>
+      </div>
+    </div>
+  }
+</div>

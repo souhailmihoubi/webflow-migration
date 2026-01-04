@@ -1,0 +1,134 @@
+<div class="flex h-screen bg-gray-100 overflow-hidden font-sans">
+  <!-- Sidebar -->
+  <aside
+    [class]="
+      'bg-primary text-white h-screen transition-all duration-300 flex-shrink-0 z-50 ' +
+      (isSidebarOpen ? 'w-64' : 'w-20')
+    "
+  >
+    <!-- Brand -->
+    <div class="h-20 flex items-center px-6 border-b border-white/10">
+      <div class="flex items-center space-x-3 overflow-hidden">
+        <div class="w-8 h-8 bg-accent flex-shrink-0 rounded-sm"></div>
+        <span
+          [class]="
+            'font-heading font-bold uppercase tracking-widest text-sm transition-opacity duration-300 ' +
+            (isSidebarOpen ? 'opacity-100' : 'opacity-0 w-0')
+          "
+        >
+          L'Artistou Admin
+        </span>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="mt-8 px-4 space-y-2">
+      @for (item of menuItems; track item.label) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="bg-white/10 text-accent"
+          [routerLinkActiveOptions]="{ exact: item.route === '/admin' }"
+          class="flex items-center h-12 px-4 rounded-lg hover:bg-white/5 transition-all group overflow-hidden"
+          [title]="item.label"
+        >
+          <svg
+            class="w-5 h-5 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            [innerHTML]="item.icon"
+          ></svg>
+          <span
+            [class]="
+              'ml-4 text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ' +
+              (isSidebarOpen ? 'opacity-100' : 'opacity-0 w-0')
+            "
+          >
+            {{ item.label }}
+          </span>
+        </a>
+      }
+    </nav>
+
+    <!-- Bottom Actions -->
+    <div class="absolute bottom-8 left-0 w-full px-4 space-y-2">
+      <button
+        (click)="logout()"
+        class="flex items-center w-full h-12 px-4 rounded-lg hover:bg-red-500/10 text-red-400 transition-all group overflow-hidden"
+        title="Se déconnecter"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5 flex-shrink-0"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          />
+        </svg>
+        <span
+          [class]="
+            'ml-4 text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ' +
+            (isSidebarOpen ? 'opacity-100' : 'opacity-0 w-0')
+          "
+        >
+          Déconnexion
+        </span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <!-- Header -->
+    <header
+      class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0"
+    >
+      <button
+        (click)="toggleSidebar()"
+        class="p-2 text-gray-400 hover:text-primary transition-colors"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+
+      <div class="flex items-center space-x-6">
+        <div class="text-right hidden sm:block">
+          <p class="text-[10px] uppercase font-bold text-primary">
+            {{ currentUser()?.firstName }} {{ currentUser()?.lastName }}
+          </p>
+          <p class="text-[8px] uppercase tracking-widest text-accent font-bold">
+            Administrateur
+          </p>
+        </div>
+        <div
+          class="w-10 h-10 bg-cream-light rounded-full border border-gray-100 flex items-center justify-center text-primary font-bold text-xs"
+        >
+          {{ currentUser()?.firstName?.charAt(0)
+          }}{{ currentUser()?.lastName?.charAt(0) }}
+        </div>
+      </div>
+    </header>
+
+    <!-- Scrollable content area -->
+    <div class="flex-1 overflow-y-auto p-8 bg-gray-50">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

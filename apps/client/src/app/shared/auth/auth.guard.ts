@@ -15,3 +15,16 @@ export const authGuard: CanActivateFn = () => {
   authService.openAuthModal();
   return router.parseUrl('/');
 };
+
+export const adminGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  const user = authService.currentUser();
+
+  if (user && user.role === 'ADMIN') {
+    return true;
+  }
+
+  // Redirect to home if not admin
+  return router.parseUrl('/');
+};

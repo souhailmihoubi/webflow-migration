@@ -1,0 +1,119 @@
+<div class="space-y-8">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xs uppercase tracking-[0.3em] text-accent font-bold">
+      Gestion des Commandes
+    </h2>
+    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+      {{ orders().length }} commandes au total
+    </p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-20">
+      <div
+        class="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"
+      ></div>
+    </div>
+  } @else {
+    <div class="bg-white border border-gray-100 shadow-sm overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-gray-50 border-b border-gray-100">
+          <tr>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+            >
+              Code
+            </th>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+            >
+              Client
+            </th>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+            >
+              Date
+            </th>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+            >
+              Total
+            </th>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+            >
+              Statut
+            </th>
+            <th
+              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold text-right"
+            >
+              Mettre à jour
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @for (order of orders(); track order.id) {
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4">
+                <p class="text-[11px] font-bold text-primary">
+                  #{{ order.id.slice(-6).toUpperCase() }}
+                </p>
+              </td>
+              <td class="px-6 py-4">
+                <p class="text-[11px] font-bold text-primary">
+                  {{ order.user.firstName }} {{ order.user.lastName }}
+                </p>
+                <p class="text-[9px] text-gray-400">{{ order.user.email }}</p>
+              </td>
+              <td class="px-6 py-4">
+                <p class="text-[10px] text-gray-400">
+                  {{ order.createdAt | date: 'short' }}
+                </p>
+              </td>
+              <td class="px-6 py-4">
+                <p class="text-[11px] font-bold text-primary">
+                  {{ order.totalPrice }} DT
+                </p>
+                <p class="text-[9px] text-gray-400">
+                  {{ order.items.length }} articles
+                </p>
+              </td>
+              <td class="px-6 py-4">
+                <span
+                  [class]="
+                    'px-2 py-1 text-[8px] font-bold uppercase tracking-widest shadow-sm ' +
+                    getStatusClass(order.status)
+                  "
+                >
+                  {{ order.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <div class="flex items-center justify-end space-x-2">
+                  <select
+                    [disabled]="isUpdating() === order.id"
+                    (change)="updateStatus(order.id, $any($event.target).value)"
+                    [class]="
+                      'text-[9px] font-bold uppercase tracking-widest border border-gray-100 p-2 focus:border-accent focus:outline-none bg-gray-50 appearance-none ' +
+                      (isUpdating() === order.id ? 'opacity-50' : '')
+                    "
+                  >
+                    <option value="">Modifier</option>
+                    @for (status of statuses; track status) {
+                      <option
+                        [value]="status"
+                        [selected]="status === order.status"
+                      >
+                        {{ status }}
+                      </option>
+                    }
+                  </select>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

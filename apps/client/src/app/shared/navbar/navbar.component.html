@@ -58,11 +58,6 @@
                 <h3 class="text-xl font-heading font-bold text-primary">
                   Explorez nos univers
                 </h3>
-                <a
-                  routerLink="/shop"
-                  class="text-xs uppercase tracking-widest text-accent hover:text-primary transition-colors font-medium"
-                  >Voir tout le catalogue</a
-                >
               </div>
 
               <div class="grid grid-cols-4 gap-6">
@@ -107,7 +102,7 @@
                         {{ cat.name }}
                       </p>
                       <p
-                        class="text-[10px] text-gray-400 uppercase tracking-tighter"
+                        class="text-[12px] text-gray-400 uppercase tracking-tighter"
                       >
                         {{ cat._count?.products || 0 }} Articles
                       </p>
@@ -232,6 +227,15 @@
                   >
                     Mes Commandes
                   </a>
+
+                  @if (currentUser()?.role === 'ADMIN') {
+                    <a
+                      routerLink="/admin"
+                      class="block px-4 py-2 text-sm text-accent hover:bg-cream-light transition-colors font-bold uppercase tracking-widest text-[10px]"
+                    >
+                      Administration
+                    </a>
+                  }
 
                   <div class="border-t border-gray-100 mt-2 pt-2">
                     <button

@@ -21,9 +21,27 @@ import { OrderHistoryComponent } from './profile/order-history/order-history.com
 import { OrderDetailComponent } from './profile/order-detail/order-detail.component';
 import { UserProfileComponent } from './profile/user-profile/user-profile.component';
 import { ContactComponent } from './contact/contact.component';
-import { authGuard } from './shared/auth/auth.guard';
+import { AdminLayoutComponent } from './admin/admin-layout/admin-layout.component';
+import { DashboardComponent } from './admin/dashboard/dashboard.component';
+import { CategoryListComponent } from './admin/categories/category-list.component';
+import { ProductListComponent } from './admin/products/product-list.component';
+import { OrderListComponent } from './admin/orders/order-list.component';
+import { UserListComponent } from './admin/users/user-list.component';
+import { authGuard, adminGuard } from './shared/auth/auth.guard';
 
 const routes: Routes = [
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [adminGuard],
+    children: [
+      { path: '', component: DashboardComponent },
+      { path: 'categories', component: CategoryListComponent },
+      { path: 'products', component: ProductListComponent },
+      { path: 'orders', component: OrderListComponent },
+      { path: 'users', component: UserListComponent },
+    ],
+  },
   { path: 'cart', component: CartComponent },
   { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
   { path: 'contact', component: ContactComponent },

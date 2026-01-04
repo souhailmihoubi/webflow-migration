@@ -2,7 +2,9 @@
   "name": "@webflow-migration/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "db:import": "npx ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" scripts/import-data.ts"
+  },
   "private": true,
   "devDependencies": {
     "@angular-devkit/core": "~21.0.0",
@@ -68,6 +70,7 @@
     "@types/passport-jwt": "^4.0.1",
     "axios": "^1.6.0",
     "bcrypt": "^6.0.0",
+    "csv-parse": "^6.1.0",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.12",
     "passport": "^0.7.0",

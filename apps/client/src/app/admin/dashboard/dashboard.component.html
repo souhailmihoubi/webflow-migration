@@ -1,0 +1,208 @@
+<div class="space-y-8">
+  <div class="flex items-center justify-between">
+    <h2 class="text-xs uppercase tracking-[0.3em] text-accent font-bold">
+      Tableau de bord
+    </h2>
+    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+      Dernière mise à jour: Aujourd'hui
+    </p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-20">
+      <div
+        class="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"
+      ></div>
+    </div>
+  } @else {
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="bg-white p-6 rounded-sm border border-gray-100 shadow-sm">
+        <p
+          class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2"
+        >
+          Chiffre d'Affaire
+        </p>
+        <p class="text-2xl font-heading font-bold text-primary">
+          {{ stats()?.totalRevenue }} DT
+        </p>
+        <div
+          class="mt-4 flex items-center text-green-500 text-[10px] font-bold"
+        >
+          <span>+12.5%</span>
+          <span class="text-gray-400 ml-2 font-normal">vs mois dernier</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-sm border border-gray-100 shadow-sm">
+        <p
+          class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2"
+        >
+          Total Commandes
+        </p>
+        <p class="text-2xl font-heading font-bold text-primary">
+          {{ stats()?.totalOrders }}
+        </p>
+        <div class="mt-4 flex items-center text-blue-500 text-[10px] font-bold">
+          <span>{{ stats()?.pendingOrders }} en attente</span>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-sm border border-gray-100 shadow-sm">
+        <p
+          class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2"
+        >
+          Total Produits
+        </p>
+        <p class="text-2xl font-heading font-bold text-primary">
+          {{ stats()?.totalProducts }}
+        </p>
+        <p class="mt-4 text-[10px] text-gray-400 font-medium">
+          {{ stats()?.totalCategories }} catégories
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-sm border border-gray-100 shadow-sm">
+        <p
+          class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2"
+        >
+          Utilisateurs
+        </p>
+        <p class="text-2xl font-heading font-bold text-primary">
+          {{ stats()?.totalUsers }}
+        </p>
+        <p class="mt-4 text-[10px] text-gray-400 font-medium">
+          Clients inscrits
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Recent Orders -->
+      <div class="lg:col-span-2 space-y-6">
+        <div class="flex items-center justify-between">
+          <h3
+            class="text-[10px] uppercase tracking-widest text-primary font-bold"
+          >
+            Commandes Récentes
+          </h3>
+          <a
+            routerLink="/admin/orders"
+            class="text-[9px] uppercase tracking-widest text-accent font-bold hover:underline"
+            >Voir tout</a
+          >
+        </div>
+
+        <div class="bg-white border border-gray-100 shadow-sm overflow-hidden">
+          <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-100">
+              <tr>
+                <th
+                  class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >
+                  Commande
+                </th>
+                <th
+                  class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >
+                  Client
+                </th>
+                <th
+                  class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >
+                  Total
+                </th>
+                <th
+                  class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                >
+                  Statut
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              @for (order of recentOrders(); track order.id) {
+                <tr class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4">
+                    <p class="text-[11px] font-bold text-primary">
+                      #{{ order.id.slice(-6).toUpperCase() }}
+                    </p>
+                    <p class="text-[9px] text-gray-400">
+                      {{ order.createdAt | date: 'short' }}
+                    </p>
+                  </td>
+                  <td class="px-6 py-4">
+                    <p class="text-[11px] font-bold text-primary">
+                      {{ order.user.firstName }} {{ order.user.lastName }}
+                    </p>
+                    <p class="text-[9px] text-gray-400">
+                      {{ order.user.email }}
+                    </p>
+                  </td>
+                  <td class="px-6 py-4 text-[11px] font-bold text-primary">
+                    {{ order.totalPrice }} DT
+                  </td>
+                  <td class="px-6 py-4">
+                    <span
+                      [class]="
+                        'px-2 py-1 text-[8px] font-bold uppercase tracking-widest ' +
+                        getStatusClass(order.status)
+                      "
+                    >
+                      {{ order.status }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Recent Products -->
+      <div class="space-y-6">
+        <div class="flex items-center justify-between">
+          <h3
+            class="text-[10px] uppercase tracking-widest text-primary font-bold"
+          >
+            Derniers Produits
+          </h3>
+          <a
+            routerLink="/admin/products"
+            class="text-[9px] uppercase tracking-widest text-accent font-bold hover:underline"
+            >Gérer</a
+          >
+        </div>
+
+        <div class="bg-white border border-gray-100 shadow-sm p-6 space-y-4">
+          @for (product of recentProducts(); track product.id) {
+            <div class="flex items-center space-x-4">
+              <div
+                class="w-12 h-12 bg-gray-50 border border-gray-100 overflow-hidden"
+              >
+                <img
+                  [src]="product.mainImage"
+                  [alt]="product.name"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p class="text-[11px] font-bold text-primary truncate">
+                  {{ product.name }}
+                </p>
+                <p class="text-[10px] text-accent font-bold">
+                  {{ product.price }} DT
+                </p>
+              </div>
+              <div
+                [class]="
+                  'w-2 h-2 rounded-full ' +
+                  (product.showInMenu ? 'bg-green-400' : 'bg-gray-300')
+                "
+              ></div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>
