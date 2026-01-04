@@ -37,8 +37,6 @@ export class CheckoutComponent {
     address: ['', [Validators.required]],
     city: ['', [Validators.required]],
     notes: [''],
-    paymentFacility: [false],
-    acceptTerms: [false, [Validators.requiredTrue]],
   });
 
   isSubmitted = signal(false);
@@ -83,7 +81,9 @@ export class CheckoutComponent {
       city: this.checkoutForm.get('city')?.value || '',
       remarks: this.checkoutForm.get('notes')?.value || '',
       items: this.cartItems().map((item) => ({
-        productId: item.product.id,
+        productId:
+          item.type === 'product' && item.product ? item.product.id : undefined,
+        packId: item.type === 'pack' && item.pack ? item.pack.id : undefined,
         quantity: item.quantity,
       })),
     };
@@ -108,8 +108,14 @@ export class CheckoutComponent {
   }
 
   getItemPrice(item: any): number {
-    const product = item.product;
-    const price = product.discountPrice ?? product.price;
-    return typeof price === 'string' ? parseFloat(price) : price;
+    if (item.type === 'product' && item.product) {
+      const product = item.product;
+      const price = product.discountPrice ?? product.price;
+      return typeof price === 'string' ? parseFloat(price) : price;
+    } else if (item.type === 'pack' && item.pack) {
+      const price = item.pack.price;
+      return typeof price === 'string' ? parseFloat(price) : price;
+    }
+    return 0;
   }
 }

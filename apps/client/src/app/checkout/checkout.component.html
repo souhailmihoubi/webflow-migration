@@ -41,7 +41,10 @@
           </div>
 
           <div class="space-y-4">
-            @for (item of cartItems(); track item.product.id) {
+            @for (
+              item of cartItems();
+              track item.type === 'product' ? item.product?.id : item.pack?.id
+            ) {
               <div
                 class="flex items-center justify-between py-2 border-b border-white/5"
               >
@@ -49,21 +52,45 @@
                   <div
                     class="w-12 h-12 bg-white/10 overflow-hidden flex-shrink-0"
                   >
-                    <img
-                      [src]="item.product.mainImage"
-                      [alt]="item.product.name"
-                      class="w-full h-full object-cover opacity-80"
-                    />
+                    @if (item.type === 'product' && item.product) {
+                      <img
+                        [src]="item.product.mainImage"
+                        [alt]="item.product.name"
+                        class="w-full h-full object-cover opacity-80"
+                      />
+                    } @else if (item.type === 'pack' && item.pack) {
+                      <img
+                        [src]="item.pack.mainImage || ''"
+                        [alt]="item.pack.name"
+                        class="w-full h-full object-cover opacity-80"
+                      />
+                    }
                   </div>
                   <div>
-                    <p
-                      class="text-white text-sm font-bold uppercase tracking-wider"
-                    >
-                      {{ item.product.name }}
-                      <span class="text-accent/60 lowercase ml-1"
-                        >x{{ item.quantity }}</span
+                    @if (item.type === 'product' && item.product) {
+                      <p
+                        class="text-white text-sm font-bold uppercase tracking-wider"
                       >
-                    </p>
+                        {{ item.product.name }}
+                        <span class="text-accent/60 lowercase ml-1"
+                          >x{{ item.quantity }}</span
+                        >
+                      </p>
+                    } @else if (item.type === 'pack' && item.pack) {
+                      <p
+                        class="text-white text-sm font-bold uppercase tracking-wider"
+                      >
+                        {{ item.pack.name }}
+                        <span class="text-accent/60 lowercase ml-1"
+                          >x{{ item.quantity }}</span
+                        >
+                      </p>
+                      <p
+                        class="text-[9px] text-accent uppercase tracking-widest"
+                      >
+                        Pack Mariage
+                      </p>
+                    }
                   </div>
                 </div>
                 <p class="text-accent font-bold">
@@ -274,70 +301,9 @@
               ></textarea>
             </div>
 
-            <!-- Options -->
-            <div class="space-y-4 pt-4">
-              <label
-                class="flex items-start space-x-3 p-6 border border-primary/10 bg-primary/5 cursor-pointer group"
-              >
-                <input
-                  type="checkbox"
-                  formControlName="paymentFacility"
-                  class="mt-1 w-4 h-4 text-accent border-gray-300 rounded focus:ring-accent"
-                />
-                <div class="flex-1">
-                  <p
-                    class="text-xs font-bold uppercase tracking-widest text-primary flex items-center space-x-2"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-4 h-4"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M2.25 8.25h19.5M2.25 9h19.5m-19.5 7.5h19.5m-19.5 3.75h19.5"
-                      />
-                    </svg>
-                    <span>Je souhaite une facilité de paiement</span>
-                  </p>
-                  <p
-                    class="text-[10px] text-gray-500 uppercase tracking-widest mt-1"
-                  >
-                    Payez en plusieurs fois sur 3 à 10 mois. Notre équipe vous
-                    contactera pour discuter des modalités.
-                  </p>
-                </div>
-              </label>
-
-              <label class="flex items-center space-x-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  formControlName="acceptTerms"
-                  class="w-4 h-4 text-accent border-gray-300 rounded focus:ring-accent"
-                />
-                <span
-                  class="text-[10px] text-gray-500 uppercase tracking-widest font-bold"
-                >
-                  J'accepte les
-                  <a href="#" class="text-accent underline"
-                    >conditions générales de vente</a
-                  >
-                  et la
-                  <a href="#" class="text-accent underline"
-                    >politique de confidentialité</a
-                  >
-                </span>
-              </label>
-            </div>
-
             <button
               type="submit"
-              [disabled]="checkoutForm.invalid"
-              class="w-full py-6 bg-accent text-white text-xs font-bold uppercase tracking-[0.3em] hover:bg-primary transition-all duration-300 shadow-xl flex items-center justify-center space-x-4 disabled:opacity-50 disabled:cursor-not-allowed group"
+              class="w-full py-6 bg-accent text-white text-xs font-bold uppercase tracking-[0.3em] hover:bg-primary transition-all duration-300 shadow-xl flex items-center justify-center space-x-4 group"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -468,13 +434,22 @@
                     Articles
                   </p>
                   <div class="bg-cream-light p-4 space-y-3">
-                    @for (item of cartItems(); track item.product.id) {
+                    @for (
+                      item of cartItems();
+                      track item.type === 'product'
+                        ? item.product?.id
+                        : item.pack?.id
+                    ) {
                       <div
                         class="flex justify-between text-xs font-bold text-primary"
                       >
-                        <span
-                          >{{ item.product.name }} x{{ item.quantity }}</span
-                        >
+                        @if (item.type === 'product' && item.product) {
+                          <span
+                            >{{ item.product.name }} x{{ item.quantity }}</span
+                          >
+                        } @else if (item.type === 'pack' && item.pack) {
+                          <span>{{ item.pack.name }} x{{ item.quantity }}</span>
+                        }
                         <span
                           >{{ getItemPrice(item) * item.quantity }} TND</span
                         >
@@ -492,30 +467,6 @@
                     </div>
                   </div>
                 </div>
-
-                @if (checkoutForm.value.paymentFacility) {
-                  <div
-                    class="flex items-center space-x-2 text-accent bg-accent/5 p-3"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                      stroke="currentColor"
-                      class="w-4 h-4"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                      />
-                    </svg>
-                    <p class="text-[10px] font-bold uppercase tracking-widest">
-                      Demande de facilité de paiement incluse
-                    </p>
-                  </div>
-                }
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
                   <button

@@ -1,0 +1,260 @@
+<div class="p-8 max-w-4xl mx-auto">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">
+      {{ isEditMode() ? 'Modifier le Pack' : 'Nouveau Pack' }}
+    </h1>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center items-center py-12">
+      <div
+        class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"
+      ></div>
+    </div>
+  } @else {
+    <form
+      [formGroup]="packForm"
+      (ngSubmit)="onSubmit()"
+      class="bg-white rounded-lg shadow p-8 space-y-6"
+    >
+      <!-- Name -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Nom du Pack <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="name"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Ex: Pack Complet Maison"
+        />
+        @if (packForm.get('name')?.invalid && packForm.get('name')?.touched) {
+          <p class="mt-1 text-sm text-red-600">Le nom est requis</p>
+        }
+      </div>
+
+      <!-- Slug -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Slug <span class="text-red-500">*</span>
+        </label>
+        <input
+          type="text"
+          formControlName="slug"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="pack-complet-maison"
+        />
+        <p class="mt-1 text-xs text-gray-500">
+          URL-friendly identifier (auto-généré depuis le nom)
+        </p>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Description
+        </label>
+        <textarea
+          formControlName="description"
+          rows="4"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Description du pack..."
+        ></textarea>
+      </div>
+
+      <!-- Main Image -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Image Principale (URL)
+        </label>
+        <input
+          type="text"
+          formControlName="mainImage"
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="https://example.com/image.jpg"
+        />
+        @if (packForm.get('mainImage')?.value) {
+          <img
+            [src]="packForm.get('mainImage')!.value"
+            alt="Preview"
+            class="mt-2 h-32 w-32 object-cover rounded border"
+          />
+        }
+      </div>
+
+      <!-- Discount Percentage -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Pourcentage de Réduction <span class="text-red-500">*</span>
+        </label>
+        <div class="flex items-center space-x-4">
+          <input
+            type="number"
+            formControlName="discountPercentage"
+            min="0"
+            max="100"
+            step="1"
+            class="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+          <span class="text-gray-600">%</span>
+        </div>
+        <p class="mt-1 text-xs text-gray-500">
+          Le pourcentage de réduction appliqué au pack (ex: 5 pour -5%)
+        </p>
+        @if (
+          packForm.get('discountPercentage')?.invalid &&
+          packForm.get('discountPercentage')?.touched
+        ) {
+          <p class="mt-1 text-sm text-red-600">
+            Le pourcentage doit être entre 0 et 100
+          </p>
+        }
+      </div>
+
+      <div class="border-t border-gray-200 pt-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+          Sélection des Produits
+        </h3>
+        <p class="text-sm text-gray-600 mb-6">
+          Choisissez un produit de chaque catégorie pour composer le pack
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- Product SAM -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Produit SAM <span class="text-red-500">*</span>
+            </label>
+            <select
+              formControlName="productSamId"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Sélectionner...</option>
+              @for (product of samProducts(); track product.id) {
+                <option [value]="product.id">
+                  {{ product.name }} ({{
+                    product.discountPrice || product.price
+                  }}
+                  TND)
+                </option>
+              }
+            </select>
+            @if (
+              packForm.get('productSamId')?.invalid &&
+              packForm.get('productSamId')?.touched
+            ) {
+              <p class="mt-1 text-sm text-red-600">Produit SAM requis</p>
+            }
+          </div>
+
+          <!-- Product CAC -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Produit CAC <span class="text-red-500">*</span>
+            </label>
+            <select
+              formControlName="productCacId"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Sélectionner...</option>
+              @for (product of cacProducts(); track product.id) {
+                <option [value]="product.id">
+                  {{ product.name }} ({{
+                    product.discountPrice || product.price
+                  }}
+                  TND)
+                </option>
+              }
+            </select>
+            @if (
+              packForm.get('productCacId')?.invalid &&
+              packForm.get('productCacId')?.touched
+            ) {
+              <p class="mt-1 text-sm text-red-600">Produit CAC requis</p>
+            }
+          </div>
+
+          <!-- Product Salon -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Produit Salon <span class="text-red-500">*</span>
+            </label>
+            <select
+              formControlName="productSalonId"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Sélectionner...</option>
+              @for (product of salonProducts(); track product.id) {
+                <option [value]="product.id">
+                  {{ product.name }} ({{
+                    product.discountPrice || product.price
+                  }}
+                  TND)
+                </option>
+              }
+            </select>
+            @if (
+              packForm.get('productSalonId')?.invalid &&
+              packForm.get('productSalonId')?.touched
+            ) {
+              <p class="mt-1 text-sm text-red-600">Produit Salon requis</p>
+            }
+          </div>
+        </div>
+
+        <!-- Price Calculation Display -->
+        @if (calculatedPrice()) {
+          <div class="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-700"
+                >Prix du Pack (avec -{{
+                  packForm.get('discountPercentage')?.value
+                }}% de réduction):</span
+              >
+              <span class="text-2xl font-bold text-green-600"
+                >{{ calculatedPrice() }} TND</span
+              >
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Show in Menu -->
+      <div class="flex items-center">
+        <input
+          type="checkbox"
+          formControlName="showInMenu"
+          id="showInMenu"
+          class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        />
+        <label for="showInMenu" class="ml-2 block text-sm text-gray-700">
+          Afficher dans le menu
+        </label>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+        <button
+          type="button"
+          (click)="cancel()"
+          class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          [disabled]="packForm.invalid || isSaving()"
+          class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {{
+            isSaving()
+              ? 'Enregistrement...'
+              : isEditMode()
+                ? 'Modifier'
+                : 'Créer'
+          }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

@@ -42,6 +42,11 @@ model Product {
   categoryId         String
   orderItems         OrderItem[]
   cartItems          CartItem[]
+  
+  // Pack relations
+  packsSam           Pack[]      @relation("PackProductSam")
+  packsCac           Pack[]      @relation("PackProductCac")
+  packsSalon         Pack[]      @relation("PackProductSalon")
 }
 
 model Category {
@@ -73,11 +78,13 @@ model Order {
 }
 
 model OrderItem {
-  id          String  @id @default(uuid())
-  order       Order   @relation(fields: [orderId], references: [id])
+  id          String   @id @default(uuid())
+  order       Order    @relation(fields: [orderId], references: [id])
   orderId     String
-  product     Product @relation(fields: [productId], references: [id])
-  productId   String
+  product     Product? @relation(fields: [productId], references: [id])
+  productId   String?
+  pack        Pack?    @relation(fields: [packId], references: [id])
+  packId      String?
   quantity    Int
   priceAtTime Decimal
 }
@@ -91,12 +98,40 @@ model Cart {
 }
 
 model CartItem {
-  id        String  @id @default(uuid())
-  cart      Cart    @relation(fields: [cartId], references: [id])
+  id        String   @id @default(uuid())
+  cart      Cart     @relation(fields: [cartId], references: [id])
   cartId    String
-  product   Product @relation(fields: [productId], references: [id])
-  productId String
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+  pack      Pack?    @relation(fields: [packId], references: [id])
+  packId    String?
   quantity  Int
+}
+
+model Pack {
+  id             String      @id @default(uuid())
+  name           String
+  slug           String      @unique
+  description    String?
+  mainImage      String?
+  price          Decimal     // Calculated: 95% of sum of 3 product discountPrices
+  discountPercentage Int     @default(5)
+  showInMenu     Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  
+  // Relations to exactly 3 products
+  productSam     Product     @relation("PackProductSam", fields: [productSamId], references: [id])
+  productSamId   String
+  
+  productCac     Product     @relation("PackProductCac", fields: [productCacId], references: [id])
+  productCacId   String
+  
+  productSalon   Product     @relation("PackProductSalon", fields: [productSalonId], references: [id])
+  productSalonId String
+  
+  orderItems     OrderItem[]
+  cartItems      CartItem[]
 }
 
 enum Role {

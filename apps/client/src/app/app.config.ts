@@ -21,12 +21,16 @@ import { OrderHistoryComponent } from './profile/order-history/order-history.com
 import { OrderDetailComponent } from './profile/order-detail/order-detail.component';
 import { UserProfileComponent } from './profile/user-profile/user-profile.component';
 import { ContactComponent } from './contact/contact.component';
+import { PacksListComponent } from './packs/packs-list.component';
+import { PackDetailComponent } from './packs/pack-detail.component';
 import { AdminLayoutComponent } from './admin/admin-layout/admin-layout.component';
 import { DashboardComponent } from './admin/dashboard/dashboard.component';
 import { CategoryListComponent } from './admin/categories/category-list.component';
 import { ProductListComponent } from './admin/products/product-list.component';
 import { OrderListComponent } from './admin/orders/order-list.component';
 import { UserListComponent } from './admin/users/user-list.component';
+import { PackListComponent } from './admin/packs/pack-list.component';
+import { PackFormComponent } from './admin/packs/pack-form.component';
 import { authGuard, adminGuard } from './shared/auth/auth.guard';
 
 const routes: Routes = [
@@ -38,6 +42,9 @@ const routes: Routes = [
       { path: '', component: DashboardComponent },
       { path: 'categories', component: CategoryListComponent },
       { path: 'products', component: ProductListComponent },
+      { path: 'packs', component: PackListComponent },
+      { path: 'packs/new', component: PackFormComponent },
+      { path: 'packs/:id/edit', component: PackFormComponent },
       { path: 'orders', component: OrderListComponent },
       { path: 'users', component: UserListComponent },
     ],
@@ -64,6 +71,8 @@ const routes: Routes = [
   { path: 'category/:slug', component: CategoryDetailComponent },
 
   { path: 'product/:slug', component: ProductDetailComponent },
+  { path: 'packs', component: PacksListComponent },
+  { path: 'pack/:slug', component: PackDetailComponent },
   { path: '', component: HomeComponent, pathMatch: 'full' },
 ];
 

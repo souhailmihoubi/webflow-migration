@@ -24,19 +24,30 @@ export class CartComponent {
   }
 
   getItemTotal(item: CartItem): number {
-    const price =
-      typeof item.product.discountPrice === 'number'
-        ? item.product.discountPrice
-        : parseFloat(String(item.product.discountPrice || item.product.price));
-    return price * item.quantity;
+    if (item.type === 'product' && item.product) {
+      const price =
+        typeof item.product.discountPrice === 'number'
+          ? item.product.discountPrice
+          : parseFloat(
+              String(item.product.discountPrice || item.product.price),
+            );
+      return price * item.quantity;
+    } else if (item.type === 'pack' && item.pack) {
+      const price =
+        typeof item.pack.price === 'number'
+          ? item.pack.price
+          : parseFloat(String(item.pack.price));
+      return price * item.quantity;
+    }
+    return 0;
   }
 
-  updateQuantity(productId: string, quantity: number) {
-    this.cartService.updateQuantity(productId, quantity);
+  updateQuantity(itemId: string, quantity: number, type: 'product' | 'pack') {
+    this.cartService.updateQuantity(itemId, quantity, type);
   }
 
-  removeItem(productId: string) {
-    this.cartService.removeFromCart(productId);
+  removeItem(itemId: string, type: 'product' | 'pack') {
+    this.cartService.removeFromCart(itemId, type);
   }
 
   clearCart() {

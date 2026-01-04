@@ -1,0 +1,127 @@
+<div class="p-8">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Gestion des Packs</h1>
+    <a
+      routerLink="/admin/packs/new"
+      class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+    >
+      + Nouveau Pack
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex justify-center items-center py-12">
+      <div
+        class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"
+      ></div>
+    </div>
+  } @else if (packs().length === 0) {
+    <div class="bg-white rounded-lg shadow p-12 text-center">
+      <p class="text-gray-500 text-lg">Aucun pack disponible</p>
+      <a
+        routerLink="/admin/packs/new"
+        class="inline-block mt-4 text-blue-600 hover:text-blue-700 font-medium"
+      >
+        Créer le premier pack
+      </a>
+    </div>
+  } @else {
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Nom
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Prix
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Produits
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Affiché
+            </th>
+            <th
+              class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          @for (pack of packs(); track pack.id) {
+            <tr class="hover:bg-gray-50">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  @if (pack.mainImage) {
+                    <img
+                      [src]="pack.mainImage"
+                      [alt]="pack.name"
+                      class="h-10 w-10 rounded object-cover mr-3"
+                    />
+                  }
+                  <div class="text-sm font-medium text-gray-900">
+                    {{ pack.name }}
+                  </div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm text-gray-900">{{ pack.price }} TND</div>
+                <div class="text-xs text-green-600">
+                  -{{ pack.discountPercentage || 5 }}%
+                </div>
+              </td>
+              <td class="px-6 py-4">
+                <div class="text-xs text-gray-500 space-y-1">
+                  <div>SAM: {{ pack.productSam?.name }}</div>
+                  <div>CAC: {{ pack.productCac?.name }}</div>
+                  <div>Salon: {{ pack.productSalon?.name }}</div>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                @if (pack.showInMenu) {
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800"
+                  >
+                    Oui
+                  </span>
+                } @else {
+                  <span
+                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800"
+                  >
+                    Non
+                  </span>
+                }
+              </td>
+              <td
+                class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2"
+              >
+                <a
+                  [routerLink]="['/admin/packs', pack.id, 'edit']"
+                  class="text-blue-600 hover:text-blue-900"
+                >
+                  Modifier
+                </a>
+                <button
+                  (click)="deletePack(pack.id, pack.name)"
+                  class="text-red-600 hover:text-red-900"
+                >
+                  Supprimer
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

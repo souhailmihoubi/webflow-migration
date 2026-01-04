@@ -10,6 +10,7 @@ import { CatalogModule } from './catalog/catalog.module';
 import { OrderModule } from './order/order.module';
 import { UploadModule } from './upload/upload.module';
 import { AdminModule } from './admin/admin.module';
+import { PackModule } from './pack/pack.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AdminModule } from './admin/admin.module';
     OrderModule,
     UploadModule,
     AdminModule,
+    PackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

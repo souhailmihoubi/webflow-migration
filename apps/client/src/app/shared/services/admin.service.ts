@@ -65,4 +65,32 @@ export class AdminService {
   updateOrderStatus(id: string, status: string): Observable<any> {
     return this.http.patch(`${this.apiUrl}/orders/${id}/status`, { status });
   }
+
+  // Packs
+  getAllPacks(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/catalog/packs`);
+  }
+
+  getPackById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/catalog/packs/${id}`);
+  }
+
+  createPack(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/admin/packs`, data);
+  }
+
+  updatePack(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/admin/packs/${id}`, data);
+  }
+
+  deletePack(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/admin/packs/${id}`);
+  }
+
+  // Get products by category slug
+  getProductsByCategory(categorySlug: string): Observable<any> {
+    return this.http.get<any>(
+      `${this.apiUrl}/catalog/categories/${categorySlug}`,
+    );
+  }
 }

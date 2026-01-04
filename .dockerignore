@@ -1,0 +1,17 @@
+node_modules
+dist
+.angular
+.nx
+npm-debug.log
+.env
+.env.local
+.git
+.gitignore
+README.md
+.vscode
+.editorconfig
+*.md
+coverage
+.nyc_output
+uploads/*
+!uploads/.gitkeep

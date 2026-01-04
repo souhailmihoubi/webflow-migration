@@ -2,7 +2,7 @@
   <!-- Sidebar -->
   <aside
     [class]="
-      'bg-primary text-white h-screen transition-all duration-300 flex-shrink-0 z-50 ' +
+      'bg-primary text-white h-screen transition-all duration-300 flex-shrink-0 z-50 flex flex-col ' +
       (isSidebarOpen ? 'w-64' : 'w-20')
     "
   >
@@ -50,7 +50,7 @@
     </nav>
 
     <!-- Bottom Actions -->
-    <div class="absolute bottom-8 left-0 w-full px-4 space-y-2">
+    <div class="mt-auto px-4 pb-8 space-y-2">
       <button
         (click)="logout()"
         class="flex items-center w-full h-12 px-4 rounded-lg hover:bg-red-500/10 text-red-400 transition-all group overflow-hidden"

@@ -118,5 +118,57 @@ export class PlaceOrderDto {
   shippingAddress!: string;
   city!: string;
   remarks?: string;
-  items?: { productId: string; quantity: number }[];
+  items!: {
+    productId?: string;
+    packId?: string;
+    quantity: number;
+  }[];
+}
+
+// Pack DTOs
+export class CreatePackDto {
+  name!: string;
+  slug!: string;
+  description?: string;
+  mainImage?: string;
+  productSamId!: string;
+  productCacId!: string;
+  productSalonId!: string;
+  discountPercentage?: number;
+  showInMenu?: boolean;
+}
+
+export class UpdatePackDto {
+  name?: string;
+  description?: string;
+  mainImage?: string;
+  productSamId?: string;
+  productCacId?: string;
+  productSalonId?: string;
+  discountPercentage?: number;
+  showInMenu?: boolean;
+}
+
+export interface ProductDto {
+  id: string;
+  name: string;
+  slug: string;
+  mainImage: string;
+  price: number;
+  discountPrice?: number;
+}
+
+export interface PackDto {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  mainImage?: string;
+  price: number;
+  showInMenu: boolean;
+  productSam: ProductDto;
+  productCac: ProductDto;
+  productSalon: ProductDto;
+  createdAt: string;
+  updatedAt: string;
 }
