@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AdminService } from '../../shared/services/admin.service';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-pack-form',
@@ -14,6 +15,7 @@ export class PackFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toast = inject(ToastService);
   private adminService = inject(AdminService);
 
   packId = signal<string | null>(null);
@@ -52,9 +54,11 @@ export class PackFormComponent implements OnInit {
     const discountPercentage =
       this.packForm.get('discountPercentage')?.value || 0;
 
-    const samProduct = this.samProducts().find((p) => p.id === samId);
-    const cacProduct = this.cacProducts().find((p) => p.id === cacId);
-    const salonProduct = this.salonProducts().find((p) => p.id === salonId);
+    const samProduct = this.samProducts().find((p: any) => p.id === samId);
+    const cacProduct = this.cacProducts().find((p: any) => p.id === cacId);
+    const salonProduct = this.salonProducts().find(
+      (p: any) => p.id === salonId,
+    );
 
     if (!samProduct || !cacProduct || !salonProduct) {
       this.calculatedPrice.set(null);
@@ -112,16 +116,30 @@ export class PackFormComponent implements OnInit {
     // Get all products and filter by category
     this.adminService.getProducts().subscribe({
       next: (products: any[]) => {
+        console.log('All products:', products);
+        console.log(
+          'Categories:',
+          products.map((p: any) => ({
+            name: p.name,
+            categorySlug: p.category?.slug,
+          })),
+        );
+
         // Filter products by category slug
         this.samProducts.set(
-          products.filter((p) => p.category?.slug === 'sam'),
+          products.filter((p: any) => p.category?.slug === 'sam'),
         );
         this.cacProducts.set(
-          products.filter((p) => p.category?.slug === 'cac'),
+          products.filter((p: any) => p.category?.slug === 'cac'),
         );
         this.salonProducts.set(
-          products.filter((p) => p.category?.slug === 'salons-et-sejours'),
+          products.filter((p: any) => p.category?.slug === 'salon'),
         );
+
+        console.log('SAM products:', this.samProducts());
+        console.log('CAC products:', this.cacProducts());
+        console.log('Salon products:', this.salonProducts());
+
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -136,7 +154,7 @@ export class PackFormComponent implements OnInit {
     // Use admin endpoint to get pack by ID
     this.adminService.getAllPacks().subscribe({
       next: (packs) => {
-        const pack = packs.find((p) => p.id === id);
+        const pack = packs.find((p: any) => p.id === id);
         if (pack) {
           this.packForm.patchValue({
             name: pack.name,
@@ -150,14 +168,14 @@ export class PackFormComponent implements OnInit {
             showInMenu: pack.showInMenu,
           });
         } else {
-          alert('Pack non trouvé');
+          this.toast.error('Pack non trouvé');
           this.router.navigate(['/admin/packs']);
         }
         this.isLoading.set(false);
       },
       error: (error) => {
         console.error('Error loading pack:', error);
-        alert('Erreur lors du chargement du pack');
+        this.toast.error('Erreur lors du chargement du pack');
         this.router.navigate(['/admin/packs']);
       },
     });
@@ -178,7 +196,7 @@ export class PackFormComponent implements OnInit {
 
     request.subscribe({
       next: () => {
-        alert(
+        this.toast.success(
           this.isEditMode()
             ? 'Pack modifié avec succès'
             : 'Pack créé avec succès',
@@ -187,7 +205,10 @@ export class PackFormComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error saving pack:', error);
-        alert("Erreur lors de l'enregistrement du pack");
+        this.toast.error(
+          "Erreur lors de l'enregistrement: " +
+            (error.error?.message || error.message || 'Erreur inconnue'),
+        );
         this.isSaving.set(false);
       },
     });

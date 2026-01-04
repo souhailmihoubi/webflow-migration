@@ -11,6 +11,42 @@
     </button>
   </div>
 
+  <!-- Search Bar -->
+  <div class="flex items-center gap-4">
+    <div class="flex-1 relative">
+      <input
+        type="text"
+        [value]="searchTerm()"
+        (input)="onSearchChange($event)"
+        placeholder="Rechercher par nom, slug ou description..."
+        class="w-full bg-gray-50 border border-gray-100 p-4 pr-10 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+      />
+      @if (searchTerm()) {
+        <button
+          (click)="clearSearch()"
+          class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      }
+    </div>
+    <div class="text-[10px] text-gray-400 uppercase tracking-widest">
+      {{ totalItems() }} catégorie(s)
+    </div>
+  </div>
+
   @if (isLoading()) {
     <div class="flex justify-center py-20">
       <div
@@ -19,84 +55,83 @@
     </div>
   } @else {
     <div class="bg-white border border-gray-100 shadow-sm overflow-hidden">
-      <table class="w-full text-left">
-        <thead class="bg-gray-50 border-b border-gray-100">
-          <tr>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-            >
-              Image
-            </th>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-            >
-              Nom
-            </th>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-            >
-              Slug
-            </th>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-            >
-              Description
-            </th>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold text-right"
-            >
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-          @for (category of categories(); track category.id) {
-            <tr class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4">
-                <div
-                  class="w-12 h-12 bg-gray-50 border border-gray-100 overflow-hidden"
-                >
-                  <img
-                    [src]="category.image || 'https://via.placeholder.com/150'"
-                    class="w-full h-full object-cover"
-                  />
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                <p class="text-[11px] font-bold text-primary">
-                  {{ category.name }}
-                </p>
-              </td>
-              <td class="px-6 py-4">
-                <p class="text-[10px] text-gray-400 font-mono">
-                  {{ category.slug }}
-                </p>
-              </td>
-              <td class="px-6 py-4">
-                <p class="text-[10px] text-gray-400 line-clamp-1 max-w-xs">
-                  {{ category.description }}
-                </p>
-              </td>
-              <td class="px-6 py-4 text-right">
-                <div class="flex items-center justify-end space-x-3">
-                  <button
-                    (click)="openEditModal(category)"
-                    class="text-blue-500 hover:text-blue-700 font-bold text-[10px] uppercase tracking-widest"
-                  >
-                    Modifier
-                  </button>
-                  <button
-                    (click)="deleteCategory(category.id)"
-                    class="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase tracking-widest"
-                  >
-                    Supprimer
-                  </button>
-                </div>
-              </td>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="bg-gray-50 border-b border-gray-100">
+            <tr>
+              <th
+                class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Image
+              </th>
+              <th
+                class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Nom
+              </th>
+              <th
+                class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Slug
+              </th>
+              <th
+                class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold text-right"
+              >
+                Actions
+              </th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            @for (cat of categories(); track cat.id) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                  <div
+                    class="w-12 h-12 bg-gray-50 border border-gray-100 overflow-hidden"
+                  >
+                    <img
+                      [src]="cat.image || 'https://via.placeholder.com/150'"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <p class="text-[11px] font-bold text-primary">
+                    {{ cat.name }}
+                  </p>
+                </td>
+                <td class="px-6 py-4">
+                  <p class="text-[10px] text-gray-400 font-mono">
+                    {{ cat.slug }}
+                  </p>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div class="flex items-center justify-end space-x-3">
+                    <button
+                      (click)="openEditModal(cat)"
+                      class="text-blue-500 hover:text-blue-700 font-bold text-[10px] uppercase tracking-widest"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      (click)="deleteCategory(cat.id, cat.name)"
+                      class="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase tracking-widest"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination
+        [currentPage]="currentPage()"
+        [itemsPerPage]="itemsPerPage()"
+        [totalItems]="totalItems()"
+        (pageChange)="onPageChange($event)"
+      ></app-pagination>
     </div>
   }
 
@@ -173,18 +208,6 @@
           <div class="space-y-2">
             <label
               class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-              >Description</label
-            >
-            <textarea
-              formControlName="description"
-              rows="3"
-              class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all resize-none"
-            ></textarea>
-          </div>
-
-          <div class="space-y-2">
-            <label
-              class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
               >URL de l'image</label
             >
             <input
@@ -211,4 +234,7 @@
       </div>
     </div>
   }
+
+  <!-- Reusable Confirmation Modal -->
+  <app-confirm-modal (confirmed)="onConfirmDelete()"></app-confirm-modal>
 </div>

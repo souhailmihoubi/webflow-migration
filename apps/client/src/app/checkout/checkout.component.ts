@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from '@angular/core';
+import { Component, inject, signal, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import {
@@ -11,6 +11,10 @@ import { CartService } from '../shared/services/cart.service';
 import { OrderService } from '../shared/services/order.service';
 import { PlaceOrderDto } from '@my-org/api-interfaces';
 import { AuthService } from '../shared/auth/auth.service';
+import {
+  TUNISIA_GOVERNORATES,
+  getShippingCost,
+} from '../shared/constants/governorates';
 
 @Component({
   selector: 'app-checkout',
@@ -28,6 +32,13 @@ export class CheckoutComponent {
   cartItems = this.cartService.cartItems;
   cartCount = this.cartService.cartCount;
   cartTotal = this.cartService.cartTotal;
+
+  governorates = TUNISIA_GOVERNORATES;
+  shippingCost = signal(7); // Default shipping cost
+
+  orderTotal = computed(() => {
+    return this.cartTotal() + this.shippingCost();
+  });
 
   checkoutForm = this.fb.group({
     firstName: ['', [Validators.required]],
@@ -65,6 +76,12 @@ export class CheckoutComponent {
     }
   }
 
+  onCityChange(event: Event) {
+    const city = (event.target as HTMLSelectElement).value;
+    const cost = getShippingCost(city);
+    this.shippingCost.set(cost);
+  }
+
   closeReviewModal() {
     this.isReviewModalOpen.set(false);
   }
@@ -79,6 +96,7 @@ export class CheckoutComponent {
       phone: this.checkoutForm.get('phone')?.value || '',
       shippingAddress: this.checkoutForm.get('address')?.value || '',
       city: this.checkoutForm.get('city')?.value || '',
+      shippingCost: this.shippingCost(),
       remarks: this.checkoutForm.get('notes')?.value || '',
       items: this.cartItems().map((item) => ({
         productId:

@@ -24,8 +24,10 @@ export class AdminService {
   }
 
   // Categories
-  getCategories(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/catalog/categories`);
+  getCategories(page = 1, limit = 10, search?: string): Observable<any> {
+    const params: any = { page, limit };
+    if (search) params.search = search;
+    return this.http.get<any>(`${this.apiUrl}/catalog/categories`, { params });
   }
 
   createCategory(data: any): Observable<any> {
@@ -41,8 +43,8 @@ export class AdminService {
   }
 
   // Products
-  getProducts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/catalog/products`);
+  getProducts(params: any = {}): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/catalog/products`, { params });
   }
 
   createProduct(data: any): Observable<any> {
@@ -58,8 +60,8 @@ export class AdminService {
   }
 
   // Orders
-  getAllOrders(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/orders/admin/all`);
+  getAllOrders(params: any = {}): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/orders/admin/all`, { params });
   }
 
   updateOrderStatus(id: string, status: string): Observable<any> {
@@ -67,8 +69,8 @@ export class AdminService {
   }
 
   // Packs
-  getAllPacks(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/catalog/packs`);
+  getAllPacks(params: any = {}): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/admin/packs`, { params });
   }
 
   getPackById(id: string): Observable<any> {

@@ -38,21 +38,34 @@ export class CatalogService {
     });
   }
 
-  async getAllCategories(search?: string) {
+  async getAllCategories(search?: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
     const where: Prisma.CategoryWhereInput = {};
     if (search) {
       where.name = { contains: search, mode: 'insensitive' };
     }
 
-    return this.db.category.findMany({
-      where,
-      include: {
-        _count: {
-          select: { products: true },
+    const [data, total] = await Promise.all([
+      this.db.category.findMany({
+        where,
+        skip,
+        take: limit,
+        include: {
+          _count: {
+            select: { products: true },
+          },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.db.category.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async getCategoryById(id: string) {
@@ -193,59 +206,68 @@ export class CatalogService {
     });
   }
 
-  async getAllProducts(filters?: {
+  async getAllProducts(params: {
     search?: string;
     categoryId?: string;
     minPrice?: number;
     maxPrice?: number;
     visible?: boolean;
+    page?: number;
+    limit?: number;
   }) {
+    const {
+      search,
+      categoryId,
+      minPrice,
+      maxPrice,
+      visible,
+      page = 1,
+      limit = 10,
+    } = params;
+
+    const skip = (page - 1) * limit;
     const where: Prisma.ProductWhereInput = {};
 
-    // Search by name or description
-    if (filters?.search) {
+    if (search) {
       where.OR = [
-        { name: { contains: filters.search, mode: 'insensitive' } },
-        {
-          productDescription: { contains: filters.search, mode: 'insensitive' },
-        },
+        { name: { contains: search, mode: 'insensitive' } },
+        { productDescription: { contains: search, mode: 'insensitive' } },
       ];
     }
-
-    // Filter by category
-    if (filters?.categoryId) {
-      where.categoryId = filters.categoryId;
+    if (categoryId) where.categoryId = categoryId;
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      const priceFilter: any = {};
+      if (minPrice !== undefined) priceFilter.gte = Number(minPrice);
+      if (maxPrice !== undefined) priceFilter.lte = Number(maxPrice);
+      where.price = priceFilter;
     }
+    if (visible !== undefined) where.showInMenu = visible;
 
-    // Filter by visibility
-    if (filters?.visible !== undefined) {
-      where.showInMenu = filters.visible;
-    }
-
-    // Filter by price range
-    if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
-      where.price = {};
-      if (filters?.minPrice !== undefined) {
-        where.price.gte = filters.minPrice;
-      }
-      if (filters?.maxPrice !== undefined) {
-        where.price.lte = filters.maxPrice;
-      }
-    }
-
-    return this.db.product.findMany({
-      where,
-      include: {
-        category: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
+    const [data, total] = await Promise.all([
+      this.db.product.findMany({
+        where,
+        skip,
+        take: limit,
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+            },
           },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.db.product.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async getProductById(id: string) {

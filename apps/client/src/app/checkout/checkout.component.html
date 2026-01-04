@@ -100,13 +100,27 @@
             }
           </div>
 
-          <div class="flex justify-between items-center pt-4">
-            <span class="text-white uppercase tracking-widest font-bold"
-              >Total à payer :</span
+          <div class="space-y-2 pt-4 border-t border-white/10">
+            <div class="flex justify-between items-center text-white/70">
+              <span class="uppercase tracking-widest text-xs"
+                >Sous-total :</span
+              >
+              <span class="font-bold">{{ cartTotal() }} TND</span>
+            </div>
+            <div class="flex justify-between items-center text-white/70">
+              <span class="uppercase tracking-widest text-xs">Livraison :</span>
+              <span class="font-bold">{{ shippingCost() }} TND</span>
+            </div>
+            <div
+              class="flex justify-between items-center pt-2 border-t border-white/10"
             >
-            <span class="text-2xl font-bold text-accent"
-              >{{ cartTotal() }} TND</span
-            >
+              <span class="text-white uppercase tracking-widest font-bold"
+                >Total à payer :</span
+              >
+              <span class="text-2xl font-bold text-accent"
+                >{{ orderTotal() }} TND</span
+              >
+            </div>
           </div>
         </section>
 
@@ -273,18 +287,26 @@
               </div>
             </div>
 
-            <!-- Ville -->
+            <!-- Ville (Governorate) -->
             <div class="space-y-2">
               <label
                 class="text-[10px] font-bold uppercase tracking-widest text-gray-400"
-                >Ville *</label
+                >Gouvernorat *</label
               >
-              <input
-                type="text"
+              <select
                 formControlName="city"
-                placeholder="Ex: Tunis, Sfax, Sousse..."
+                (change)="onCityChange($event)"
                 class="w-full bg-cream-light border-none p-4 text-sm text-primary focus:ring-1 focus:ring-accent outline-none"
-              />
+              >
+                <option value="" disabled selected>
+                  Sélectionnez votre gouvernorat
+                </option>
+                @for (gov of governorates; track gov.name) {
+                  <option [value]="gov.name">
+                    {{ gov.name }} ({{ gov.shippingCost }} TND livraison)
+                  </option>
+                }
+              </select>
             </div>
 
             <!-- Notes -->
@@ -455,15 +477,29 @@
                         >
                       </div>
                     }
-                    <div
-                      class="border-t border-primary/10 pt-3 flex justify-between items-center text-primary"
-                    >
-                      <span class="text-[10px] uppercase tracking-widest"
-                        >Total Final</span
+                    <div class="space-y-2 pt-3">
+                      <div class="flex justify-between text-xs text-gray-600">
+                        <span class="uppercase tracking-widest"
+                          >Sous-total</span
+                        >
+                        <span class="font-medium">{{ cartTotal() }} TND</span>
+                      </div>
+                      <div class="flex justify-between text-xs text-gray-600">
+                        <span class="uppercase tracking-widest">Livraison</span>
+                        <span class="font-medium"
+                          >{{ shippingCost() }} TND</span
+                        >
+                      </div>
+                      <div
+                        class="border-t border-primary/10 pt-3 flex justify-between items-center text-primary"
                       >
-                      <span class="text-lg font-bold text-accent"
-                        >{{ cartTotal() }} TND</span
-                      >
+                        <span class="text-[10px] uppercase tracking-widest"
+                          >Total Final</span
+                        >
+                        <span class="text-lg font-bold text-accent"
+                          >{{ orderTotal() }} TND</span
+                        >
+                      </div>
                     </div>
                   </div>
                 </div>

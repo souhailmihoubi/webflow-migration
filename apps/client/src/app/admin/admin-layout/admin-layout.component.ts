@@ -54,6 +54,12 @@ export class AdminLayoutComponent {
     this.isSidebarOpen = !this.isSidebarOpen;
   }
 
+  onSidebarLinkClick() {
+    if (window.innerWidth < 768) {
+      this.isSidebarOpen = false;
+    }
+  }
+
   logout() {
     this.authService.logout();
     this.router.navigate(['/']);

@@ -3,14 +3,67 @@
     <h2 class="text-xs uppercase tracking-[0.3em] text-accent font-bold">
       Gestion des Produits
     </h2>
-    <div class="flex space-x-4">
-      <!-- Search/Filter TBD -->
-      <button
-        (click)="openCreateModal()"
-        class="bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-6 py-3 transition-all hover:bg-accent"
-      >
-        Ajouter un produit
-      </button>
+    <button
+      (click)="openCreateModal()"
+      class="bg-primary text-white text-[10px] font-bold uppercase tracking-widest px-6 py-3 transition-all hover:bg-accent"
+    >
+      Ajouter un produit
+    </button>
+  </div>
+
+  <!-- Search and Filter Section -->
+  <div class="bg-white border border-gray-100 p-6 space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <!-- Search Input -->
+      <div class="md:col-span-2">
+        <label
+          class="block text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2"
+        >
+          Rechercher
+        </label>
+        <input
+          type="text"
+          [value]="searchTerm()"
+          (input)="onSearchChange($event)"
+          placeholder="Nom, description, slug..."
+          class="w-full bg-gray-50 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+        />
+      </div>
+
+      <!-- Category Filter -->
+      <div>
+        <label
+          class="block text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2"
+        >
+          Catégorie
+        </label>
+        <select
+          [value]="selectedCategory()"
+          (change)="onCategoryChange($event)"
+          aria-label="Filtrer par catégorie"
+          class="w-full bg-gray-50 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all appearance-none"
+        >
+          <option value="all">Toutes les catégories</option>
+          @for (cat of categories(); track cat.id) {
+            <option [value]="cat.id">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <!-- Filter Summary -->
+    <div
+      class="flex items-center justify-between pt-2 border-t border-gray-100"
+    >
+      <p class="text-[10px] text-gray-500">{{ totalItems() }} produit(s)</p>
+      @if (searchTerm() || selectedCategory() !== 'all') {
+        <button
+          (click)="clearFilters()"
+          class="text-[9px] uppercase tracking-widest text-accent hover:text-primary font-bold transition-colors"
+        >
+          Réinitialiser
+        </button>
+      }
     </div>
   </div>
 
@@ -22,113 +75,99 @@
     </div>
   } @else {
     <div class="bg-white border border-gray-100 shadow-sm overflow-hidden">
-      <table class="w-full text-left">
-        <thead class="bg-gray-50 border-b border-gray-100">
-          <tr>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-            >
-              Produit
-            </th>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-            >
-              Catégorie
-            </th>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-            >
-              Prix
-            </th>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-            >
-              Statut
-            </th>
-            <th
-              class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold text-right"
-            >
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-          @for (product of products(); track product.id) {
-            <tr class="hover:bg-gray-50 transition-colors">
-              <td class="px-6 py-4">
-                <div class="flex items-center space-x-4">
-                  <div
-                    class="w-12 h-12 bg-gray-50 border border-gray-100 overflow-hidden"
-                  >
-                    <img
-                      [src]="product.mainImage"
-                      class="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <p class="text-[11px] font-bold text-primary">
-                      {{ product.name }}
-                    </p>
-                    <p class="text-[9px] text-gray-400 font-mono">
-                      {{ product.slug }}
-                    </p>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4">
-                <span class="text-[10px] uppercase font-bold text-primary">{{
-                  product.category?.name
-                }}</span>
-              </td>
-              <td class="px-6 py-4">
-                <p class="text-[11px] font-bold text-primary">
-                  {{ product.price }} DT
-                </p>
-                @if (product.discountPrice) {
-                  <p class="text-[9px] text-accent font-bold">
-                    PROMO: {{ product.discountPrice }} DT
-                  </p>
-                }
-              </td>
-              <td class="px-6 py-4">
-                <div class="flex flex-col space-y-1">
-                  <span
-                    [class]="
-                      'w-fit px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest ' +
-                      (product.visible
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-700')
-                    "
-                  >
-                    {{ product.visible ? 'Visible' : 'Masqué' }}
-                  </span>
-                  @if (product.showInMenu) {
-                    <span class="text-[8px] text-indigo-500 font-bold"
-                      >EN VEDETTE</span
-                    >
-                  }
-                </div>
-              </td>
-              <td class="px-6 py-4 text-right">
-                <div class="flex items-center justify-end space-x-3">
-                  <button
-                    (click)="openEditModal(product)"
-                    class="text-blue-500 hover:text-blue-700 font-bold text-[10px] uppercase tracking-widest"
-                  >
-                    Modifier
-                  </button>
-                  <button
-                    (click)="deleteProduct(product.id)"
-                    class="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase tracking-widest"
-                  >
-                    Supprimer
-                  </button>
-                </div>
-              </td>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="bg-gray-50 border-b border-gray-100">
+            <tr>
+              <th
+                class="px-6 py-4 text-[13px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Produit
+              </th>
+              <th
+                class="px-6 py-4 text-[13px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Catégorie
+              </th>
+              <th
+                class="px-6 py-4 text-[13px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Prix
+              </th>
+              <th
+                class="px-6 py-4 text-[13px] uppercase tracking-widest text-gray-400 font-bold text-right"
+              >
+                Actions
+              </th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            @for (product of products(); track product.id) {
+              <tr class="hover:bg-gray-50 transition-colors">
+                <td class="px-6 py-4">
+                  <div class="flex items-center space-x-4">
+                    <div
+                      class="w-12 h-12 bg-gray-50 border border-gray-100 overflow-hidden"
+                    >
+                      <img
+                        alt=""
+                        [src]="product.mainImage"
+                        class="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <p class="text-[13px] font-bold text-primary">
+                        {{ product.name }}
+                      </p>
+                      <p class="text-[11px] text-gray-400 font-mono">
+                        {{ product.slug }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="text-[10px] uppercase font-bold text-primary">{{
+                    product.category?.name
+                  }}</span>
+                </td>
+                <td class="px-6 py-4">
+                  <p class="text-[13px] font-bold text-primary">
+                    {{ product.price }} DT
+                  </p>
+                  @if (product.discountPrice) {
+                    <p class="text-[11px] text-accent font-bold">
+                      PROMO: {{ product.discountPrice }} DT
+                    </p>
+                  }
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <div class="flex items-center justify-end space-x-3">
+                    <button
+                      (click)="openEditModal(product)"
+                      class="text-blue-500 hover:text-blue-700 font-bold text-[10px] uppercase tracking-widest"
+                    >
+                      Modifier
+                    </button>
+                    <button
+                      (click)="deleteProduct(product.id, product.name)"
+                      class="text-red-500 hover:text-red-700 font-bold text-[10px] uppercase tracking-widest"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <app-pagination
+        [currentPage]="currentPage()"
+        [itemsPerPage]="itemsPerPage()"
+        [totalItems]="totalItems()"
+        (pageChange)="onPageChange($event)"
+      ></app-pagination>
     </div>
   }
 
@@ -180,51 +219,95 @@
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-                >Nom du produit</label
+                >Nom du produit <span class="text-red-500">*</span></label
               >
               <input
                 type="text"
                 formControlName="name"
                 (input)="generateSlug()"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                [class.border-red-500]="
+                  productForm.get('name')?.invalid &&
+                  productForm.get('name')?.touched
+                "
               />
+              @if (
+                productForm.get('name')?.invalid &&
+                productForm.get('name')?.touched
+              ) {
+                <p class="text-xs text-red-500 mt-1">
+                  Le nom du produit est requis
+                </p>
+              }
             </div>
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-                >Slug (URL)</label
+                >Slug (URL) <span class="text-red-500">*</span></label
               >
               <input
                 type="text"
                 formControlName="slug"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                [class.border-red-500]="
+                  productForm.get('slug')?.invalid &&
+                  productForm.get('slug')?.touched
+                "
               />
+              @if (
+                productForm.get('slug')?.invalid &&
+                productForm.get('slug')?.touched
+              ) {
+                <p class="text-xs text-red-500 mt-1">Le slug est requis</p>
+              }
             </div>
           </div>
 
           <div class="space-y-2">
             <label
               class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-              >Description</label
+              >Description <span class="text-red-500">*</span></label
             >
             <textarea
-              formControlName="description"
+              formControlName="productDescription"
               rows="3"
               class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all resize-none"
+              [class.border-red-500]="
+                productForm.get('productDescription')?.invalid &&
+                productForm.get('productDescription')?.touched
+              "
             ></textarea>
+            @if (
+              productForm.get('productDescription')?.invalid &&
+              productForm.get('productDescription')?.touched
+            ) {
+              <p class="text-xs text-red-500 mt-1">
+                La description est requise
+              </p>
+            }
           </div>
 
           <div class="grid grid-cols-3 gap-6">
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-                >Prix (DT)</label
+                >Prix (DT) <span class="text-red-500">*</span></label
               >
               <input
                 type="number"
                 formControlName="price"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                [class.border-red-500]="
+                  productForm.get('price')?.invalid &&
+                  productForm.get('price')?.touched
+                "
               />
+              @if (
+                productForm.get('price')?.invalid &&
+                productForm.get('price')?.touched
+              ) {
+                <p class="text-xs text-red-500 mt-1">Le prix est requis</p>
+              }
             </div>
             <div class="space-y-2">
               <label
@@ -240,17 +323,29 @@
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-                >Catégorie</label
+                >Catégorie <span class="text-red-500">*</span></label
               >
               <select
                 formControlName="categoryId"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all appearance-none"
+                [class.border-red-500]="
+                  productForm.get('categoryId')?.invalid &&
+                  productForm.get('categoryId')?.touched
+                "
               >
                 <option value="">Sélectionner</option>
                 @for (cat of categories(); track cat.id) {
                   <option [value]="cat.id">{{ cat.name }}</option>
                 }
               </select>
+              @if (
+                productForm.get('categoryId')?.invalid &&
+                productForm.get('categoryId')?.touched
+              ) {
+                <p class="text-xs text-red-500 mt-1">
+                  La catégorie est requise
+                </p>
+              }
             </div>
           </div>
 
@@ -259,13 +354,27 @@
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-                >Image Principale (URL)</label
+                >Image Principale (URL)
+                <span class="text-red-500">*</span></label
               >
               <input
                 type="text"
                 formControlName="mainImage"
+                placeholder="https://exemple.com/image.jpg"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                [class.border-red-500]="
+                  productForm.get('mainImage')?.invalid &&
+                  productForm.get('mainImage')?.touched
+                "
               />
+              @if (
+                productForm.get('mainImage')?.invalid &&
+                productForm.get('mainImage')?.touched
+              ) {
+                <p class="text-xs text-red-500 mt-1">
+                  L'image principale est requise
+                </p>
+              }
             </div>
 
             <div class="space-y-3">
@@ -321,17 +430,6 @@
             <label class="flex items-center space-x-3 cursor-pointer group">
               <input
                 type="checkbox"
-                formControlName="visible"
-                class="form-checkbox h-4 w-4 text-accent border-gray-100 rounded focus:ring-accent"
-              />
-              <span
-                class="text-[10px] uppercase font-bold text-primary group-hover:text-accent transition-colors"
-                >Visible sur le site</span
-              >
-            </label>
-            <label class="flex items-center space-x-3 cursor-pointer group">
-              <input
-                type="checkbox"
                 formControlName="showInMenu"
                 class="form-checkbox h-4 w-4 text-accent border-gray-100 rounded focus:ring-accent"
               />
@@ -344,7 +442,8 @@
 
           <button
             type="submit"
-            [disabled]="isSaving() || productForm.invalid"
+            (click)="onSubmit()"
+            [disabled]="isSaving()"
             class="w-full bg-primary text-white text-[10px] font-bold uppercase tracking-widest py-5 hover:bg-accent disabled:opacity-50 transition-all duration-300"
           >
             {{
@@ -359,4 +458,7 @@
       </div>
     </div>
   }
+
+  <!-- Reusable Confirmation Modal -->
+  <app-confirm-modal (confirmed)="onConfirmDelete()"></app-confirm-modal>
 </div>

@@ -8,6 +8,7 @@ import {
   Put,
   UseGuards,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import {
@@ -89,8 +90,22 @@ export class OrderController {
 
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Get('admin/all')
-  getAllOrders() {
-    return this.orderService.getAllOrders();
+  getAllOrders(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    return this.orderService.getAllOrders(
+      page ? +page : 1,
+      limit ? +limit : 10,
+      search,
+      status,
+      startDate,
+      endDate,
+    );
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -8,31 +8,50 @@ import {
   FormArray,
 } from '@angular/forms';
 import { AdminService } from '../../shared/services/admin.service';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal.component';
+import { ToastService } from '../../shared/services/toast.service';
+import { PaginationComponent } from '../../shared/components/pagination.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ConfirmModalComponent,
+    PaginationComponent,
+  ],
   templateUrl: './product-list.component.html',
 })
 export class ProductListComponent implements OnInit {
   private adminService = inject(AdminService);
   private fb = inject(FormBuilder);
+  private toast = inject(ToastService);
 
   products = signal<any[]>([]);
+  totalItems = signal(0);
+  currentPage = signal(1);
+  itemsPerPage = signal(10);
+
   categories = signal<any[]>([]);
   isLoading = signal(true);
   isSaving = signal(false);
+
+  // Filter properties
+  searchTerm = signal('');
+  selectedCategory = signal<string>('all');
 
   showModal = signal(false);
   editingProduct = signal<any | null>(null);
   productForm: FormGroup;
 
+  @ViewChild(ConfirmModalComponent) confirmModal!: ConfirmModalComponent;
+
   constructor() {
     this.productForm = this.fb.group({
       name: ['', [Validators.required]],
       slug: ['', [Validators.required]],
-      description: ['', [Validators.required]],
+      productDescription: ['', [Validators.required]],
       price: [0, [Validators.required, Validators.min(0)]],
       discountPrice: [null],
       categoryId: ['', [Validators.required]],
@@ -48,19 +67,49 @@ export class ProductListComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadInitialData();
+  }
+
+  loadInitialData() {
+    // Load categories first
+    this.adminService.getCategories().subscribe({
+      next: (response: any) => {
+        // Categories might return array or paged object now?
+        // AdminService.getCategories now returns observable of any.
+        // Need to check if it returns array or {data...}
+        const cats = Array.isArray(response) ? response : response.data || [];
+        this.categories.set(cats);
+      },
+      error: (err) => console.error('Error loading categories:', err),
+    });
+
     this.loadData();
   }
 
   loadData() {
     this.isLoading.set(true);
-    // Load categories first for the dropdown
-    this.adminService
-      .getCategories()
-      .subscribe((cats) => this.categories.set(cats));
 
-    this.adminService.getProducts().subscribe({
-      next: (data) => {
+    const params: any = {
+      page: this.currentPage(),
+      limit: this.itemsPerPage(),
+    };
+
+    if (this.searchTerm()) {
+      params.search = this.searchTerm();
+    }
+
+    if (this.selectedCategory() !== 'all') {
+      params.categoryId = this.selectedCategory();
+    }
+
+    this.adminService.getProducts(params).subscribe({
+      next: (response: any) => {
+        // Handle paginated response
+        const data = response.data || [];
+        const total = response.total || 0;
+
         this.products.set(data);
+        this.totalItems.set(total);
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -68,6 +117,38 @@ export class ProductListComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+    this.loadData();
+  }
+
+  applyFilters() {
+    this.currentPage.set(1);
+    this.loadData();
+  }
+
+  onSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm.set(value);
+    this.applyFilters();
+  }
+
+  onCategoryChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.selectedCategory.set(value);
+    this.applyFilters();
+  }
+
+  clearFilters() {
+    this.searchTerm.set('');
+    this.selectedCategory.set('all');
+    this.applyFilters();
+  }
+
+  get totalCount() {
+    return this.totalItems();
   }
 
   addImage() {
@@ -92,7 +173,7 @@ export class ProductListComponent implements OnInit {
     this.productForm.patchValue({
       name: product.name,
       slug: product.slug,
-      description: product.description,
+      productDescription: product.productDescription,
       price: product.price,
       discountPrice: product.discountPrice,
       categoryId: product.categoryId,
@@ -115,7 +196,38 @@ export class ProductListComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.productForm.invalid) return;
+    // Prevent duplicate submissions
+    if (this.isSaving()) {
+      return;
+    }
+
+    console.log('Submitting form...');
+    console.log('Form value:', this.productForm.value);
+    console.log('Form valid:', this.productForm.valid);
+    console.log('Form errors:', this.productForm.errors);
+
+    if (this.productForm.invalid) {
+      this.productForm.markAllAsTouched();
+
+      // Build specific error message
+      const errors: string[] = [];
+      if (this.productForm.get('name')?.invalid)
+        errors.push('- Nom du produit');
+      if (this.productForm.get('slug')?.invalid) errors.push('- Slug');
+      if (this.productForm.get('productDescription')?.invalid)
+        errors.push('- Description');
+      if (this.productForm.get('price')?.invalid) errors.push('- Prix');
+      if (this.productForm.get('categoryId')?.invalid)
+        errors.push('- Catégorie');
+      if (this.productForm.get('mainImage')?.invalid)
+        errors.push('- Image principale');
+
+      this.toast.error(
+        'Champs requis manquants :\n\n' + errors.join('\n'),
+        4000,
+      );
+      return;
+    }
 
     this.isSaving.set(true);
     const data = this.productForm.value;
@@ -127,23 +239,51 @@ export class ProductListComponent implements OnInit {
 
     obs.subscribe({
       next: () => {
+        this.toast.success(
+          editing ? 'Produit modifié avec succès' : 'Produit créé avec succès',
+        );
+        this.closeModal();
         this.loadData();
         this.isSaving.set(false);
-        this.closeModal();
       },
       error: (err) => {
         console.error('Error saving product:', err);
+        this.toast.error(
+          "Erreur lors de l'enregistrement: " +
+            (err.error?.message || err.message || 'Erreur inconnue'),
+        );
         this.isSaving.set(false);
       },
     });
   }
 
-  deleteProduct(id: string) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) return;
+  deleteProduct(id: string, name: string) {
+    this.confirmModal.open(
+      'Confirmer la suppression',
+      `Êtes-vous sûr de vouloir supprimer le produit "${name}" ?\n\nCette action est irréversible.`,
+      'Supprimer',
+    );
+
+    // Store the ID for when user confirms
+    (this.confirmModal as any)._pendingId = id;
+  }
+
+  onConfirmDelete() {
+    const id = (this.confirmModal as any)._pendingId;
+    if (!id) return;
 
     this.adminService.deleteProduct(id).subscribe({
-      next: () => this.loadData(),
-      error: (err) => console.error('Error deleting product:', err),
+      next: () => {
+        this.toast.success('Produit supprimé avec succès');
+        this.loadData();
+      },
+      error: (err) => {
+        console.error('Error deleting product:', err);
+        this.toast.error(
+          'Erreur lors de la suppression: ' +
+            (err.error?.message || err.message),
+        );
+      },
     });
   }
 

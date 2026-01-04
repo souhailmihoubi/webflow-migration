@@ -281,6 +281,7 @@ export class OrderService {
         email: dto.email,
         shippingAddress: dto.shippingAddress,
         city: dto.city,
+        shippingCost: dto.shippingCost,
         remarks: dto.remarks,
         totalPrice,
         status: 'PENDING',
@@ -379,29 +380,73 @@ export class OrderService {
 
   // ========== Admin Order Management ==========
 
-  async getAllOrders() {
-    return this.db.order.findMany({
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
+  async getAllOrders(
+    page = 1,
+    limit = 10,
+    search?: string,
+    status?: string,
+    startDate?: string,
+    endDate?: string,
+  ) {
+    const skip = (page - 1) * limit;
+
+    const where: any = {};
+
+    if (status && status !== 'ALL') {
+      where.status = status;
+    }
+
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) where.createdAt.gte = new Date(startDate);
+      if (endDate) where.createdAt.lte = new Date(endDate);
+    }
+
+    if (search) {
+      where.OR = [
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { city: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [data, total] = await Promise.all([
+      this.db.order.findMany({
+        where,
+        skip,
+        take: limit,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+            },
           },
-        },
-        items: {
-          include: {
-            product: {
-              include: {
-                category: true,
+          items: {
+            include: {
+              product: {
+                include: {
+                  category: true,
+                },
               },
             },
           },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.db.order.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async updateOrderStatus(orderId: string, status: string) {

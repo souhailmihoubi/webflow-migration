@@ -16,15 +16,11 @@ export class AdminService {
         this.db.order.count(),
       ]);
 
-    // Get revenue (sum of all CONFIRMED, SHIPPED, and DELIVERED orders)
+    // Get revenue (sum of all CONFIRMED and DELIVERED orders)
     const revenueResult = await this.db.order.aggregate({
       where: {
         status: {
-          in: [
-            OrderStatus.CONFIRMED,
-            OrderStatus.SHIPPED,
-            OrderStatus.DELIVERED,
-          ],
+          in: [OrderStatus.CONFIRMED, OrderStatus.DELIVERED],
         },
       },
       _sum: {

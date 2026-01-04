@@ -67,6 +67,7 @@ model Order {
   email           String
   shippingAddress String
   city            String
+  shippingCost    Decimal     @default(0)
   totalPrice      Decimal
   remarks         String?
   status          OrderStatus @default(PENDING)

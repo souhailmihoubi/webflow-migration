@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PackService } from './pack.service';
 import { CreatePackDto, UpdatePackDto } from '@my-org/api-interfaces';
@@ -19,8 +20,8 @@ export class PackController {
 
   // Public endpoints
   @Get('catalog/packs')
-  getAllPacks() {
-    return this.packService.getAllPacks();
+  getAllPacks(@Query('page') page?: number, @Query('limit') limit?: number) {
+    return this.packService.getAllPacks(page ? +page : 1, limit ? +limit : 10);
   }
 
   @Get('catalog/packs/:slug')
@@ -29,6 +30,20 @@ export class PackController {
   }
 
   // Admin endpoints
+  @Get('admin/packs')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  getAdminPacks(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+    @Query('search') search?: string,
+  ) {
+    return this.packService.getAdminPacks(
+      page ? +page : 1,
+      limit ? +limit : 10,
+      search,
+    );
+  }
+
   @Post('admin/packs')
   @UseGuards(JwtAuthGuard, AdminGuard)
   createPack(@Body() dto: CreatePackDto) {

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -7,30 +7,46 @@ import {
   Validators,
 } from '@angular/forms';
 import { AdminService } from '../../shared/services/admin.service';
+import { ConfirmModalComponent } from '../../shared/components/confirm-modal.component';
+import { ToastService } from '../../shared/services/toast.service';
+import { PaginationComponent } from '../../shared/components/pagination.component';
 
 @Component({
   selector: 'app-category-list',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ConfirmModalComponent,
+    PaginationComponent,
+  ],
   templateUrl: './category-list.component.html',
 })
 export class CategoryListComponent implements OnInit {
   private adminService = inject(AdminService);
   private fb = inject(FormBuilder);
+  private toast = inject(ToastService);
 
   categories = signal<any[]>([]);
+  totalItems = signal(0);
+  currentPage = signal(1);
+  itemsPerPage = signal(10);
+
   isLoading = signal(true);
   isSaving = signal(false);
+
+  searchTerm = signal('');
 
   showModal = signal(false);
   editingCategory = signal<any | null>(null);
   categoryForm: FormGroup;
 
+  @ViewChild(ConfirmModalComponent) confirmModal!: ConfirmModalComponent;
+
   constructor() {
     this.categoryForm = this.fb.group({
       name: ['', [Validators.required]],
       slug: ['', [Validators.required]],
-      description: [''],
       image: [''],
     });
   }
@@ -41,9 +57,17 @@ export class CategoryListComponent implements OnInit {
 
   loadCategories() {
     this.isLoading.set(true);
-    this.adminService.getCategories().subscribe({
-      next: (data) => {
-        this.categories.set(data);
+    const page = this.currentPage();
+    const limit = this.itemsPerPage();
+    const search = this.searchTerm();
+
+    this.adminService.getCategories(page, limit, search).subscribe({
+      next: (response: any) => {
+        // Backend returns: { data, total, page, lastPage }
+        // If the backend was previously returning just array, we need to handle that or assume new format is active.
+        // Based on my backend changes, it returns { data, total, ... }
+        this.categories.set(response.data);
+        this.totalItems.set(response.total);
         this.isLoading.set(false);
       },
       error: (err) => {
@@ -51,6 +75,28 @@ export class CategoryListComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+    this.loadCategories();
+  }
+
+  // Note: Client-side filtering is replaced by server-side search
+  applyFilters() {
+    this.currentPage.set(1); // Reset to first page on new search
+    this.loadCategories();
+  }
+
+  onSearchChange(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchTerm.set(value);
+    this.applyFilters();
+  }
+
+  clearSearch() {
+    this.searchTerm.set('');
+    this.applyFilters();
   }
 
   openCreateModal() {
@@ -64,7 +110,6 @@ export class CategoryListComponent implements OnInit {
     this.categoryForm.patchValue({
       name: category.name,
       slug: category.slug,
-      description: category.description,
       image: category.image,
     });
     this.showModal.set(true);
@@ -87,24 +132,51 @@ export class CategoryListComponent implements OnInit {
 
     obs.subscribe({
       next: () => {
+        this.toast.success(
+          editing
+            ? 'Catégorie modifiée avec succès'
+            : 'Catégorie créée avec succès',
+        );
         this.loadCategories();
-        this.isSaving.set(false);
         this.closeModal();
+        this.isSaving.set(false);
       },
       error: (err) => {
         console.error('Error saving category:', err);
+        this.toast.error(
+          'Erreur: ' + (err.error?.message || err.message || 'Erreur inconnue'),
+        );
         this.isSaving.set(false);
       },
     });
   }
 
-  deleteCategory(id: string) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?'))
-      return;
+  deleteCategory(id: string, name: string) {
+    this.confirmModal.open(
+      'Confirmer la suppression',
+      `Êtes-vous sûr de vouloir supprimer la catégorie "${name}" ?\n\nCette action est irréversible.`,
+      'Supprimer',
+    );
+
+    (this.confirmModal as any)._pendingId = id;
+  }
+
+  onConfirmDelete() {
+    const id = (this.confirmModal as any)._pendingId;
+    if (!id) return;
 
     this.adminService.deleteCategory(id).subscribe({
-      next: () => this.loadCategories(),
-      error: (err) => console.error('Error deleting category:', err),
+      next: () => {
+        this.toast.success('Catégorie supprimée avec succès');
+        this.loadCategories();
+      },
+      error: (err) => {
+        console.error('Error deleting category:', err);
+        this.toast.error(
+          'Erreur lors de la suppression: ' +
+            (err.error?.message || err.message),
+        );
+      },
     });
   }
 

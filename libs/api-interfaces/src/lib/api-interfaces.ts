@@ -1,3 +1,14 @@
+import {
+  IsString,
+  IsNotEmpty,
+  IsEmail,
+  IsNumber,
+  IsOptional,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
 export interface Message {
   message: string;
 }
@@ -111,13 +122,37 @@ export class UpdateCartItemDto {
 }
 
 export class PlaceOrderDto {
+  @IsString()
+  @IsNotEmpty()
   firstName!: string;
+
+  @IsString()
+  @IsNotEmpty()
   lastName!: string;
+
+  @IsString()
+  @IsNotEmpty()
   phone!: string;
+
+  @IsEmail()
   email!: string;
+
+  @IsString()
+  @IsNotEmpty()
   shippingAddress!: string;
+
+  @IsString()
+  @IsNotEmpty()
   city!: string;
+
+  @IsNumber()
+  shippingCost!: number;
+
+  @IsOptional()
+  @IsString()
   remarks?: string;
+
+  @IsArray()
   items!: {
     productId?: string;
     packId?: string;

@@ -26,8 +26,16 @@ export class CatalogController {
   // ========== Categories ==========
 
   @Get('categories')
-  getAllCategories(@Query('search') search?: string) {
-    return this.catalogService.getAllCategories(search);
+  getAllCategories(
+    @Query('search') search?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.catalogService.getAllCategories(
+      search,
+      page ? +page : 1,
+      limit ? +limit : 10,
+    );
   }
 
   @Get('categories/:id')
@@ -67,6 +75,8 @@ export class CatalogController {
     @Query('minPrice') minPrice?: string,
     @Query('maxPrice') maxPrice?: string,
     @Query('visible') visible?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
   ) {
     return this.catalogService.getAllProducts({
       search,
@@ -75,6 +85,8 @@ export class CatalogController {
       maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
       visible:
         visible === 'true' ? true : visible === 'false' ? false : undefined,
+      page: page ? +page : 1,
+      limit: limit ? +limit : 10,
     });
   }
 

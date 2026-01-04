@@ -18,7 +18,7 @@ export class PackService {
     productSamId: string,
     productCacId: string,
     productSalonId: string,
-    discountPercentage: number = 5,
+    discountPercentage = 5,
   ): Promise<Decimal> {
     const products = await this.db.product.findMany({
       where: {
@@ -68,9 +68,9 @@ export class PackService {
       throw new BadRequestException('Product CAC must be from category "cac"');
     }
 
-    if (!salonProduct || salonProduct.category.slug !== 'salons-et-sejours') {
+    if (!salonProduct || salonProduct.category.slug !== 'salon') {
       throw new BadRequestException(
-        'Product Salon must be from category "salons-et-sejours"',
+        'Product Salon must be from category "salon"',
       );
     }
   }
@@ -114,16 +114,64 @@ export class PackService {
     });
   }
 
-  async getAllPacks() {
-    return this.db.pack.findMany({
-      where: { showInMenu: true },
-      include: {
-        productSam: { include: { category: true } },
-        productCac: { include: { category: true } },
-        productSalon: { include: { category: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+  async getAdminPacks(page = 1, limit = 10, search?: string) {
+    const skip = (page - 1) * limit;
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { slug: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [data, total] = await Promise.all([
+      this.db.pack.findMany({
+        where,
+        skip,
+        take: limit,
+        include: {
+          productSam: { include: { category: true } },
+          productCac: { include: { category: true } },
+          productSalon: { include: { category: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.db.pack.count({ where }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
+  }
+
+  async getAllPacks(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+      this.db.pack.findMany({
+        where: { showInMenu: true },
+        skip,
+        take: limit,
+        include: {
+          productSam: { include: { category: true } },
+          productCac: { include: { category: true } },
+          productSalon: { include: { category: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.db.pack.count({ where: { showInMenu: true } }),
+    ]);
+
+    return {
+      data,
+      total,
+      page,
+      lastPage: Math.ceil(total / limit),
+    };
   }
 
   async getPackBySlug(slug: string) {

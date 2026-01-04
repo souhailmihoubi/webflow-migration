@@ -382,6 +382,14 @@
             class="text-sm font-bold text-primary uppercase tracking-widest py-2"
             >Mon Espace</a
           >
+          @if (currentUser()?.role === 'ADMIN') {
+            <a
+              routerLink="/admin"
+              (click)="closeMobileMenu()"
+              class="text-sm font-bold text-accent uppercase tracking-widest py-2"
+              >Administration</a
+            >
+          }
           <button
             (click)="logout(); closeMobileMenu()"
             class="text-sm font-bold text-red-500 uppercase tracking-widest py-2"
