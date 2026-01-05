@@ -11,6 +11,8 @@ import { AdminService } from '../../shared/services/admin.service';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal.component';
 import { ToastService } from '../../shared/services/toast.service';
 import { PaginationComponent } from '../../shared/components/pagination.component';
+import { ImageUploadComponent } from '../../shared/components/image-upload/image-upload.component';
+import { Product } from '../../shared/services/product.service';
 
 @Component({
   selector: 'app-product-list',
@@ -20,6 +22,7 @@ import { PaginationComponent } from '../../shared/components/pagination.componen
     ReactiveFormsModule,
     ConfirmModalComponent,
     PaginationComponent,
+    ImageUploadComponent,
   ],
   templateUrl: './product-list.component.html',
 })
@@ -28,12 +31,12 @@ export class ProductListComponent implements OnInit {
   private fb = inject(FormBuilder);
   private toast = inject(ToastService);
 
-  products = signal<any[]>([]);
+  products = signal<Product[]>([]);
   totalItems = signal(0);
   currentPage = signal(1);
   itemsPerPage = signal(10);
 
-  categories = signal<any[]>([]);
+  categories = signal<any[]>([]); // Should be Category[] but any for now to avoid breaking if not imported
   isLoading = signal(true);
   isSaving = signal(false);
 
@@ -42,10 +45,12 @@ export class ProductListComponent implements OnInit {
   selectedCategory = signal<string>('all');
 
   showModal = signal(false);
-  editingProduct = signal<any | null>(null);
+  editingProduct = signal<Product | null>(null);
   productForm: FormGroup;
 
   @ViewChild(ConfirmModalComponent) confirmModal!: ConfirmModalComponent;
+
+  productIdToDelete: string | null = null;
 
   constructor() {
     this.productForm = this.fb.group({
@@ -112,7 +117,7 @@ export class ProductListComponent implements OnInit {
         this.totalItems.set(total);
         this.isLoading.set(false);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading products:', err);
         this.isLoading.set(false);
       },
@@ -166,7 +171,7 @@ export class ProductListComponent implements OnInit {
     this.showModal.set(true);
   }
 
-  openEditModal(product: any) {
+  openEditModal(product: Product) {
     this.editingProduct.set(product);
     this.multiImages.clear();
 
@@ -176,7 +181,7 @@ export class ProductListComponent implements OnInit {
       productDescription: product.productDescription,
       price: product.price,
       discountPrice: product.discountPrice,
-      categoryId: product.categoryId,
+      categoryId: product.category.id,
       mainImage: product.mainImage,
       showInMenu: product.showInMenu,
       visible: product.visible,
@@ -193,6 +198,11 @@ export class ProductListComponent implements OnInit {
 
   closeModal() {
     this.showModal.set(false);
+  }
+
+  onMainImageUploaded(url: string) {
+    this.productForm.patchValue({ mainImage: url });
+    this.productForm.get('mainImage')?.markAsTouched();
   }
 
   onSubmit() {
@@ -258,18 +268,16 @@ export class ProductListComponent implements OnInit {
   }
 
   deleteProduct(id: string, name: string) {
+    this.productIdToDelete = id;
     this.confirmModal.open(
       'Confirmer la suppression',
       `Êtes-vous sûr de vouloir supprimer le produit "${name}" ?\n\nCette action est irréversible.`,
       'Supprimer',
     );
-
-    // Store the ID for when user confirms
-    (this.confirmModal as any)._pendingId = id;
   }
 
   onConfirmDelete() {
-    const id = (this.confirmModal as any)._pendingId;
+    const id = this.productIdToDelete;
     if (!id) return;
 
     this.adminService.deleteProduct(id).subscribe({

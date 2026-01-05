@@ -90,6 +90,7 @@
                   >
                     <img
                       [src]="cat.image || 'https://via.placeholder.com/150'"
+                      [alt]="cat.name"
                       class="w-full h-full object-cover"
                     />
                   </div>
@@ -141,6 +142,10 @@
       <div
         class="absolute inset-0 bg-black/60 backdrop-blur-sm"
         (click)="closeModal()"
+        (keyup.escape)="closeModal()"
+        tabindex="0"
+        role="button"
+        aria-label="Fermer la modale"
       ></div>
 
       <div
@@ -183,10 +188,12 @@
           <div class="space-y-2">
             <label
               class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+              for="name"
               >Nom de la catégorie</label
             >
             <input
               type="text"
+              id="name"
               formControlName="name"
               (input)="generateSlug()"
               class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
@@ -196,10 +203,12 @@
           <div class="space-y-2">
             <label
               class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+              for="slug"
               >Slug (URL)</label
             >
             <input
               type="text"
+              id="slug"
               formControlName="slug"
               class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
             />
@@ -208,13 +217,18 @@
           <div class="space-y-2">
             <label
               class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-              >URL de l'image</label
+              [for]="'cat-image-upload'"
+              >Image de la catégorie</label
             >
-            <input
-              type="text"
-              formControlName="image"
-              class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
-            />
+            <div id="cat-image-upload">
+              <app-image-upload
+                [previewUrl]="categoryForm.get('image')?.value"
+                uploadPath="upload/category-image"
+                (imageUploaded)="onImageUploaded($event)"
+              ></app-image-upload>
+            </div>
+            <!-- Hidden input to maintain form validation if needed, though we patch value directly -->
+            <input type="hidden" formControlName="image" />
           </div>
 
           <button

@@ -10,6 +10,8 @@ import { AdminService } from '../../shared/services/admin.service';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal.component';
 import { ToastService } from '../../shared/services/toast.service';
 import { PaginationComponent } from '../../shared/components/pagination.component';
+import { ImageUploadComponent } from '../../shared/components/image-upload/image-upload.component';
+import { Category } from '../../shared/services/category.service';
 
 @Component({
   selector: 'app-category-list',
@@ -19,6 +21,7 @@ import { PaginationComponent } from '../../shared/components/pagination.componen
     ReactiveFormsModule,
     ConfirmModalComponent,
     PaginationComponent,
+    ImageUploadComponent,
   ],
   templateUrl: './category-list.component.html',
 })
@@ -27,7 +30,7 @@ export class CategoryListComponent implements OnInit {
   private fb = inject(FormBuilder);
   private toast = inject(ToastService);
 
-  categories = signal<any[]>([]);
+  categories = signal<Category[]>([]);
   totalItems = signal(0);
   currentPage = signal(1);
   itemsPerPage = signal(10);
@@ -38,10 +41,12 @@ export class CategoryListComponent implements OnInit {
   searchTerm = signal('');
 
   showModal = signal(false);
-  editingCategory = signal<any | null>(null);
+  editingCategory = signal<Category | null>(null);
   categoryForm: FormGroup;
 
   @ViewChild(ConfirmModalComponent) confirmModal!: ConfirmModalComponent;
+
+  categoryIdToDelete: string | null = null;
 
   constructor() {
     this.categoryForm = this.fb.group({
@@ -105,7 +110,7 @@ export class CategoryListComponent implements OnInit {
     this.showModal.set(true);
   }
 
-  openEditModal(category: any) {
+  openEditModal(category: Category) {
     this.editingCategory.set(category);
     this.categoryForm.patchValue({
       name: category.name,
@@ -117,6 +122,11 @@ export class CategoryListComponent implements OnInit {
 
   closeModal() {
     this.showModal.set(false);
+  }
+
+  onImageUploaded(url: string) {
+    this.categoryForm.patchValue({ image: url });
+    this.categoryForm.get('image')?.markAsTouched();
   }
 
   onSubmit() {
@@ -152,17 +162,16 @@ export class CategoryListComponent implements OnInit {
   }
 
   deleteCategory(id: string, name: string) {
+    this.categoryIdToDelete = id;
     this.confirmModal.open(
       'Confirmer la suppression',
       `Êtes-vous sûr de vouloir supprimer la catégorie "${name}" ?\n\nCette action est irréversible.`,
       'Supprimer',
     );
-
-    (this.confirmModal as any)._pendingId = id;
   }
 
   onConfirmDelete() {
-    const id = (this.confirmModal as any)._pendingId;
+    const id = this.categoryIdToDelete;
     if (!id) return;
 
     this.adminService.deleteCategory(id).subscribe({

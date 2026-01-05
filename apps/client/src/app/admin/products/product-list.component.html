@@ -18,11 +18,13 @@
       <div class="md:col-span-2">
         <label
           class="block text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2"
+          for="search"
         >
           Rechercher
         </label>
         <input
           type="text"
+          id="search"
           [value]="searchTerm()"
           (input)="onSearchChange($event)"
           placeholder="Nom, description, slug..."
@@ -34,10 +36,12 @@
       <div>
         <label
           class="block text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2"
+          for="category-filter"
         >
           Catégorie
         </label>
         <select
+          id="category-filter"
           [value]="selectedCategory()"
           (change)="onCategoryChange($event)"
           aria-label="Filtrer par catégorie"
@@ -110,7 +114,7 @@
                       class="w-12 h-12 bg-gray-50 border border-gray-100 overflow-hidden"
                     >
                       <img
-                        alt=""
+                        [alt]="product.name"
                         [src]="product.mainImage"
                         class="w-full h-full object-cover"
                       />
@@ -177,6 +181,10 @@
       <div
         class="absolute inset-0 bg-black/60 backdrop-blur-sm"
         (click)="closeModal()"
+        (keyup.escape)="closeModal()"
+        tabindex="0"
+        role="button"
+        aria-label="Fermer la modale"
       ></div>
 
       <div
@@ -219,10 +227,12 @@
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                for="name"
                 >Nom du produit <span class="text-red-500">*</span></label
               >
               <input
                 type="text"
+                id="name"
                 formControlName="name"
                 (input)="generateSlug()"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
@@ -243,10 +253,12 @@
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                for="slug"
                 >Slug (URL) <span class="text-red-500">*</span></label
               >
               <input
                 type="text"
+                id="slug"
                 formControlName="slug"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
                 [class.border-red-500]="
@@ -266,9 +278,11 @@
           <div class="space-y-2">
             <label
               class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+              for="productDescription"
               >Description <span class="text-red-500">*</span></label
             >
             <textarea
+              id="productDescription"
               formControlName="productDescription"
               rows="3"
               class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all resize-none"
@@ -291,10 +305,12 @@
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                for="price"
                 >Prix (DT) <span class="text-red-500">*</span></label
               >
               <input
                 type="number"
+                id="price"
                 formControlName="price"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
                 [class.border-red-500]="
@@ -312,10 +328,12 @@
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                for="discountPrice"
                 >Prix Promo (Optionnel)</label
               >
               <input
                 type="number"
+                id="discountPrice"
                 formControlName="discountPrice"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
               />
@@ -323,9 +341,11 @@
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+                for="categoryId"
                 >Catégorie <span class="text-red-500">*</span></label
               >
               <select
+                id="categoryId"
                 formControlName="categoryId"
                 class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all appearance-none"
                 [class.border-red-500]="
@@ -354,19 +374,18 @@
             <div class="space-y-2">
               <label
                 class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-                >Image Principale (URL)
-                <span class="text-red-500">*</span></label
+                [for]="'prod-image-upload'"
+                >Image Principale <span class="text-red-500">*</span></label
               >
-              <input
-                type="text"
-                formControlName="mainImage"
-                placeholder="https://exemple.com/image.jpg"
-                class="w-full bg-gray-50 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
-                [class.border-red-500]="
-                  productForm.get('mainImage')?.invalid &&
-                  productForm.get('mainImage')?.touched
-                "
-              />
+              <div id="prod-image-upload">
+                <app-image-upload
+                  [previewUrl]="productForm.get('mainImage')?.value"
+                  uploadPath="upload/product-image"
+                  (imageUploaded)="onMainImageUploaded($event)"
+                ></app-image-upload>
+              </div>
+              <!-- Hidden input to maintain form validation logic if needed -->
+              <input type="hidden" formControlName="mainImage" />
               @if (
                 productForm.get('mainImage')?.invalid &&
                 productForm.get('mainImage')?.touched
@@ -397,6 +416,7 @@
                   <div class="flex space-x-2">
                     <input
                       [formControlName]="$index"
+                      [attr.aria-label]="'Image ' + ($index + 1)"
                       class="flex-1 bg-gray-50 border border-gray-100 p-3 text-[10px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
                     />
                     <button
@@ -427,9 +447,13 @@
 
           <!-- Toggles -->
           <div class="flex space-x-12 pt-4">
-            <label class="flex items-center space-x-3 cursor-pointer group">
+            <label
+              class="flex items-center space-x-3 cursor-pointer group"
+              for="showInMenu"
+            >
               <input
                 type="checkbox"
+                id="showInMenu"
                 formControlName="showInMenu"
                 class="form-checkbox h-4 w-4 text-accent border-gray-100 rounded focus:ring-accent"
               />

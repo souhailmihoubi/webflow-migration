@@ -18,6 +18,7 @@ export interface Product {
     name: string;
     slug: string;
   };
+  visible: boolean;
 }
 
 @Injectable({
@@ -34,11 +35,15 @@ export class ProductService {
     if (categoryId) {
       url += `?categoryId=${categoryId}`;
     }
-    return this.http.get<any>(url).pipe(
-      map((response: any) => {
+    return this.http.get<Product[] | { data: Product[] }>(url).pipe(
+      map((response) => {
         if (Array.isArray(response)) {
           return response;
-        } else if (response.data && Array.isArray(response.data)) {
+        } else if (
+          response &&
+          'data' in response &&
+          Array.isArray(response.data)
+        ) {
           return response.data;
         }
         return [];

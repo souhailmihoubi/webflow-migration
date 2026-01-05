@@ -12,6 +12,18 @@ import { UploadService } from './upload.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AdminGuard } from '../auth/admin.guard';
 
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination: string;
+  filename: string;
+  path: string;
+  buffer: Buffer;
+}
+
 @Controller('upload')
 @UseGuards(JwtAuthGuard, AdminGuard)
 export class UploadController {
@@ -34,7 +46,7 @@ export class UploadController {
       },
     }),
   )
-  async uploadProductImage(@UploadedFile() file: any) {
+  async uploadProductImage(@UploadedFile() file: MulterFile) {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
@@ -60,7 +72,7 @@ export class UploadController {
       },
     }),
   )
-  async uploadProductImages(@UploadedFiles() files: any[]) {
+  async uploadProductImages(@UploadedFiles() files: Array<MulterFile>) {
     if (!files || files.length === 0) {
       throw new BadRequestException('No files uploaded');
     }
@@ -89,12 +101,38 @@ export class UploadController {
       },
     }),
   )
-  async uploadCategoryImage(@UploadedFile() file: any) {
+  async uploadCategoryImage(@UploadedFile() file: MulterFile) {
     if (!file) {
       throw new BadRequestException('No file uploaded');
     }
 
     const imageUrl = await this.uploadService.uploadImage(file, 'categories');
+    return { url: imageUrl };
+  }
+
+  @Post('pack-image')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB
+      },
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+          return cb(
+            new BadRequestException('Only image files are allowed'),
+            false,
+          );
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async uploadPackImage(@UploadedFile() file: MulterFile) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    const imageUrl = await this.uploadService.uploadImage(file, 'packs');
     return { url: imageUrl };
   }
 }

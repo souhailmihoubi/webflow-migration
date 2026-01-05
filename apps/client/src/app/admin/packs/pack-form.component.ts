@@ -1,14 +1,22 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AdminService } from '../../shared/services/admin.service';
+import { Pack } from '../../shared/services/pack.service';
+import { Product } from '../../shared/services/product.service';
 import { ToastService } from '../../shared/services/toast.service';
+import { ImageUploadComponent } from '../../shared/components/image-upload/image-upload.component';
 
 @Component({
   selector: 'app-pack-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    ImageUploadComponent,
+  ],
   templateUrl: './pack-form.component.html',
 })
 export class PackFormComponent implements OnInit {
@@ -20,16 +28,25 @@ export class PackFormComponent implements OnInit {
 
   packId = signal<string | null>(null);
   isEditMode = computed(() => !!this.packId());
-  isLoading = signal(false);
+  isLoading = signal(true); // Changed initial value to true as per instruction
   isSaving = signal(false);
 
   // Products by category
-  samProducts = signal<any[]>([]);
-  cacProducts = signal<any[]>([]);
-  salonProducts = signal<any[]>([]);
+  packs = signal<Pack[]>([]);
+  products = signal<Product[]>([]);
 
-  // Calculated price as a regular signal
+  // Products by category
+  samProducts = signal<Product[]>([]);
+  cacProducts = signal<Product[]>([]);
+  salonProducts = signal<Product[]>([]);
+
+  // Calculated price
   calculatedPrice = signal<string | null>(null);
+
+  categories = signal<any[]>([]);
+
+  showModal = signal(false);
+  editingPack = signal<Pack | null>(null);
 
   packForm = this.fb.group({
     name: ['', [Validators.required]],
@@ -54,11 +71,9 @@ export class PackFormComponent implements OnInit {
     const discountPercentage =
       this.packForm.get('discountPercentage')?.value || 0;
 
-    const samProduct = this.samProducts().find((p: any) => p.id === samId);
-    const cacProduct = this.cacProducts().find((p: any) => p.id === cacId);
-    const salonProduct = this.salonProducts().find(
-      (p: any) => p.id === salonId,
-    );
+    const samProduct = this.samProducts().find((p) => p.id === samId);
+    const cacProduct = this.cacProducts().find((p) => p.id === cacId);
+    const salonProduct = this.salonProducts().find((p) => p.id === salonId);
 
     if (!samProduct || !cacProduct || !salonProduct) {
       this.calculatedPrice.set(null);
@@ -84,11 +99,12 @@ export class PackFormComponent implements OnInit {
 
   ngOnInit() {
     // Check if editing
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.packId.set(id);
-      this.loadPack(id);
-    }
+    this.route.params.subscribe((params) => {
+      if (params['id']) {
+        this.packId.set(params['id']);
+        this.loadPack(params['id']);
+      }
+    });
 
     // Load products for each category
     this.loadProductsByCategory();
@@ -104,10 +120,7 @@ export class PackFormComponent implements OnInit {
       }
     });
 
-    // Subscribe to form changes to trigger price recalculation
-    this.packForm.valueChanges.subscribe(() => {
-      this.calculatePrice();
-    });
+    // Subscribe to form changes to trigger price recalculation - REMOVED as per instruction
   }
 
   loadProductsByCategory() {
@@ -123,21 +136,23 @@ export class PackFormComponent implements OnInit {
         console.log('All products:', products);
         console.log(
           'Categories:',
-          products.map((p: any) => ({
+          products.map((p: Product) => ({
             name: p.name,
             categorySlug: p.category?.slug,
           })),
         );
 
         // Filter products by category slug
+        this.products.set(products);
+
         this.samProducts.set(
-          products.filter((p: any) => p.category?.slug === 'sam'),
+          products.filter((p: Product) => p.category?.slug === 'sam'),
         );
         this.cacProducts.set(
-          products.filter((p: any) => p.category?.slug === 'cac'),
+          products.filter((p: Product) => p.category?.slug === 'cac'),
         );
         this.salonProducts.set(
-          products.filter((p: any) => p.category?.slug === 'salon'),
+          products.filter((p: Product) => p.category?.slug === 'salon'),
         );
 
         console.log('SAM products:', this.samProducts());
@@ -146,7 +161,7 @@ export class PackFormComponent implements OnInit {
 
         this.isLoading.set(false);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading products:', error);
         this.isLoading.set(false);
       },
@@ -178,12 +193,33 @@ export class PackFormComponent implements OnInit {
         }
         this.isLoading.set(false);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading pack:', error);
         this.toast.error('Erreur lors du chargement du pack');
         this.router.navigate(['/admin/packs']);
       },
     });
+  }
+
+  openEditModal(pack: Pack) {
+    this.editingPack.set(pack);
+    this.packForm.patchValue({
+      name: pack.name,
+      slug: pack.slug,
+      description: pack.description,
+      showInMenu: pack.showInMenu,
+      mainImage: pack.mainImage,
+      productSamId: pack.productSam.id,
+      productCacId: pack.productCac.id,
+      productSalonId: pack.productSalon.id,
+      discountPercentage: pack.discountPercentage || 5, // Added this back based on original form
+    });
+    this.showModal.set(true);
+  }
+
+  onImageUploaded(url: string) {
+    this.packForm.patchValue({ mainImage: url });
+    this.packForm.get('mainImage')?.markAsTouched();
   }
 
   onSubmit() {
@@ -208,7 +244,7 @@ export class PackFormComponent implements OnInit {
         );
         this.router.navigate(['/admin/packs']);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error saving pack:', error);
         this.toast.error(
           "Erreur lors de l'enregistrement: " +

@@ -63,11 +63,15 @@ export class PackService {
   packs = signal<Pack[]>([]);
 
   fetchPacks(): Observable<Pack[]> {
-    return this.http.get<any>(this.apiUrl).pipe(
+    return this.http.get<Pack[] | { data: Pack[] }>(this.apiUrl).pipe(
       map((response) => {
         if (Array.isArray(response)) {
           return response;
-        } else if (response.data && Array.isArray(response.data)) {
+        } else if (
+          response &&
+          'data' in response &&
+          Array.isArray(response.data)
+        ) {
           return response.data;
         }
         return [];
