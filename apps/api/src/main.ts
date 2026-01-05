@@ -6,11 +6,22 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { WinstonModule } from 'nest-winston';
+import { winstonConfig } from './app/common/logging/winston.config';
+import { HttpLoggingInterceptor } from './app/common/logging/http-logging.interceptor';
+import { AllExceptionsFilter } from './app/common/logging/all-exceptions.filter';
+import { HttpAdapterHost } from '@nestjs/core';
 
 import compression from 'compression';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: WinstonModule.createLogger(winstonConfig),
+  });
+
+  const httpAdapter = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
+  app.useGlobalInterceptors(new HttpLoggingInterceptor());
 
   // Enable compression
   app.use(compression());

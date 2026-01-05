@@ -1,0 +1,2 @@
+{"level":"error","message":"This is a test error log from the verification script.","timestamp":"2026-01-05T13:37:05.384Z"}
+{"context":"NestApplication","level":"error","message":"Error: listen EADDRINUSE: address already in use :::3000","stack":[null],"timestamp":"2026-01-05T13:38:47.894Z"}
