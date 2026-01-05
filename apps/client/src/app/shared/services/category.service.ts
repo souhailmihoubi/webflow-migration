@@ -24,10 +24,16 @@ export class CategoryService {
 
   categories = signal<Category[]>([]);
 
-  fetchCategories(): Observable<Category[]> {
-    return this.http
-      .get<Category[]>(this.apiUrl)
-      .pipe(tap((categories) => this.categories.set(categories)));
+  fetchCategories(): Observable<any> {
+    return this.http.get<any>(this.apiUrl).pipe(
+      tap((response) => {
+        if (Array.isArray(response)) {
+          this.categories.set(response);
+        } else if (response.data && Array.isArray(response.data)) {
+          this.categories.set(response.data);
+        }
+      }),
+    );
   }
 
   getCategoryBySlug(slug: string): Observable<Category> {

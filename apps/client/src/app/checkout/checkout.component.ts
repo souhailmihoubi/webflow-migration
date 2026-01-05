@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect, computed } from '@angular/core';
+import { Component, inject, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import {
@@ -7,7 +7,7 @@ import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
-import { CartService } from '../shared/services/cart.service';
+import { CartService, CartItem } from '../shared/services/cart.service';
 import { OrderService } from '../shared/services/order.service';
 import { PlaceOrderDto } from '@my-org/api-interfaces';
 import { AuthService } from '../shared/auth/auth.service';
@@ -15,6 +15,8 @@ import {
   TUNISIA_GOVERNORATES,
   getShippingCost,
 } from '../shared/constants/governorates';
+
+import { COUNTRY_CODES } from '../shared/constants/countries';
 
 @Component({
   selector: 'app-checkout',
@@ -34,6 +36,7 @@ export class CheckoutComponent {
   cartTotal = this.cartService.cartTotal;
 
   governorates = TUNISIA_GOVERNORATES;
+  countryCodes = COUNTRY_CODES;
   shippingCost = signal(7); // Default shipping cost
 
   orderTotal = computed(() => {
@@ -44,7 +47,8 @@ export class CheckoutComponent {
     firstName: ['', [Validators.required]],
     lastName: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
-    phone: ['', [Validators.required]],
+    countryCode: ['+216', [Validators.required]],
+    phone: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
     address: ['', [Validators.required]],
     city: ['', [Validators.required]],
     notes: [''],
@@ -62,7 +66,7 @@ export class CheckoutComponent {
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          phone: '', // Placeholder: assuming phone is not in token by default or needs separate fetch
+          phone: '', // Placeholder
         });
       }
     });
@@ -89,16 +93,20 @@ export class CheckoutComponent {
   confirmOrder() {
     this.isLoading.set(true);
 
+    const countryCode = this.checkoutForm.get('countryCode')?.value || '';
+    const phoneNumber = this.checkoutForm.get('phone')?.value || '';
+    const fullPhone = `${countryCode} ${phoneNumber}`;
+
     const orderDto: PlaceOrderDto = {
       firstName: this.checkoutForm.get('firstName')?.value || '',
       lastName: this.checkoutForm.get('lastName')?.value || '',
       email: this.checkoutForm.get('email')?.value || '',
-      phone: this.checkoutForm.get('phone')?.value || '',
+      phone: fullPhone,
       shippingAddress: this.checkoutForm.get('address')?.value || '',
       city: this.checkoutForm.get('city')?.value || '',
       shippingCost: this.shippingCost(),
       remarks: this.checkoutForm.get('notes')?.value || '',
-      items: this.cartItems().map((item) => ({
+      items: this.cartItems().map((item: any) => ({
         productId:
           item.type === 'product' && item.product ? item.product.id : undefined,
         packId: item.type === 'pack' && item.pack ? item.pack.id : undefined,
@@ -107,7 +115,7 @@ export class CheckoutComponent {
     };
 
     this.orderService.placeOrder(orderDto).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.isLoading.set(false);
         this.isReviewModalOpen.set(false);
         this.isSubmitted.set(true);
@@ -115,7 +123,7 @@ export class CheckoutComponent {
         // Scroll to top to see success message
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },
-      error: (err) => {
+      error: (err: any) => {
         this.isLoading.set(false);
         console.error('Error placing order:', err);
         alert(

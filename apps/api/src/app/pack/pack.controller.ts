@@ -8,13 +8,16 @@ import {
   Param,
   UseGuards,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import { PackService } from './pack.service';
 import { CreatePackDto, UpdatePackDto } from '@my-org/api-interfaces';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AdminGuard } from '../auth/admin.guard';
 
 @Controller()
+@UseInterceptors(CacheInterceptor)
 export class PackController {
   constructor(private packService: PackService) {}
 

@@ -219,32 +219,77 @@
                   class="text-[10px] font-bold uppercase tracking-widest text-gray-400"
                   >Téléphone *</label
                 >
-                <div class="relative">
-                  <div
-                    class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-4 h-4"
+                <div class="flex space-x-2">
+                  <div class="relative w-5/12">
+                    <select
+                      formControlName="countryCode"
+                      class="w-full bg-cream-light border-none p-4 text-sm text-primary focus:ring-1 focus:ring-accent outline-none appearance-none truncate pr-8"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a12.035 12.035 0 0 1-7.143-7.143c-.155-.44.01-.927.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
-                      />
-                    </svg>
+                      @for (code of countryCodes; track code.code) {
+                        <option [value]="code.dial_code">
+                          {{ code.flag }} {{ code.name }} ({{ code.dial_code }})
+                        </option>
+                      }
+                    </select>
+                    <div
+                      class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-400"
+                    >
+                      <svg
+                        class="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 9l-7 7-7-7"
+                        ></path>
+                      </svg>
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    formControlName="phone"
-                    placeholder="+216 XX XXX XXX"
-                    class="w-full bg-cream-light border-none p-4 pl-12 text-sm text-primary focus:ring-1 focus:ring-accent outline-none"
-                  />
+
+                  <div class="relative flex-1">
+                    <div
+                      class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-4 h-4"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.387a12.035 12.035 0 0 1-7.143-7.143c-.155-.44.01-.927.387-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      formControlName="phone"
+                      placeholder="XX XXX XXX"
+                      class="w-full bg-cream-light border-none p-4 pl-12 text-sm text-primary focus:ring-1 focus:ring-accent outline-none"
+                    />
+                  </div>
                 </div>
+                @if (
+                  checkoutForm.get('phone')?.touched &&
+                  checkoutForm.get('phone')?.invalid
+                ) {
+                  <div class="text-red-500 text-[10px] mt-1 pl-1">
+                    @if (checkoutForm.get('phone')?.errors?.['required']) {
+                      Le numéro est requis.
+                    }
+                    @if (checkoutForm.get('phone')?.errors?.['pattern']) {
+                      Veuillez entrer uniquement des chiffres.
+                    }
+                  </div>
+                }
               </div>
             </div>
 
@@ -412,6 +457,7 @@
                       {{ checkoutForm.value.lastName }}
                     </p>
                     <p class="text-xs text-gray-500">
+                      {{ checkoutForm.value.countryCode }}
                       {{ checkoutForm.value.phone }}
                     </p>
                     <p class="text-xs text-gray-500">

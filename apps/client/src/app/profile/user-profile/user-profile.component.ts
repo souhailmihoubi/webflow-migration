@@ -9,6 +9,8 @@ import {
 import { AuthService } from '../../shared/auth/auth.service';
 import { RouterModule } from '@angular/router';
 
+import { COUNTRY_CODES } from '../../shared/constants/countries';
+
 @Component({
   selector: 'app-user-profile',
   standalone: true,
@@ -21,6 +23,8 @@ export class UserProfileComponent implements OnInit {
 
   profileForm: FormGroup;
   passwordForm: FormGroup;
+
+  countryCodes = COUNTRY_CODES;
 
   isLoading = signal(true);
   isSavingProfile = signal(false);
@@ -38,7 +42,8 @@ export class UserProfileComponent implements OnInit {
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       email: [{ value: '', disabled: true }],
-      phone: ['', [Validators.pattern(/^[0-9+ ]{8,}$/)]],
+      countryCode: ['+216', [Validators.required]],
+      phone: ['', [Validators.pattern(/^\d+$/)]],
     });
 
     this.passwordForm = this.fb.group(
@@ -59,11 +64,26 @@ export class UserProfileComponent implements OnInit {
     this.isLoading.set(true);
     this.authService.getProfile().subscribe({
       next: (user) => {
+        let phone = user.phone || '';
+        let code = '+216';
+
+        // Try to properly split phone if it already contains a code
+        const matchingCode = this.countryCodes.find(
+          (c) =>
+            phone.startsWith(c.dial_code) && phone.length > c.dial_code.length,
+        );
+
+        if (matchingCode) {
+          code = matchingCode.dial_code;
+          phone = phone.substring(code.length).trim();
+        }
+
         this.profileForm.patchValue({
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          phone: user.phone || '',
+          countryCode: code,
+          phone: phone,
         });
         this.isLoading.set(false);
       },
@@ -80,7 +100,21 @@ export class UserProfileComponent implements OnInit {
     this.isSavingProfile.set(true);
     this.profileMessage.set(null);
 
-    this.authService.updateProfile(this.profileForm.getRawValue()).subscribe({
+    const formVal = this.profileForm.getRawValue();
+    const fullPhone = formVal.phone
+      ? `${formVal.countryCode} ${formVal.phone}`
+      : '';
+
+    const payload = {
+      ...formVal,
+      phone: fullPhone,
+    };
+    // Remove temporary field countryCode from payload if backend doesn't want it,
+    // although updateProfile likely accepts partial UserUpdateDto.
+    // Assuming backend takes { firstName, lastName, phone } and ignores extras or we should sanitize.
+    // AuthServic.updateProfile takes Partial<User>.
+
+    this.authService.updateProfile(payload).subscribe({
       next: (updated) => {
         this.isSavingProfile.set(false);
         this.profileMessage.set({

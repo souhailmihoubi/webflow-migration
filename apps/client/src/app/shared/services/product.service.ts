@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, map } from 'rxjs';
 
 export interface Product {
   id: string;
@@ -33,9 +33,17 @@ export class ProductService {
     if (categoryId) {
       url += `?categoryId=${categoryId}`;
     }
-    return this.http
-      .get<Product[]>(url)
-      .pipe(tap((products) => this.products.set(products)));
+    return this.http.get<any>(url).pipe(
+      map((response: any) => {
+        if (Array.isArray(response)) {
+          return response;
+        } else if (response.data && Array.isArray(response.data)) {
+          return response.data;
+        }
+        return [];
+      }),
+      tap((products) => this.products.set(products)),
+    );
   }
 
   searchProducts(query: string): Observable<Product[]> {

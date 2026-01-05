@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "db:import": "npx ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" scripts/import-data.ts"
+    "db:import": "npx ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\" scripts/import-data.ts",
+    "test:load": "npx autocannon -c 100 -d 10 http://localhost:3000/api/catalog/products"
   },
   "private": true,
   "devDependencies": {
@@ -58,6 +59,7 @@
     "@angular/forms": "~21.0.0",
     "@angular/platform-browser": "~21.0.0",
     "@angular/router": "~21.0.0",
+    "@nestjs/cache-manager": "^3.1.0",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/jwt": "^11.0.2",
@@ -65,13 +67,17 @@
     "@nestjs/platform-express": "^11.1.11",
     "@nestjs/serve-static": "^5.0.4",
     "@types/bcrypt": "^6.0.0",
+    "@types/compression": "^1.8.1",
     "@types/multer": "^2.0.0",
     "@types/nodemailer": "^7.0.4",
     "@types/passport-jwt": "^4.0.1",
     "axios": "^1.6.0",
     "bcrypt": "^6.0.0",
+    "cache-manager": "^7.2.7",
+    "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
+    "compression": "^1.8.1",
     "csv-parse": "^6.1.0",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.12",

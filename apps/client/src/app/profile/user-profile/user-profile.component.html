@@ -149,11 +149,56 @@
                   class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
                   >Téléphone</label
                 >
-                <input
-                  type="tel"
-                  formControlName="phone"
-                  class="w-full bg-cream-light/30 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
-                />
+                <div class="flex space-x-2">
+                  <div class="relative w-5/12">
+                    <select
+                      formControlName="countryCode"
+                      class="w-full bg-cream-light/30 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all appearance-none truncate pr-6"
+                    >
+                      @for (code of countryCodes; track code.code) {
+                        <option [value]="code.dial_code">
+                          {{ code.flag }} {{ code.name }} ({{ code.dial_code }})
+                        </option>
+                      }
+                    </select>
+                    <div
+                      class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-400"
+                    >
+                      <svg
+                        class="w-3 h-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 9l-7 7-7-7"
+                        ></path>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div class="relative flex-1">
+                    <input
+                      type="text"
+                      formControlName="phone"
+                      placeholder="XX XXX XXX"
+                      class="w-full bg-cream-light/30 border border-gray-100 p-3 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                    />
+                  </div>
+                </div>
+                @if (
+                  profileForm.get('phone')?.touched &&
+                  profileForm.get('phone')?.invalid
+                ) {
+                  <div class="text-red-500 text-[9px] mt-1 pl-1">
+                    @if (profileForm.get('phone')?.errors?.['pattern']) {
+                      Veuillez entrer uniquement des chiffres.
+                    }
+                  </div>
+                }
               </div>
 
               @if (profileMessage()) {

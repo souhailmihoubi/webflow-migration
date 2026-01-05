@@ -114,8 +114,12 @@ export class PackFormComponent implements OnInit {
     this.isLoading.set(true);
 
     // Get all products and filter by category
-    this.adminService.getProducts().subscribe({
-      next: (products: any[]) => {
+    this.adminService.getProducts({ limit: 1000 }).subscribe({
+      next: (response: any) => {
+        const products = Array.isArray(response)
+          ? response
+          : response.data || [];
+
         console.log('All products:', products);
         console.log(
           'Categories:',
@@ -152,8 +156,9 @@ export class PackFormComponent implements OnInit {
   loadPack(id: string) {
     this.isLoading.set(true);
     // Use admin endpoint to get pack by ID
-    this.adminService.getAllPacks().subscribe({
-      next: (packs) => {
+    this.adminService.getAllPacks({ limit: 1000 }).subscribe({
+      next: (response: any) => {
+        const packs = Array.isArray(response) ? response : response.data || [];
         const pack = packs.find((p: any) => p.id === id);
         if (pack) {
           this.packForm.patchValue({
