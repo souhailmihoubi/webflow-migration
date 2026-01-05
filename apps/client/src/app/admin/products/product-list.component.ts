@@ -205,6 +205,11 @@ export class ProductListComponent implements OnInit {
     this.productForm.get('mainImage')?.markAsTouched();
   }
 
+  onAdditionalImageUploaded(index: number, url: string) {
+    this.multiImages.at(index).setValue(url);
+    this.multiImages.at(index).markAsTouched();
+  }
+
   onSubmit() {
     // Prevent duplicate submissions
     if (this.isSaving()) {
