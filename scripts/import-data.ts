@@ -1,13 +1,77 @@
+import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
 import { parse } from 'csv-parse/sync';
+import { S3Client } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
+import axios from 'axios';
+import sharp from 'sharp';
+import { randomUUID } from 'crypto';
 
 const prisma = new PrismaClient();
 
+// Init S3 Client
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || '',
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || '',
+  },
+});
+const bucketName = process.env.AWS_S3_BUCKET || '';
+
+async function processImage(
+  url: string | undefined,
+  folder: string,
+): Promise<string> {
+  if (!url || typeof url !== 'string') return '';
+
+  // Return if already an S3 URL or invalid
+  if (url.includes('amazonaws.com') || !url.startsWith('http')) {
+    return url;
+  }
+
+  try {
+    console.log(`⬇️  Downloading ${url.substring(0, 50)}...`);
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+    const buffer = Buffer.from(response.data);
+
+    // Optimize
+    const optimizedBuffer = await sharp(buffer)
+      .resize(1200, 1200, {
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .jpeg({ quality: 85 })
+      .toBuffer();
+
+    // Upload
+    const fileName = `${randomUUID()}.jpg`;
+    const key = `${folder}/${fileName}`;
+
+    const upload = new Upload({
+      client: s3Client,
+      params: {
+        Bucket: bucketName,
+        Key: key,
+        Body: optimizedBuffer,
+        ContentType: 'image/jpeg',
+      },
+    });
+
+    await upload.done();
+    const s3Url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+    console.log(`✅ Migrated to S3: ${s3Url}`);
+    return s3Url;
+  } catch (error: any) {
+    console.warn(`⚠️ Failed to migrate image ${url}: ${error.message}`);
+    return url; // Fallback to original URL
+  }
+}
+
 function cleanHtml(html: string): string {
   if (!html) return '';
-  // Remove id attributes and empty p tags with zero-width spaces or similar
   return html
     .replace(/id="[^"]*"/g, '')
     .replace(/<p>\s*‌\s*<\/p>/g, '')
@@ -17,13 +81,16 @@ function cleanHtml(html: string): string {
 
 function parsePrice(price: string): number {
   if (!price) return 0;
-  // Remove spaces and replace comma with dot
   const cleaned = price.replace(/\s/g, '').replace(',', '.');
   return parseFloat(cleaned) || 0;
 }
 
 async function main() {
-  console.log('🚀 Starting Data Import...');
+  console.log('🚀 Starting Data Import with S3 Image Migration...');
+
+  if (!process.env.AWS_S3_BUCKET || !process.env.AWS_REGION) {
+    throw new Error('Missing AWS configuration in .env');
+  }
 
   const baseDir = path.join(__dirname, '..');
   const categoriesPath = path.join(
@@ -48,17 +115,19 @@ async function main() {
   const categoryMap = new Map<string, string>();
 
   for (const cat of categoriesData) {
+    const imageUrl = await processImage(cat['Category Image'], 'categories');
+
     const created = await prisma.category.upsert({
       where: { slug: cat.Slug },
       update: {
         name: cat.Name,
-        image: cat['Category Image'],
+        image: imageUrl,
         showInHomePage: cat['Show in Home']?.toUpperCase() === 'TRUE',
       },
       create: {
         name: cat.Name,
         slug: cat.Slug,
-        image: cat['Category Image'],
+        image: imageUrl,
         showInHomePage: cat['Show in Home']?.toUpperCase() === 'TRUE',
       },
     });
@@ -74,16 +143,9 @@ async function main() {
     skip_empty_lines: true,
   }) as any[];
 
-  const foundCategories = new Set<string>();
-  productsData.forEach((p) => foundCategories.add(p['Catégorie']));
-  console.log(
-    '📊 Categories found in Products CSV:',
-    Array.from(foundCategories),
-  );
-
   let productCount = 0;
   for (const prod of productsData) {
-    if (!prod.Slug || prod.Slug === 'ds') continue; // Skip placeholders
+    if (!prod.Slug || prod.Slug === 'ds') continue;
 
     const catId = categoryMap.get(prod['Catégorie']);
     if (!catId) {
@@ -93,18 +155,28 @@ async function main() {
       continue;
     }
 
-    const multiImages = prod['Multi Images']
+    // Process Main Image
+    const mainImageUrl = await processImage(prod['Main Image'], 'products');
+
+    // Process Multi Images
+    const multiImagesRaw = prod['Multi Images']
       ? prod['Multi Images']
           .split(';')
           .map((img: string) => img.trim())
           .filter((img: string) => img)
       : [];
 
+    const multiImages: string[] = [];
+    for (const imgUrl of multiImagesRaw) {
+      const s3Url = await processImage(imgUrl, 'products');
+      if (s3Url) multiImages.push(s3Url);
+    }
+
     await prisma.product.upsert({
       where: { slug: prod.Slug },
       update: {
         name: prod.Name,
-        mainImage: prod['Main Image'],
+        mainImage: mainImageUrl,
         multiImages: multiImages,
         priceDetails: prod['Détails Prix'],
         productDescription: cleanHtml(prod["Détails de L'article"]),
@@ -120,7 +192,7 @@ async function main() {
       create: {
         name: prod.Name,
         slug: prod.Slug,
-        mainImage: prod['Main Image'],
+        mainImage: mainImageUrl,
         multiImages: multiImages,
         priceDetails: prod['Détails Prix'],
         productDescription: cleanHtml(prod["Détails de L'article"]),
@@ -136,7 +208,7 @@ async function main() {
     });
 
     productCount++;
-    if (productCount % 50 === 0) {
+    if (productCount % 10 === 0) {
       console.log(`⏳ Processed ${productCount} products...`);
     }
   }
