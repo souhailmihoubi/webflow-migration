@@ -2,6 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Product } from './product.service';
+import { environment } from '../../../environments/environment';
 
 export interface Category {
   id: string;
@@ -20,7 +21,7 @@ export interface Category {
 })
 export class CategoryService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/catalog/categories';
+  private apiUrl = `${environment.apiUrl}/catalog/categories`;
 
   categories = signal<Category[]>([]);
 

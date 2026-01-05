@@ -3,7 +3,7 @@
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
       <!-- Text Content -->
-      <div class="order-2 md:order-1 space-y-8">
+      <div class="order-2 md:order-1 space-y-8" appScrollReveal delay="200ms">
         <h1
           class="text-4xl md:text-6xl font-heading font-bold text-primary leading-tight"
         >
@@ -19,22 +19,22 @@
         </p>
         <div class="pt-4">
           <a
-            routerLink="/shop"
+            routerLink="/packs"
             class="inline-block bg-primary text-white text-sm uppercase tracking-widest font-medium py-4 px-8 hover:bg-zinc-800 transition-colors duration-300"
           >
-            Découvrir la Collection
+            Pack Mariage
           </a>
         </div>
       </div>
 
       <!-- Hero Image -->
-      <div class="order-1 md:order-2 relative">
+      <div class="order-1 md:order-2 relative" appScrollReveal delay="400ms">
         <div
           class="aspect-[4/5] md:aspect-square bg-white shadow-2xl overflow-hidden relative group"
         >
           <!-- Placeholder for Hero Image - simulating high quality interior shot -->
           <img
-            src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop"
+            [src]="heroImages()[currentHeroSlide()]"
             alt="Modern Interior"
             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
@@ -261,7 +261,7 @@
   <section class="bg-white py-12 border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-        <div class="p-6">
+        <div class="p-6" appScrollReveal delay="100ms">
           <svg
             class="w-10 h-10 text-accent mb-4 mx-auto"
             fill="none"
@@ -280,7 +280,7 @@
             Des pièces créées pour se démarquer.
           </p>
         </div>
-        <div class="p-6">
+        <div class="p-6" appScrollReveal delay="300ms">
           <svg
             class="w-10 h-10 text-accent mb-4 mx-auto"
             fill="none"
@@ -299,7 +299,7 @@
             Matériaux nobles et finitions soignées.
           </p>
         </div>
-        <div class="p-6">
+        <div class="p-6" appScrollReveal delay="500ms">
           <svg
             class="w-10 h-10 text-accent mb-4 mx-auto"
             fill="none"
@@ -323,8 +323,8 @@
   </section>
 
   <!-- Featured Categories Preview -->
-  <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-16">
+  <section class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-[#FCEED7]">
+    <div class="text-center mb-16" appScrollReveal>
       <h2 class="text-3xl font-heading font-bold mb-4">Nos Collections</h2>
       <div class="w-24 h-1 bg-accent mx-auto"></div>
     </div>
@@ -334,6 +334,8 @@
         <a
           [routerLink]="['/category', cat.slug]"
           class="group relative aspect-[3/4] overflow-hidden bg-gray-100 cursor-pointer"
+          appScrollRe
+          veal
         >
           @if (cat.image) {
             <img
@@ -396,6 +398,7 @@
 
     <div
       class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-20"
+      appScrollReveal
     >
       <h2
         class="text-3xl md:text-4xl font-heading font-bold text-primary mb-6 max-w-4xl mx-auto leading-tight"
@@ -480,7 +483,10 @@
         </div>
       </div>
 
-      <h3 class="text-2xl font-heading font-bold text-primary mb-12">
+      <h3
+        class="text-2xl font-heading font-bold text-primary mb-12"
+        appScrollReveal
+      >
         Profitez De Nos Promotions
       </h3>
 
@@ -538,7 +544,7 @@
           </div>
 
           <a
-            routerLink="/shop"
+            routerLink="/category/salon"
             class="inline-block bg-accent/20 text-accent text-[10px] uppercase font-bold tracking-[0.2em] px-6 py-3 hover:bg-accent hover:text-white transition-all duration-300"
           >
             VOIR TOUT NOS ARTICLES
@@ -561,12 +567,17 @@
                 <div
                   class="relative aspect-[4/5] bg-white overflow-hidden mb-4 shadow-md group-hover:shadow-xl transition-shadow duration-300"
                 >
-                  <img
-                    [src]="product.mainImage"
-                    [alt]="product.name"
-                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
-                    draggable="false"
-                  />
+                  <a
+                    [routerLink]="['/product', product.slug]"
+                    class="block w-full h-full"
+                  >
+                    <img
+                      [src]="product.mainImage"
+                      [alt]="product.name"
+                      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 pointer-events-none"
+                      draggable="false"
+                    />
+                  </a>
                   <div
                     class="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-white/95"
                   >
@@ -619,6 +630,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <h2
         class="text-3xl md:text-5xl font-heading font-light text-primary mb-6"
+        appScrollReveal
       >
         Notre Instagram
       </h2>

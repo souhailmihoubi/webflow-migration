@@ -1,16 +1,19 @@
-# Stage 1: Build
-FROM node:22-alpine AS builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npx nx build api --configuration=production
-
-# Stage 2: Run
 FROM node:22-alpine
+RUN apk update && apk add --no-cache openssl
 WORKDIR /app
-COPY --from=builder /app/dist/apps/api ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./
+
+# Copy pruned package config from local build
+COPY dist/apps/api/package.json ./
+
+# Install production dependencies and specific prisma version in one go to avoid caching issues
+RUN npm install --omit=dev && npm install @prisma/client && npm install prisma@5.22.0
+
+# Generate Prisma Client for the container OS
+COPY prisma ./prisma
+RUN npx prisma generate
+
+# Copy built application code
+COPY dist/apps/api ./dist
+
+# Run the application
 CMD ["node", "dist/main.js"]

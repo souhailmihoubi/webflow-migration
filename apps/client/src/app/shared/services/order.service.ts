@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PlaceOrderDto } from '@my-org/api-interfaces';
@@ -8,7 +9,7 @@ import { PlaceOrderDto } from '@my-org/api-interfaces';
 })
 export class OrderService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/orders';
+  private apiUrl = `${environment.apiUrl}/orders`;
 
   placeOrder(dto: PlaceOrderDto): Observable<any> {
     return this.http.post<any>(this.apiUrl, dto);

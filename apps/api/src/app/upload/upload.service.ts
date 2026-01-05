@@ -1,31 +1,29 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import sharp from 'sharp';
 import { randomUUID } from 'crypto';
-import { mkdir, writeFile, unlink } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 
 @Injectable()
 export class UploadService {
-  private uploadDir = join(process.cwd(), 'uploads');
-  private baseUrl = process.env.API_BASE_URL || 'http://localhost:3000';
+  private s3Client: S3Client;
+  private bucketName: string;
+  private region: string;
 
-  constructor() {
-    this.ensureUploadDirExists();
-  }
+  constructor(private configService: ConfigService) {
+    this.bucketName = this.configService.getOrThrow<string>('AWS_S3_BUCKET');
+    this.region = this.configService.getOrThrow<string>('AWS_REGION');
 
-  private async ensureUploadDirExists() {
-    const dirs = [
-      this.uploadDir,
-      join(this.uploadDir, 'products'),
-      join(this.uploadDir, 'categories'),
-    ];
-
-    for (const dir of dirs) {
-      if (!existsSync(dir)) {
-        await mkdir(dir, { recursive: true });
-      }
-    }
+    this.s3Client = new S3Client({
+      region: this.region,
+      credentials: {
+        accessKeyId: this.configService.getOrThrow<string>('AWS_ACCESS_KEY_ID'),
+        secretAccessKey: this.configService.getOrThrow<string>(
+          'AWS_SECRET_ACCESS_KEY',
+        ),
+      },
+    });
   }
 
   async uploadImage(file: any, folder = 'products'): Promise<string> {
@@ -40,17 +38,27 @@ export class UploadService {
         .toBuffer();
 
       // Generate unique filename
-      const fileExtension = 'jpg'; // Always save as JPEG after optimization
+      const fileExtension = 'jpg';
       const fileName = `${randomUUID()}.${fileExtension}`;
-      const filePath = join(this.uploadDir, folder, fileName);
+      const key = `${folder}/${fileName}`;
 
-      // Save file to disk
-      await writeFile(filePath, optimizedBuffer);
+      // Upload to S3
+      const upload = new Upload({
+        client: this.s3Client,
+        params: {
+          Bucket: this.bucketName,
+          Key: key,
+          Body: optimizedBuffer,
+          ContentType: 'image/jpeg',
+        },
+      });
+
+      await upload.done();
 
       // Return public URL
-      return `${this.baseUrl}/uploads/${folder}/${fileName}`;
+      return `https://${this.bucketName}.s3.${this.region}.amazonaws.com/${key}`;
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error('Error uploading image to S3:', error);
       throw new Error('Failed to upload image');
     }
   }
@@ -65,19 +73,21 @@ export class UploadService {
 
   async deleteImage(imageUrl: string): Promise<void> {
     try {
-      // Extract filename from URL
-      const urlParts = imageUrl.split('/');
-      const fileName = urlParts[urlParts.length - 1];
-      const folderName = urlParts[urlParts.length - 2];
+      // Extract key from URL
+      // URL format: https://BUCKET.s3.REGION.amazonaws.com/FOLDER/FILENAME
+      const urlObj = new URL(imageUrl);
+      // Pathname will be /FOLDER/FILENAME (with leading slash)
+      const key = urlObj.pathname.substring(1); // Remove leading slash
 
-      const filePath = join(this.uploadDir, folderName, fileName);
-
-      if (existsSync(filePath)) {
-        await unlink(filePath);
-      }
+      await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: this.bucketName,
+          Key: key,
+        }),
+      );
     } catch (error) {
-      console.error('Error deleting image:', error);
-      // Don't throw error - image might already be deleted
+      console.error('Error deleting image from S3:', error);
+      // Don't throw error - image might already be deleted or URL format mismatch
     }
   }
 }

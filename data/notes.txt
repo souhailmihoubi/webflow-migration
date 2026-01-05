@@ -1,46 +1,55 @@
-user:
--fist name
--last name
--phone
--email
--password
--role
--orders[]
--cart
-
-Order:
--fist name
--last name
--phone
--email
--shipping Address
--city (depending on the city there is and adding price for the shipping)
--total price
--remarks
--items
--status
-(after that when we receive the order we can call the costumer and proceed the payement and the shipping)
-
-Product: 
--name
--slug
--main image
--multi images
--category
--price details (its like description for price)
--product description
--caractéristiques
--price
--discountPrice
--showInMenu (boolean) (use it when the product exists in stock or not its variable)
--video link (link to redirect to a reel on our instagram)
-
-Category:
--name
--image
--slug
--showInHomePage
--products
-
-
 cmd /c "npm run db:import"
+
+npx nx build api
+npx prisma studio
+npx prisma db push
+
+video link in product page
+
+
+Secret ID : REDACTED
+ID: REDACTED
+
+
+ECR repository name : webflow-migration-api
+
+RDS PostgreSQL: webflow-migration-db (db.t3.micro).
+Password: WebflowMigration2026! (Please save this!)
+
+ElastiCache Redis: webflow-migration-redis (cache.t3.micro).
+
+Route 53 (DNS) : lartistou.com
+
+CloudFron name: webflow-migration-frontend-hosting
+
+docker push 173763384580.dkr.ecr.eu-west-3.amazonaws.com/webflow-migration-api:latest
+
+
+
+----
+
+# 1. Build API (Required for Docker)
+npx nx build api
+
+# 2. Build Client (Required for S3)
+npx nx run client:build:production
+
+# 3. Docker Commands (Now safe to run)
+aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin 173763384580.dkr.ecr.eu-west-3.amazonaws.com
+
+docker build -f apps/api/Dockerfile -t webflow-migration-api .
+
+docker tag webflow-migration-api:latest 173763384580.dkr.ecr.eu-west-3.amazonaws.com/webflow-migration-api:latest
+
+docker push 173763384580.dkr.ecr.eu-west-3.amazonaws.com/webflow-migration-api:latest
+
+
+check i app runner status command:
+aws apprunner list-services --region eu-west-3 --no-cli-pager
+
+
+Custom DNS:
+ns-1430.awsdns-50.org
+ns-17.awsdns-02.com
+ns-1832.awsdns-37.co.uk
+ns-938.awsdns-53.net

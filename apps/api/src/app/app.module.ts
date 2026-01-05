@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -18,16 +19,34 @@ import { winstonConfig } from './common/logging/winston.config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
-    CacheModule.register({
+    CacheModule.registerAsync({
       isGlobal: true,
-      store: redisStore,
-      host: process.env.REDIS_HOST || 'localhost',
-      port: 6379,
-      ttl: 600,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const redisHost = configService.get<string>('REDIS_HOST');
+        // Only use Redis if a host is provided and it is NOT localhost (unless you really have local redis in dev, but for prod container it fails)
+        // For App Runner, 'localhost' implies the container itself, which has no Redis.
+        if (redisHost && redisHost !== 'localhost') {
+          return {
+            store: redisStore,
+            host: redisHost,
+            port: 6379,
+            ttl: 600,
+          };
+        }
+        // Fallback to memory cache
+        return {
+          ttl: 600,
+        };
+      },
     }),
     DatabaseModule,
     EmailModule,

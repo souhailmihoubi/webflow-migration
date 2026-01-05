@@ -1,0 +1,18 @@
+{
+    "Comment": "ACM Validation for lartistou.com",
+    "Changes": [
+        {
+            "Action": "UPSERT",
+            "ResourceRecordSet": {
+                "Name": "_41f188e47ca78117de5fd4d49a2e61a4.lartistou.com.",
+                "Type": "CNAME",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "_3162b8eea380e84ee65f4d7efae8c813.jkddzztszm.acm-validations.aws."
+                    }
+                ]
+            }
+        }
+    ]
+}

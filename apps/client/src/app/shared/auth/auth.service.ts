@@ -1,4 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 
@@ -21,7 +22,7 @@ interface AuthResponse {
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   // Signal to track the current logged-in user
   currentUser = signal<User | null>(this.getUserFromStorage());

@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -7,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 export class AdminService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = environment.apiUrl;
 
   // Dashboard Stats
   getDashboardStats(): Observable<any> {
@@ -74,6 +75,7 @@ export class AdminService {
   }
 
   getPackById(id: string): Observable<any> {
+    // Note: Backend PackController generally requests by slug for GET, check if this works
     return this.http.get<any>(`${this.apiUrl}/catalog/packs/${id}`);
   }
 

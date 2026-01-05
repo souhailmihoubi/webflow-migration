@@ -13,10 +13,12 @@ import { RouterModule } from '@angular/router';
 import { CategoryService } from '../shared/services/category.service';
 import { ProductService } from '../shared/services/product.service';
 
+import { ScrollRevealDirective } from '../shared/directives/scroll-reveal.directive';
+
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, ScrollRevealDirective],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -39,6 +41,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   countdown = signal({ days: '00', hours: '00', minutes: '00', seconds: '00' });
   private timerInterval: ReturnType<typeof setInterval> | undefined;
 
+  // Hero Slider
+  heroImages = signal([
+    'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?q=80&w=2000&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=2000&auto=format&fit=crop',
+  ]);
+  currentHeroSlide = signal(0);
+  private heroSliderInterval: ReturnType<typeof setInterval> | undefined;
+
   // Slider auto-scroll logic
   private autoScrollInterval: ReturnType<typeof setInterval> | undefined;
   isPaused = false;
@@ -53,11 +64,21 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.productService.fetchProducts().subscribe();
     this.startCountdown();
     this.startAutoScroll();
+    this.startHeroSlider();
   }
 
   ngOnDestroy() {
     if (this.timerInterval) clearInterval(this.timerInterval);
     if (this.autoScrollInterval) clearInterval(this.autoScrollInterval);
+    if (this.heroSliderInterval) clearInterval(this.heroSliderInterval);
+  }
+
+  private startHeroSlider() {
+    this.heroSliderInterval = setInterval(() => {
+      this.currentHeroSlide.update(
+        (val) => (val + 1) % this.heroImages().length,
+      );
+    }, 5000); // Change every 5 seconds
   }
 
   private startCountdown() {

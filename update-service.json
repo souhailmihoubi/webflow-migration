@@ -1,0 +1,29 @@
+{
+    "ServiceArn": "arn:aws:apprunner:eu-west-3:173763384580:service/webflow-migration-api/dede4a1809a14bddbbfc9c431e995fdf",
+    "SourceConfiguration": {
+        "AuthenticationConfiguration": {
+            "AccessRoleArn": "arn:aws:iam::173763384580:role/AppRunnerECRAccessRole"
+        },
+        "ImageRepository": {
+            "ImageIdentifier": "173763384580.dkr.ecr.eu-west-3.amazonaws.com/webflow-migration-api:latest",
+            "ImageConfiguration": {
+                "Port": "3000",
+                "RuntimeEnvironmentVariables": {
+                    "NODE_ENV": "production",
+                    "AWS_REGION": "eu-west-3",
+                    "AWS_S3_BUCKET": "webflow-migration-assets",
+                    "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
+                    "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
+                    "DATABASE_URL": "postgresql://postgres:WebflowMigration2026!@webflow-migration-db.cp464au8k4rd.eu-west-3.rds.amazonaws.com:5432/webflow_migration_db",
+                    "REDIS_HOST": "webflow-migration-redis.dlfxmk.0001.euw3.cache.amazonaws.com:6379"
+                }
+            },
+            "ImageRepositoryType": "ECR"
+        },
+        "AutoDeploymentsEnabled": true
+    },
+    "InstanceConfiguration": {
+        "Cpu": "1024",
+        "Memory": "2048"
+    }
+}
