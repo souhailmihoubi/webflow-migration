@@ -24,7 +24,8 @@ export class ContactComponent {
   );
 
   contactInfo = {
-    address: 'Route de Tunis, Nabeul, Tunisie',
+    address:
+      '126, AV Hédi Nouira Cité les jasmins en face station de garde national Mora 8000 Nabeul, Tunisia',
     phones: ['+216 29 137 955', '+216 29 654 800'],
     email: 'lartistou.meuble@yahoo.com',
     hours: [

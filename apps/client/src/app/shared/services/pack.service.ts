@@ -9,6 +9,7 @@ export interface Pack {
   description?: string;
   mainImage?: string;
   price: string | number;
+  discountPercentage?: number;
   showInMenu: boolean;
   productSam: {
     id: string;
