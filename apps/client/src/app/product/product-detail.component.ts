@@ -80,4 +80,63 @@ export class ProductDetailComponent implements OnInit {
     this.showSuccess.set(true);
     setTimeout(() => this.showSuccess.set(false), 3000);
   }
+
+  // --- Lightbox Logic ---
+  isLightboxOpen = signal(false);
+
+  openLightbox() {
+    this.isLightboxOpen.set(true);
+  }
+
+  closeLightbox() {
+    this.isLightboxOpen.set(false);
+  }
+
+  nextImage(event?: Event) {
+    event?.stopPropagation();
+    const images = this.allImages;
+    const currentIndex = images.indexOf(this.activeImage());
+    const nextIndex = (currentIndex + 1) % images.length;
+    this.activeImage.set(images[nextIndex]);
+  }
+
+  prevImage(event?: Event) {
+    event?.stopPropagation();
+    const images = this.allImages;
+    const currentIndex = images.indexOf(this.activeImage());
+    const prevIndex = (currentIndex - 1 + images.length) % images.length;
+    this.activeImage.set(images[prevIndex]);
+  }
+
+  // --- Zoom Logic ---
+  zoomStyle = signal<Record<string, string>>({
+    transform: 'scale(1)',
+    'transform-origin': 'center center',
+  });
+
+  onZoomMove(event: MouseEvent) {
+    const container = event.currentTarget as HTMLElement;
+    const { left, top, width, height } = container.getBoundingClientRect();
+    const x = ((event.clientX - left) / width) * 100;
+    const y = ((event.clientY - top) / height) * 100;
+
+    this.zoomStyle.set({
+      transform: 'scale(2)', // 2x Zoom
+      'transform-origin': `${x}% ${y}%`,
+    });
+  }
+
+  onZoomLeave() {
+    this.zoomStyle.set({
+      transform: 'scale(1)',
+      'transform-origin': 'center center',
+    });
+  }
+
+  // --- Tabs Logic ---
+  activeTab = signal<'description' | 'info'>('description');
+
+  setActiveTab(tab: 'description' | 'info') {
+    this.activeTab.set(tab);
+  }
 }

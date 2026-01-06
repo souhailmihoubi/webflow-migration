@@ -33,7 +33,7 @@ model Product {
   productDescription String
   caracteristiques   String?
   price              Decimal
-  discountPrice      Decimal?
+  discountPrice      Decimal
   showInMenu         Boolean     @default(true)
   videoLink          String?
   createdAt          DateTime    @default(now())
@@ -64,12 +64,15 @@ model Order {
   firstName       String
   lastName        String
   phone           String
-  email           String
+  secondaryPhone  String?
+  email           String?
   shippingAddress String
   city            String
   shippingCost    Decimal     @default(0)
   totalPrice      Decimal
   remarks         String?
+  paymentMethod   PaymentMethod @default(COD)
+  paymentPlan     PaymentPlan   @default(FULL)
   status          OrderStatus @default(PENDING)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
@@ -146,4 +149,14 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+  BANK_TRANSFER
+}
+
+enum PaymentPlan {
+  FULL
+  DEPOSIT_50
 }

@@ -10,8 +10,9 @@ export interface Product {
   mainImage: string;
   multiImages: string[];
   price: string | number;
-  discountPrice?: string | number | null;
+  discountPrice: string | number;
   productDescription: string;
+  priceDetails: string;
   showInMenu: boolean;
   category: {
     id: string;
@@ -53,9 +54,24 @@ export class ProductService {
   }
 
   searchProducts(query: string): Observable<Product[]> {
-    return this.http.get<Product[]>(
-      `${this.apiUrl}?search=${query}&visible=true`,
-    );
+    return this.http
+      .get<
+        Product[] | { data: Product[] }
+      >(`${this.apiUrl}?search=${query}&visible=true`)
+      .pipe(
+        map((response) => {
+          if (Array.isArray(response)) {
+            return response;
+          } else if (
+            response &&
+            'data' in response &&
+            Array.isArray(response.data)
+          ) {
+            return response.data;
+          }
+          return [];
+        }),
+      );
   }
 
   getProductBySlug(slug: string): Observable<Product> {

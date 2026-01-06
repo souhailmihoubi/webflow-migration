@@ -7,14 +7,48 @@
       >
         Mon Panier
       </h1>
-      <p class="text-xs uppercase tracking-widest text-accent font-bold">
-        {{ cartCount() }}
-        {{
-          cartCount() > 1
-            ? 'produits dans votre panier'
-            : 'produit dans votre panier'
-        }}
-      </p>
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+      >
+        <p class="text-xs uppercase tracking-widest text-accent font-bold">
+          {{ cartCount() }}
+          {{
+            cartCount() > 1
+              ? 'produits dans votre panier'
+              : 'produit dans votre panier'
+          }}
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="bg-white border-l-4 border-accent shadow-sm p-4 flex items-center gap-4 mb-8"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 text-accent flex-shrink-0"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+        />
+      </svg>
+      <div>
+        <p
+          class="text-[10px] font-bold text-primary uppercase tracking-wider mb-1"
+        >
+          Commande Invité
+        </p>
+        <p class="text-xs text-gray-500 font-medium">
+          Vous pourrez commander en mode invité (sans compte) à l'étape
+          suivante.
+        </p>
+      </div>
     </div>
 
     @if (cartItems().length > 0) {
@@ -236,74 +270,27 @@
               </div>
             </div>
 
-            @if (currentUser()) {
-              <a
-                routerLink="/checkout"
-                class="w-full bg-accent text-white py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-primary transition-all duration-300 shadow-xl flex items-center justify-center space-x-3 group text-center"
+            <!-- Checkout Button -->
+            <a
+              routerLink="/checkout"
+              class="w-full bg-accent text-white py-5 text-xs font-bold uppercase tracking-[0.3em] hover:bg-white hover:text-primary transition-all duration-300 shadow-xl flex items-center justify-center space-x-3 group text-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="w-5 h-5 group-hover:scale-110 transition-transform"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  class="w-5 h-5 group-hover:scale-110 transition-transform"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
-                  />
-                </svg>
-                <span>Passer ma commande</span>
-              </a>
-            } @else {
-              <div class="space-y-6">
-                <div class="bg-white/5 p-6 text-center border border-white/10">
-                  <div class="mb-4 text-accent">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-8 h-8 mx-auto opacity-50"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
-                      />
-                    </svg>
-                  </div>
-                  <p
-                    class="text-[10px] text-accent uppercase tracking-[0.2em] font-bold mb-2"
-                  >
-                    Connexion requise pour commander
-                  </p>
-                  <p
-                    class="text-[9px] text-gray-400 uppercase tracking-widest leading-relaxed"
-                  >
-                    Connectez-vous pour finaliser votre commande
-                  </p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                  <button
-                    (click)="openAuthModal()"
-                    class="py-4 border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-primary transition-all"
-                  >
-                    Se connecter
-                  </button>
-                  <button
-                    (click)="openAuthModal()"
-                    class="py-4 bg-accent text-white text-[10px] font-bold uppercase tracking-widest hover:bg-primary transition-all"
-                  >
-                    S'inscrire
-                  </button>
-                </div>
-              </div>
-            }
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z"
+                />
+              </svg>
+              <span>Passer ma commande</span>
+            </a>
 
             <!-- Help Section -->
             <div
@@ -313,7 +300,7 @@
                 Une question sur votre commande ?
               </p>
               <a
-                href="https://wa.me/21629654055"
+                href="https://wa.me/21629137955"
                 class="flex items-center justify-center space-x-3 p-4 bg-white/5 border border-white/10 hover:border-accent transition-all group"
               >
                 <svg
@@ -367,7 +354,7 @@
           Découvrez nos collections pour le remplir !
         </p>
         <a
-          routerLink="/"
+          routerLink="/category/salon"
           class="inline-block bg-primary text-white py-4 px-12 text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-accent transition-all duration-300 shadow-xl"
         >
           Explorer la boutique

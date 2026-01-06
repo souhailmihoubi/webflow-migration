@@ -14,7 +14,6 @@ export class OrderHistoryComponent implements OnInit {
 
   orders = signal<any[]>([]);
   isLoading = signal(true);
-  confirmingOrderId = signal<string | null>(null);
 
   ngOnInit() {
     this.refreshOrders();
@@ -32,30 +31,6 @@ export class OrderHistoryComponent implements OnInit {
         this.isLoading.set(false);
       },
     });
-  }
-
-  cancelOrder(orderId: string) {
-    console.log('Sending cancellation request to service for ID:', orderId);
-    this.orderService.cancelOrder(orderId).subscribe({
-      next: () => {
-        console.log('Order cancelled successfully.');
-        this.confirmingOrderId.set(null);
-        this.refreshOrders();
-      },
-      error: (err) => {
-        console.error('Error cancelling order:', err);
-        alert("Une erreur est survenue lors de l'annulation de la commande.");
-        this.confirmingOrderId.set(null);
-      },
-    });
-  }
-
-  askToCancel(orderId: string) {
-    this.confirmingOrderId.set(orderId);
-  }
-
-  abortCancel() {
-    this.confirmingOrderId.set(null);
   }
 
   getStatusClass(status: string): string {

@@ -47,8 +47,12 @@ export class CatalogController {
   }
 
   @Get('categories/slug/:slug')
-  getCategoryBySlug(@Param('slug') slug: string) {
-    return this.catalogService.getCategoryBySlug(slug);
+  async getCategoryBySlug(
+    @Param('slug') slug: string,
+    @Query('minPrice') minPrice?: string,
+    @Query('maxPrice') maxPrice?: string,
+  ) {
+    return this.catalogService.getCategoryBySlug(slug, minPrice, maxPrice);
   }
 
   @UseGuards(JwtAuthGuard, AdminGuard)

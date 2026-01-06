@@ -28,9 +28,7 @@ export class CartService {
         price =
           typeof item.product.discountPrice === 'number'
             ? item.product.discountPrice
-            : parseFloat(
-                String(item.product.discountPrice || item.product.price),
-              );
+            : parseFloat(String(item.product.discountPrice));
       } else if (item.type === 'pack' && item.pack) {
         price =
           typeof item.pack.price === 'number'

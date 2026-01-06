@@ -121,6 +121,17 @@ export class UpdateCartItemDto {
   quantity!: number;
 }
 
+// Payment Enums
+export enum PaymentMethod {
+  COD = 'COD',
+  BANK_TRANSFER = 'BANK_TRANSFER',
+}
+
+export enum PaymentPlan {
+  FULL = 'FULL',
+  DEPOSIT_50 = 'DEPOSIT_50',
+}
+
 export class PlaceOrderDto {
   @IsString()
   @IsNotEmpty()
@@ -134,8 +145,13 @@ export class PlaceOrderDto {
   @IsNotEmpty()
   phone!: string;
 
+  @IsOptional()
+  @IsString()
+  secondaryPhone?: string;
+
+  @IsOptional()
   @IsEmail()
-  email!: string;
+  email?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -151,6 +167,14 @@ export class PlaceOrderDto {
   @IsOptional()
   @IsString()
   remarks?: string;
+
+  @IsOptional()
+  @IsString()
+  paymentMethod?: PaymentMethod;
+
+  @IsOptional()
+  @IsString()
+  paymentPlan?: PaymentPlan;
 
   @IsArray()
   items!: {

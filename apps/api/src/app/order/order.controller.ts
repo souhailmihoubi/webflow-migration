@@ -62,10 +62,9 @@ export class OrderController {
 
   // ========== Order Management (Protected) ==========
 
-  @UseGuards(JwtAuthGuard)
   @Post()
   placeOrder(@CurrentUser() user: any, @Body() dto: PlaceOrderDto) {
-    return this.orderService.placeOrder(user.userId, dto);
+    return this.orderService.placeOrder(user?.userId, dto);
   }
 
   @UseGuards(JwtAuthGuard)

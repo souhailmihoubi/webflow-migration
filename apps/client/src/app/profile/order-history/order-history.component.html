@@ -136,48 +136,6 @@
                   </svg>
                   <span>Détails</span>
                 </a>
-
-                @if (order.status === 'PENDING') {
-                  @if (confirmingOrderId() === order.id) {
-                    <div
-                      class="flex items-center space-x-2 animate-in fade-in slide-in-from-left-2 duration-300"
-                    >
-                      <button
-                        (click)="cancelOrder(order.id)"
-                        class="bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-6 py-4 hover:bg-red-700 transition-all duration-300"
-                      >
-                        Confirmer l'annulation
-                      </button>
-                      <button
-                        (click)="abortCancel()"
-                        class="bg-gray-100 text-gray-500 text-[10px] font-bold uppercase tracking-widest px-6 py-4 hover:bg-gray-200 transition-all duration-300"
-                      >
-                        Retour
-                      </button>
-                    </div>
-                  } @else {
-                    <button
-                      (click)="askToCancel(order.id)"
-                      class="bg-white border border-red-200 text-red-600 text-[10px] font-bold uppercase tracking-widest px-8 md:px-12 py-4 hover:bg-red-50 transition-all duration-300 flex items-center space-x-2"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="2"
-                        stroke="currentColor"
-                        class="w-3 h-3"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M6 18 18 6M6 6l12 12"
-                        />
-                      </svg>
-                      <span>Annuler</span>
-                    </button>
-                  }
-                }
               </div>
             </div>
           }

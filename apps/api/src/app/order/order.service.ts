@@ -53,7 +53,7 @@ export class OrderService {
 
     // Calculate totals
     const subtotal = cart.items.reduce((sum, item) => {
-      const price = item.product.discountPrice || item.product.price;
+      const price = item.product.discountPrice;
       return sum + Number(price) * item.quantity;
     }, 0);
 
@@ -215,26 +215,41 @@ export class OrderService {
 
   // ========== Order Management ==========
 
-  async placeOrder(userId: string, dto: PlaceOrderDto) {
+  async placeOrder(userId: string | undefined, dto: PlaceOrderDto) {
     let orderItems: any[] = [];
     let totalPrice = new Decimal(0);
 
     if (dto.items && dto.items.length > 0) {
       // Use items from DTO
       for (const item of dto.items) {
-        const product = await this.db.product.findUnique({
-          where: { id: item.productId },
-        });
-        if (!product) continue;
-        const price = product.discountPrice || product.price;
-        totalPrice = totalPrice.add(new Decimal(price).mul(item.quantity));
-        orderItems.push({
-          productId: item.productId,
-          quantity: item.quantity,
-          priceAtTime: price,
-        });
+        if (item.productId) {
+          const product = await this.db.product.findUnique({
+            where: { id: item.productId },
+          });
+          if (!product) continue;
+          const price = product.discountPrice;
+          totalPrice = totalPrice.add(new Decimal(price).mul(item.quantity));
+          orderItems.push({
+            productId: item.productId,
+            quantity: item.quantity,
+            priceAtTime: price,
+          });
+        } else if (item.packId) {
+          const pack = await this.db.pack.findUnique({
+            where: { id: item.packId },
+          });
+          if (!pack) continue;
+          totalPrice = totalPrice.add(
+            new Decimal(pack.price).mul(item.quantity),
+          );
+          orderItems.push({
+            packId: item.packId,
+            quantity: item.quantity,
+            priceAtTime: pack.price,
+          });
+        }
       }
-    } else {
+    } else if (userId) {
       // Fallback: Get cart from DB
       const cart = await this.db.cart.findUnique({
         where: { userId },
@@ -242,6 +257,7 @@ export class OrderService {
           items: {
             include: {
               product: true,
+              pack: true,
             },
           },
         },
@@ -252,10 +268,19 @@ export class OrderService {
       }
 
       orderItems = cart.items.map((item) => {
-        const price = item.product.discountPrice || item.product.price;
+        let price: Decimal;
+        if (item.productId && item.product) {
+          price = item.product.discountPrice || item.product.price;
+        } else if (item.packId && item.pack) {
+          price = item.pack.price;
+        } else {
+          price = new Decimal(0); // Should not happen if data integrity is maintained
+        }
+
         totalPrice = totalPrice.add(new Decimal(price).mul(item.quantity));
         return {
           productId: item.productId,
+          packId: item.packId,
           quantity: item.quantity,
           priceAtTime: price,
         };
@@ -278,11 +303,14 @@ export class OrderService {
         firstName: dto.firstName,
         lastName: dto.lastName,
         phone: dto.phone,
+        secondaryPhone: dto.secondaryPhone,
         email: dto.email,
         shippingAddress: dto.shippingAddress,
         city: dto.city,
         shippingCost: dto.shippingCost,
         remarks: dto.remarks,
+        paymentMethod: dto.paymentMethod as any, // Cast to any to avoid type mismatch before prisma generate
+        paymentPlan: dto.paymentPlan as any,
         totalPrice,
         status: 'PENDING',
         items: {

@@ -73,7 +73,6 @@ export class CatalogService {
       where: { id },
       include: {
         products: {
-          where: { showInMenu: true },
           orderBy: { createdAt: 'desc' },
         },
       },
@@ -86,12 +85,20 @@ export class CatalogService {
     return category;
   }
 
-  async getCategoryBySlug(slug: string) {
+  async getCategoryBySlug(slug: string, minPrice?: string, maxPrice?: string) {
+    const where: Prisma.ProductWhereInput = {};
+
+    if (minPrice || maxPrice) {
+      where.discountPrice = {};
+      if (minPrice) where.discountPrice.gte = Number(minPrice);
+      if (maxPrice) where.discountPrice.lte = Number(maxPrice);
+    }
+
     const category = await this.db.category.findUnique({
       where: { slug },
       include: {
         products: {
-          where: { showInMenu: true },
+          where,
           orderBy: { createdAt: 'desc' },
         },
       },

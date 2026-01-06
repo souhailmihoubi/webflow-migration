@@ -120,7 +120,10 @@ export class PackFormComponent implements OnInit {
       }
     });
 
-    // Subscribe to form changes to trigger price recalculation - REMOVED as per instruction
+    // Subscribe to form changes to trigger price recalculation
+    this.packForm.valueChanges.subscribe(() => {
+      this.calculatePrice();
+    });
   }
 
   loadProductsByCategory() {
@@ -159,6 +162,7 @@ export class PackFormComponent implements OnInit {
         console.log('CAC products:', this.cacProducts());
         console.log('Salon products:', this.salonProducts());
 
+        this.calculatePrice();
         this.isLoading.set(false);
       },
       error: (error: any) => {

@@ -50,7 +50,7 @@ const routes: Routes = [
     ],
   },
   { path: 'cart', component: CartComponent },
-  { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
+  { path: 'checkout', component: CheckoutComponent },
   { path: 'contact', component: ContactComponent },
   {
     path: 'profile',

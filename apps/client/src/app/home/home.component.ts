@@ -44,7 +44,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   // Hero Slider
   heroImages = signal([
     'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?q=80&w=2000&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=2000&auto=format&fit=crop',
   ]);
   currentHeroSlide = signal(0);
