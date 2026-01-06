@@ -325,6 +325,12 @@
                     @if (checkoutForm.get('phone')?.errors?.['pattern']) {
                       Veuillez entrer uniquement des chiffres.
                     }
+                    @if (checkoutForm.get('phone')?.errors?.['tunisianPhone']) {
+                      {{
+                        checkoutForm.get('phone')?.errors?.['tunisianPhone']
+                          .message
+                      }}
+                    }
                   </div>
                 }
               </div>
@@ -370,7 +376,22 @@
                   checkoutForm.get('secondaryPhone')?.invalid
                 ) {
                   <div class="text-red-500 text-[10px] mt-1 pl-1">
-                    Veuillez entrer uniquement des chiffres.
+                    @if (
+                      checkoutForm.get('secondaryPhone')?.errors?.['pattern']
+                    ) {
+                      Veuillez entrer uniquement des chiffres.
+                    }
+                    @if (
+                      checkoutForm.get('secondaryPhone')?.errors?.[
+                        'tunisianPhone'
+                      ]
+                    ) {
+                      {{
+                        checkoutForm.get('secondaryPhone')?.errors?.[
+                          'tunisianPhone'
+                        ].message
+                      }}
+                    }
                   </div>
                 }
               </div>

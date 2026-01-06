@@ -6,6 +6,8 @@ import {
   ReactiveFormsModule,
   FormBuilder,
   Validators,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { CartService } from '../shared/services/cart.service';
 import { OrderService } from '../shared/services/order.service';
@@ -21,6 +23,43 @@ import {
   getShippingCost,
 } from '../shared/constants/governorates';
 import { COUNTRY_CODES } from '../shared/constants/countries';
+
+// Custom validator for Tunisian phone numbers
+function tunisianPhoneValidator(
+  control: AbstractControl,
+): ValidationErrors | null {
+  const phoneNumber = control.value;
+  const countryCode = control.parent?.get('countryCode')?.value;
+
+  // Only validate if there's a phone number
+  if (!phoneNumber) {
+    return null;
+  }
+
+  // Only apply Tunisia-specific validation if country code is +216
+  if (countryCode === '+216') {
+    // Remove spaces and any non-digit characters for validation
+    const cleanPhone = phoneNumber.replace(/\s/g, '');
+
+    // Must be exactly 8 digits
+    if (!/^\d{8}$/.test(cleanPhone)) {
+      return {
+        tunisianPhone: {
+          message: 'Le numéro doit contenir exactement 8 chiffres',
+        },
+      };
+    }
+
+    // Must start with 5, 2, 3, or 9
+    if (!/^[5239]/.test(cleanPhone)) {
+      return {
+        tunisianPhone: { message: 'Le numéro doit commencer par 5, 2, 9 ou 3' },
+      };
+    }
+  }
+
+  return null;
+}
 
 @Component({
   selector: 'app-checkout',
@@ -59,8 +98,15 @@ export class CheckoutComponent {
     lastName: ['', [Validators.required]],
     email: ['', [Validators.email]],
     countryCode: ['+216', [Validators.required]],
-    phone: ['', [Validators.required, Validators.pattern(/^\d+$/)]],
-    secondaryPhone: ['', [Validators.pattern(/^\d+$/)]],
+    phone: [
+      '',
+      [
+        Validators.required,
+        Validators.pattern(/^\d+$/),
+        tunisianPhoneValidator,
+      ],
+    ],
+    secondaryPhone: ['', [Validators.pattern(/^\d+$/), tunisianPhoneValidator]],
     address: ['', [Validators.required]],
     city: ['', [Validators.required]],
     notes: [''],
@@ -92,6 +138,12 @@ export class CheckoutComponent {
         this.checkoutForm.patchValue({ paymentPlan: PaymentPlan.FULL });
       }
     });
+
+    // Re-validate phone numbers when country code changes
+    this.checkoutForm.get('countryCode')?.valueChanges.subscribe(() => {
+      this.checkoutForm.get('phone')?.updateValueAndValidity();
+      this.checkoutForm.get('secondaryPhone')?.updateValueAndValidity();
+    });
   }
 
   onSubmit() {
@@ -117,8 +169,12 @@ export class CheckoutComponent {
     if (controls.phone.invalid) {
       if (controls.phone.errors?.['required']) {
         this.toast.error('Le numéro de téléphone est requis');
+      } else if (controls.phone.errors?.['tunisianPhone']) {
+        this.toast.error(controls.phone.errors['tunisianPhone'].message);
       } else if (controls.phone.errors?.['pattern']) {
-        this.toast.error('Le numéro de téléphone est invalide');
+        this.toast.error(
+          'Le numéro de téléphone doit contenir uniquement des chiffres',
+        );
       }
       return;
     }
