@@ -75,6 +75,11 @@
                 Slug
               </th>
               <th
+                class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold"
+              >
+                Page d'accueil
+              </th>
+              <th
                 class="px-6 py-4 text-[9px] uppercase tracking-widest text-gray-400 font-bold text-right"
               >
                 Actions
@@ -104,6 +109,21 @@
                   <p class="text-[10px] text-gray-400 font-mono">
                     {{ cat.slug }}
                   </p>
+                </td>
+                <td class="px-6 py-4">
+                  @if (cat.showInHomePage) {
+                    <span
+                      class="inline-block px-3 py-1 bg-green-100 text-green-700 text-[9px] font-bold uppercase tracking-widest rounded-full"
+                    >
+                      Oui
+                    </span>
+                  } @else {
+                    <span
+                      class="inline-block px-3 py-1 bg-gray-100 text-gray-500 text-[9px] font-bold uppercase tracking-widest rounded-full"
+                    >
+                      Non
+                    </span>
+                  }
                 </td>
                 <td class="px-6 py-4 text-right">
                   <div class="flex items-center justify-end space-x-3">
@@ -229,6 +249,23 @@
             </div>
             <!-- Hidden input to maintain form validation if needed, though we patch value directly -->
             <input type="hidden" formControlName="image" />
+          </div>
+
+          <div class="space-y-2">
+            <label class="flex items-center space-x-3 cursor-pointer">
+              <input
+                type="checkbox"
+                formControlName="showInHomePage"
+                class="w-5 h-5 text-accent border-gray-300 rounded focus:ring-accent focus:ring-2"
+              />
+              <span class="text-[11px] font-bold text-primary">
+                Afficher dans la page d'accueil et la navbar
+              </span>
+            </label>
+            <p class="text-[9px] text-gray-400 ml-8">
+              Cochez cette case pour afficher cette catégorie dans la page
+              d'accueil et le menu de navigation
+            </p>
           </div>
 
           <button

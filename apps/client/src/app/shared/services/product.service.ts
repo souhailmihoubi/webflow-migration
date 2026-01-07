@@ -14,6 +14,7 @@ export interface Product {
   productDescription: string;
   priceDetails: string;
   showInMenu: boolean;
+  videoLink?: string;
   category: {
     id: string;
     name: string;

@@ -3,7 +3,7 @@ import {
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
 
-import { provideRouter, Routes } from '@angular/router';
+import { provideRouter, Routes, withInMemoryScrolling } from '@angular/router';
 import {
   provideHttpClient,
   withFetch,
@@ -69,7 +69,13 @@ const routes: Routes = [
   },
 
   { path: 'category/:slug', component: CategoryDetailComponent },
-
+  {
+    path: 'categories',
+    loadComponent: () =>
+      import('./categories-list/categories-list.component').then(
+        (m) => m.CategoriesListComponent,
+      ),
+  },
   { path: 'product/:slug', component: ProductDetailComponent },
   { path: 'packs', component: PacksListComponent },
   { path: 'pack/:slug', component: PackDetailComponent },
@@ -79,7 +85,13 @@ const routes: Routes = [
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'top',
+        anchorScrolling: 'enabled',
+      }),
+    ),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
   ],
 };

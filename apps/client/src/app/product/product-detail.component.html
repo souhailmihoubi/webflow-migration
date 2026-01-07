@@ -63,6 +63,53 @@
                 Promotion
               </div>
             }
+
+            <!-- Navigation Arrows -->
+            @if (allImages.length > 1) {
+              <!-- Previous Arrow -->
+              <button
+                (click)="prevImage($event)"
+                class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-primary p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                aria-label="Image précédente"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15.75 19.5 8.25 12l7.5-7.5"
+                  />
+                </svg>
+              </button>
+
+              <!-- Next Arrow -->
+              <button
+                (click)="nextImage($event)"
+                class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-primary p-3 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                aria-label="Image suivante"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                  />
+                </svg>
+              </button>
+            }
           </div>
 
           <!-- Thumbnails BELOW (Moved as per request) -->
@@ -291,6 +338,36 @@
       </div>
     </div>
   </section>
+
+  <!-- Video Section -->
+  @if (getYoutubeEmbedUrl()) {
+    <section class="bg-white py-20 px-4">
+      <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+          <h2
+            class="text-3xl md:text-4xl font-heading font-bold text-primary uppercase tracking-[0.2em] mb-4"
+          >
+            Vidéo du Produit
+          </h2>
+          <div class="w-20 h-1 bg-accent mx-auto"></div>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+          <div
+            class="relative aspect-video bg-black shadow-2xl overflow-hidden"
+          >
+            <iframe
+              [src]="getYoutubeEmbedUrl()!"
+              class="absolute inset-0 w-full h-full"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
 
   <!-- Related Products -->
   @if (relatedProducts().length > 0) {

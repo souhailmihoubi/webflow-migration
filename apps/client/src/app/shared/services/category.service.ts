@@ -25,16 +25,49 @@ export class CategoryService {
 
   categories = signal<Category[]>([]);
 
+  // Priority order for categories
+  private readonly prioritySlugs = ['salon', 'cac', 'sam'];
+
   fetchCategories(): Observable<any> {
     return this.http.get<any>(this.apiUrl).pipe(
       tap((response) => {
+        let categoriesData: Category[] = [];
+
         if (Array.isArray(response)) {
-          this.categories.set(response);
+          categoriesData = response;
         } else if (response.data && Array.isArray(response.data)) {
-          this.categories.set(response.data);
+          categoriesData = response.data;
         }
+
+        // Sort categories with priority slugs first
+        const sortedCategories = this.sortCategories(categoriesData);
+        this.categories.set(sortedCategories);
       }),
     );
+  }
+
+  private sortCategories(categories: Category[]): Category[] {
+    // Split into priority and non-priority categories
+    const priorityCategories: Category[] = [];
+    const otherCategories: Category[] = [];
+
+    categories.forEach((category) => {
+      if (this.prioritySlugs.includes(category.slug)) {
+        priorityCategories.push(category);
+      } else {
+        otherCategories.push(category);
+      }
+    });
+
+    // Sort priority categories by their index in prioritySlugs
+    priorityCategories.sort((a, b) => {
+      const indexA = this.prioritySlugs.indexOf(a.slug);
+      const indexB = this.prioritySlugs.indexOf(b.slug);
+      return indexA - indexB;
+    });
+
+    // Return priority categories first, then others
+    return [...priorityCategories, ...otherCategories];
   }
 
   getCategoryBySlug(

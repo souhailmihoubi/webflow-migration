@@ -81,7 +81,7 @@ export class CheckoutComponent {
 
   governorates = TUNISIA_GOVERNORATES;
   countryCodes = COUNTRY_CODES;
-  shippingCost = signal(7); // Default shipping cost
+  shippingCost = signal(0); // Default shipping cost
 
   // Expose enums to template
   PaymentMethod = PaymentMethod;

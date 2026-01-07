@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -29,6 +29,11 @@ export class NavbarComponent implements OnInit {
   isAuthModalOpen = this.authService.isAuthModalOpen;
   categories = this.categoryService.categories;
   cartCount = this.cartService.cartCount;
+
+  // Filtered categories for navbar (only showInHomePage: true)
+  navbarCategories = computed(() =>
+    this.categoryService.categories().filter((cat) => cat.showInHomePage),
+  );
 
   isUserDropdownOpen = false;
   isCategoriesDropdownOpen = false;

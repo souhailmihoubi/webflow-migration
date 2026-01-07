@@ -53,6 +53,7 @@ export class CategoryListComponent implements OnInit {
       name: ['', [Validators.required]],
       slug: ['', [Validators.required]],
       image: [''],
+      showInHomePage: [false],
     });
   }
 
@@ -116,6 +117,7 @@ export class CategoryListComponent implements OnInit {
       name: category.name,
       slug: category.slug,
       image: category.image,
+      showInHomePage: category.showInHomePage,
     });
     this.showModal.set(true);
   }

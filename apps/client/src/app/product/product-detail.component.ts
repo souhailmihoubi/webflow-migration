@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ProductService, Product } from '../shared/services/product.service';
 import { CartService } from '../shared/services/cart.service';
 import { AuthService } from '../shared/auth/auth.service';
@@ -17,6 +18,7 @@ export class ProductDetailComponent implements OnInit {
   private productService = inject(ProductService);
   private cartService = inject(CartService);
   private authService = inject(AuthService);
+  private sanitizer = inject(DomSanitizer);
 
   product = signal<Product | null>(null);
 
@@ -138,5 +140,41 @@ export class ProductDetailComponent implements OnInit {
 
   setActiveTab(tab: 'description' | 'info') {
     this.activeTab.set(tab);
+  }
+
+  // --- Video Logic ---
+  getYoutubeEmbedUrl(): SafeResourceUrl | null {
+    const product = this.product();
+    if (!product?.videoLink) return null;
+
+    const videoId = this.extractYoutubeVideoId(product.videoLink);
+    console.log(videoId);
+    if (!videoId) return null;
+
+    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+  }
+
+  private extractYoutubeVideoId(url: string): string | null {
+    // Handle various YouTube URL formats:
+    // - https://www.youtube.com/watch?v=VIDEO_ID
+    // - https://youtu.be/VIDEO_ID
+    // - https://www.youtube.com/embed/VIDEO_ID
+    // - https://youtube.com/shorts/VIDEO_ID
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]+)/,
+      /(?:youtu\.be\/)([a-zA-Z0-9_-]+)/,
+      /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/,
+      /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]+)/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+
+    return null;
   }
 }
