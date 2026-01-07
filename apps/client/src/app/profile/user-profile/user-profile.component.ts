@@ -5,9 +5,12 @@ import {
   FormGroup,
   ReactiveFormsModule,
   Validators,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { AuthService } from '../../shared/auth/auth.service';
 import { RouterModule } from '@angular/router';
+import { tunisianPhoneValidator } from '../../shared/validators/phone.validator';
 
 import { COUNTRY_CODES } from '../../shared/constants/countries';
 
@@ -43,7 +46,12 @@ export class UserProfileComponent implements OnInit {
       lastName: ['', [Validators.required]],
       email: [{ value: '', disabled: true }],
       countryCode: ['+216', [Validators.required]],
-      phone: ['', [Validators.pattern(/^\d+$/)]],
+      phone: ['', [Validators.pattern(/^\d+$/), tunisianPhoneValidator]],
+    });
+
+    // Re-validate phone numbers when country code changes
+    this.profileForm.get('countryCode')?.valueChanges.subscribe(() => {
+      this.profileForm.get('phone')?.updateValueAndValidity();
     });
 
     this.passwordForm = this.fb.group(
@@ -106,13 +114,12 @@ export class UserProfileComponent implements OnInit {
       : '';
 
     const payload = {
-      ...formVal,
+      firstName: formVal.firstName,
+      lastName: formVal.lastName,
       phone: fullPhone,
     };
-    // Remove temporary field countryCode from payload if backend doesn't want it,
-    // although updateProfile likely accepts partial UserUpdateDto.
-    // Assuming backend takes { firstName, lastName, phone } and ignores extras or we should sanitize.
-    // AuthServic.updateProfile takes Partial<User>.
+    // Explicitly constructed payload to match UpdateProfileDto
+    // Replaces: const payload = { ...formVal, phone: fullPhone };
 
     this.authService.updateProfile(payload).subscribe({
       next: (updated) => {

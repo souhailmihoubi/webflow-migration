@@ -53,9 +53,16 @@
       </div>
     }
 
+    <!-- Success Message -->
+    @if (successMessage()) {
+      <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-6">
+        <p class="text-sm text-green-700">{{ successMessage() }}</p>
+      </div>
+    }
+
     <!-- Login Form -->
     @if (currentView === 'login') {
-      <form (ngSubmit)="onLogin()" class="space-y-6">
+      <form (ngSubmit)="onLogin()" class="space-y-6" novalidate>
         <div>
           <label
             for="email"
@@ -68,9 +75,24 @@
             [(ngModel)]="loginData.email"
             name="email"
             required
+            email
+            #loginEmail="ngModel"
             class="w-full bg-white border border-gray-200 px-4 py-3 focus:outline-none focus:border-accent transition-colors text-primary font-sans"
+            [class.border-red-500]="
+              (loginEmail.touched || submitted) && loginEmail.invalid
+            "
             placeholder="votre@email.com"
           />
+          @if ((loginEmail.touched || submitted) && loginEmail.invalid) {
+            <div class="text-red-500 text-xs mt-1">
+              @if (loginEmail.errors?.['required']) {
+                L'email est requis
+              }
+              @if (loginEmail.errors?.['email']) {
+                Format d'email invalide
+              }
+            </div>
+          }
         </div>
         <div>
           <label
@@ -84,9 +106,18 @@
             [(ngModel)]="loginData.password"
             name="password"
             required
+            #loginPassword="ngModel"
             class="w-full bg-white border border-gray-200 px-4 py-3 focus:outline-none focus:border-accent transition-colors text-primary font-sans"
+            [class.border-red-500]="
+              (loginPassword.touched || submitted) && loginPassword.invalid
+            "
             placeholder="••••••••"
           />
+          @if ((loginPassword.touched || submitted) && loginPassword.invalid) {
+            <div class="text-red-500 text-xs mt-1">
+              Le mot de passe est requis
+            </div>
+          }
         </div>
 
         <div class="flex justify-end">
@@ -101,7 +132,7 @@
 
         <button
           type="submit"
-          [disabled]="isLoading"
+          [disabled]="isLoading || !isLoginFormValid"
           class="w-full bg-primary text-white font-heading font-medium uppercase tracking-widest py-4 hover:bg-zinc-800 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {{ isLoading ? 'Connexion...' : 'Se Connecter' }}
@@ -122,7 +153,7 @@
 
     <!-- Register Form -->
     @if (currentView === 'register') {
-      <form (ngSubmit)="onRegister()" class="space-y-6">
+      <form (ngSubmit)="onRegister()" class="space-y-6" novalidate>
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label
@@ -136,9 +167,16 @@
               [(ngModel)]="registerData.firstName"
               name="firstName"
               required
+              #firstName="ngModel"
               class="w-full bg-white border border-gray-200 px-4 py-3 focus:outline-none focus:border-accent transition-colors text-primary font-sans"
+              [class.border-red-500]="
+                (firstName.touched || submitted) && firstName.invalid
+              "
               placeholder="Jean"
             />
+            @if ((firstName.touched || submitted) && firstName.invalid) {
+              <div class="text-red-500 text-xs mt-1">Prénom requis</div>
+            }
           </div>
           <div>
             <label
@@ -152,10 +190,75 @@
               [(ngModel)]="registerData.lastName"
               name="lastName"
               required
+              #lastName="ngModel"
               class="w-full bg-white border border-gray-200 px-4 py-3 focus:outline-none focus:border-accent transition-colors text-primary font-sans"
+              [class.border-red-500]="
+                (lastName.touched || submitted) && lastName.invalid
+              "
               placeholder="Dupont"
             />
+            @if ((lastName.touched || submitted) && lastName.invalid) {
+              <div class="text-red-500 text-xs mt-1">Nom requis</div>
+            }
           </div>
+        </div>
+        <div>
+          <label
+            for="phone"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Téléphone</label
+          >
+          <div class="flex space-x-2">
+            <div class="relative w-5/12">
+              <select
+                id="countryCode"
+                [(ngModel)]="registerData.countryCode"
+                name="countryCode"
+                class="w-full bg-white border border-gray-200 p-3 focus:outline-none focus:border-accent transition-colors text-primary font-sans appearance-none truncate pr-6"
+              >
+                @for (code of countryCodes; track code.code) {
+                  <option [value]="code.dial_code">
+                    {{ code.flag }} {{ code.name }} ({{ code.dial_code }})
+                  </option>
+                }
+              </select>
+              <div
+                class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none text-gray-400"
+              >
+                <svg
+                  class="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </div>
+            </div>
+            <div class="relative flex-1">
+              <input
+                type="tel"
+                id="phone"
+                [(ngModel)]="registerData.phone"
+                name="phone"
+                required
+                #phone="ngModel"
+                class="w-full bg-white border border-gray-200 px-4 py-3 focus:outline-none focus:border-accent transition-colors text-primary font-sans"
+                [class.border-red-500]="
+                  (phone.touched || submitted) && phone.invalid
+                "
+                placeholder="XX XXX XXX"
+              />
+            </div>
+          </div>
+          @if ((phone.touched || submitted) && phone.invalid) {
+            <div class="text-red-500 text-xs mt-1">Téléphone requis</div>
+          }
         </div>
         <div>
           <label
@@ -169,9 +272,24 @@
             [(ngModel)]="registerData.email"
             name="email"
             required
+            email
+            #regEmail="ngModel"
             class="w-full bg-white border border-gray-200 px-4 py-3 focus:outline-none focus:border-accent transition-colors text-primary font-sans"
+            [class.border-red-500]="
+              (regEmail.touched || submitted) && regEmail.invalid
+            "
             placeholder="votre@email.com"
           />
+          @if ((regEmail.touched || submitted) && regEmail.invalid) {
+            <div class="text-red-500 text-xs mt-1">
+              @if (regEmail.errors?.['required']) {
+                L'email est requis
+              }
+              @if (regEmail.errors?.['email']) {
+                Format d'email invalide
+              }
+            </div>
+          }
         </div>
         <div>
           <label
@@ -185,14 +303,29 @@
             [(ngModel)]="registerData.password"
             name="password"
             required
+            minlength="6"
+            #regPassword="ngModel"
             class="w-full bg-white border border-gray-200 px-4 py-3 focus:outline-none focus:border-accent transition-colors text-primary font-sans"
+            [class.border-red-500]="
+              (regPassword.touched || submitted) && regPassword.invalid
+            "
             placeholder="••••••••"
           />
+          @if ((regPassword.touched || submitted) && regPassword.invalid) {
+            <div class="text-red-500 text-xs mt-1">
+              @if (regPassword.errors?.['required']) {
+                Le mot de passe est requis
+              }
+              @if (regPassword.errors?.['minlength']) {
+                Le mot de passe doit contenir au moins 6 caractères
+              }
+            </div>
+          }
         </div>
 
         <button
           type="submit"
-          [disabled]="isLoading"
+          [disabled]="isLoading || !isRegisterFormValid"
           class="w-full bg-primary text-white font-heading font-medium uppercase tracking-widest py-4 hover:bg-zinc-800 transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {{ isLoading ? 'Inscription...' : "S'inscrire" }}
@@ -228,6 +361,9 @@
           <input
             type="email"
             id="fp-email"
+            [(ngModel)]="forgotMwEmail"
+            name="fpEmail"
+            required
             class="w-full bg-white border border-gray-200 px-4 py-3 focus:outline-none focus:border-accent transition-colors text-primary font-sans"
             placeholder="votre@email.com"
           />

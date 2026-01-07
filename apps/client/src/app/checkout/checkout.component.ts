@@ -24,42 +24,7 @@ import {
 } from '../shared/constants/governorates';
 import { COUNTRY_CODES } from '../shared/constants/countries';
 
-// Custom validator for Tunisian phone numbers
-function tunisianPhoneValidator(
-  control: AbstractControl,
-): ValidationErrors | null {
-  const phoneNumber = control.value;
-  const countryCode = control.parent?.get('countryCode')?.value;
-
-  // Only validate if there's a phone number
-  if (!phoneNumber) {
-    return null;
-  }
-
-  // Only apply Tunisia-specific validation if country code is +216
-  if (countryCode === '+216') {
-    // Remove spaces and any non-digit characters for validation
-    const cleanPhone = phoneNumber.replace(/\s/g, '');
-
-    // Must be exactly 8 digits
-    if (!/^\d{8}$/.test(cleanPhone)) {
-      return {
-        tunisianPhone: {
-          message: 'Le numéro doit contenir exactement 8 chiffres',
-        },
-      };
-    }
-
-    // Must start with 5, 2, 3, or 9
-    if (!/^[5239]/.test(cleanPhone)) {
-      return {
-        tunisianPhone: { message: 'Le numéro doit commencer par 5, 2, 9 ou 3' },
-      };
-    }
-  }
-
-  return null;
-}
+import { tunisianPhoneValidator } from '../shared/validators/phone.validator';
 
 @Component({
   selector: 'app-checkout',

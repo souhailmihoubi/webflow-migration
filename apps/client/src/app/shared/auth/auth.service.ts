@@ -107,4 +107,11 @@ export class AuthService {
   changePassword(data: any) {
     return this.http.post(`${this.apiUrl}/change-password`, data);
   }
+
+  forgotPassword(email: string) {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/forgot-password`,
+      { email },
+    );
+  }
 }

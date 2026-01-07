@@ -197,6 +197,12 @@
                     @if (profileForm.get('phone')?.errors?.['pattern']) {
                       Veuillez entrer uniquement des chiffres.
                     }
+                    @if (profileForm.get('phone')?.errors?.['tunisianPhone']) {
+                      {{
+                        profileForm.get('phone')?.errors?.['tunisianPhone']
+                          ?.message
+                      }}
+                    }
                   </div>
                 }
               </div>

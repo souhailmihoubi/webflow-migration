@@ -15,36 +15,76 @@ export interface Message {
 
 // Auth DTOs
 export class RegisterDto {
+  @IsString()
+  @IsNotEmpty()
   firstName!: string;
+
+  @IsString()
+  @IsNotEmpty()
   lastName!: string;
+
+  @IsString()
+  @IsNotEmpty()
   phone!: string;
+
+  @IsEmail()
+  @IsNotEmpty()
   email!: string;
+
+  @IsString()
+  @IsNotEmpty()
   password!: string;
+
+  @IsOptional()
+  @IsString()
   role?: 'ADMIN' | 'CUSTOMER';
 }
 
 export class LoginDto {
+  @IsEmail()
   email!: string;
+
+  @IsString()
+  @IsNotEmpty()
   password!: string;
 }
 
 export class ChangePasswordDto {
+  @IsString()
+  @IsNotEmpty()
   oldPassword!: string;
+
+  @IsString()
+  @IsNotEmpty()
   newPassword!: string;
 }
 
 export class ForgotPasswordDto {
+  @IsEmail()
   email!: string;
 }
 
 export class ResetPasswordDto {
+  @IsString()
+  @IsNotEmpty()
   token!: string;
+
+  @IsString()
+  @IsNotEmpty()
   newPassword!: string;
 }
 
 export class UpdateProfileDto {
+  @IsOptional()
+  @IsString()
   firstName?: string;
+
+  @IsOptional()
+  @IsString()
   lastName?: string;
+
+  @IsOptional()
+  @IsString()
   phone?: string;
 }
 
