@@ -127,14 +127,23 @@ export class AuthModalComponent {
   }
 
   onForgotPassword() {
-    if (!this.loginData.email && !this.forgotMwEmail) {
+    this.submitted = true;
+
+    // Determine which email to use
+    // If the user was in login mode and switched, loginData.email might be populated
+    // If they typed in the forgot password form, forgotMwEmail is populated
+    // We should prefer forgotMwEmail if the user is explicitly on that view and typing there.
+    const emailToSend = this.forgotMwEmail || this.loginData.email;
+
+    if (!emailToSend) {
       this.errorMessage.set('Veuillez entrer votre email');
       return;
     }
 
-    // Use the email entered in the forgot password form (need to link it to correct model)
-    // The previous code had a specific variable for this but let's make sure it's bound correctly in template
-    const emailToSend = this.forgotMwEmail || this.loginData.email;
+    if (!this.isValidEmail(emailToSend)) {
+      this.errorMessage.set("Format d'email invalide");
+      return;
+    }
 
     this.isLoading = true;
     this.errorMessage.set(null);
@@ -180,5 +189,10 @@ export class AuthModalComponent {
       !!this.registerData.phone &&
       getTunisianPhoneError(this.registerData.phone) === null
     );
+  }
+
+  get isForgotPasswordFormValid(): boolean {
+    const email = this.forgotMwEmail || this.loginData.email;
+    return !!email && this.isValidEmail(email);
   }
 }

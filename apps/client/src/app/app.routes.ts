@@ -20,6 +20,13 @@ export const appRoutes: Routes = [
   },
   { path: 'category/:slug', component: CategoryDetailComponent },
   { path: 'product/:slug', component: ProductDetailComponent },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent,
+      ),
+  },
 ];
 
 // Re-compiled to ensure CartComponent is recognized.
