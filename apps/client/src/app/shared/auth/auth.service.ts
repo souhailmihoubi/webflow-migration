@@ -39,7 +39,41 @@ export class AuthService {
   }
 
   constructor() {
-    /* empty */
+    // Start session validation if user is logged in
+    if (this.getToken()) {
+      this.startSessionValidation();
+    }
+  }
+
+  private sessionCheckInterval: ReturnType<typeof setInterval> | null = null;
+
+  private startSessionValidation() {
+    // Check session validity every 30 seconds
+    this.sessionCheckInterval = setInterval(() => {
+      if (this.getToken()) {
+        this.validateSession();
+      } else {
+        this.stopSessionValidation();
+      }
+    }, 30000); // 30 seconds
+
+    // Also check immediately on startup
+    this.validateSession();
+  }
+
+  private stopSessionValidation() {
+    if (this.sessionCheckInterval) {
+      clearInterval(this.sessionCheckInterval);
+      this.sessionCheckInterval = null;
+    }
+  }
+
+  private validateSession() {
+    this.http.get(`${this.apiUrl}/profile`).subscribe({
+      error: () => {
+        // Error handled by interceptor - will auto-logout if 401
+      },
+    });
   }
 
   private getUserFromStorage(): User | null {
@@ -68,6 +102,7 @@ export class AuthService {
   }
 
   logout() {
+    this.stopSessionValidation();
     localStorage.removeItem('accessToken');
     localStorage.removeItem('user');
     this.currentUser.set(null);
@@ -77,6 +112,7 @@ export class AuthService {
     localStorage.setItem('accessToken', response.accessToken);
     localStorage.setItem('user', JSON.stringify(response.user));
     this.currentUser.set(response.user);
+    this.startSessionValidation();
   }
 
   getToken() {

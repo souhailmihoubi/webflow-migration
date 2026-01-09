@@ -30,11 +30,11 @@ export class ToastService {
     }, duration);
   }
 
-  success(message: string, duration = 2000) {
+  success(message: string, duration = 3000) {
     this.show(message, 'success', duration);
   }
 
-  error(message: string, duration = 3000) {
+  error(message: string, duration = 5000) {
     this.show(message, 'error', duration);
   }
 
