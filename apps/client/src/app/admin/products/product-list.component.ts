@@ -61,11 +61,13 @@ export class ProductListComponent implements OnInit {
       name: ['', [Validators.required]],
       slug: ['', [Validators.required]],
       productDescription: ['', [Validators.required]],
+      priceDetails: [''],
       price: [0, [Validators.required, Validators.min(0)]],
       discountPrice: [null],
       categoryId: ['', [Validators.required]],
       mainImage: ['', [Validators.required]],
       multiImages: this.fb.array([]),
+      videoLink: [''],
       showInMenu: [true],
       visible: [true],
     });
@@ -183,10 +185,12 @@ export class ProductListComponent implements OnInit {
       name: product.name,
       slug: product.slug,
       productDescription: product.productDescription,
+      priceDetails: product.priceDetails || '',
       price: product.price,
       discountPrice: product.discountPrice,
       categoryId: product.category.id,
       mainImage: product.mainImage,
+      videoLink: product.videoLink || '',
       showInMenu: product.showInMenu,
       visible: product.visible,
     });
@@ -309,9 +313,20 @@ export class ProductListComponent implements OnInit {
       categoryId: formValue.categoryId,
       mainImage: formValue.mainImage,
       showInMenu: formValue.showInMenu ?? false,
-      // visible: formValue.visible, // REMOVED: Not in DTO
       multiImages: formValue.multiImages || [],
     };
+
+    if (formValue.discountPrice) {
+      payload.discountPrice = Number(formValue.discountPrice);
+    }
+
+    if (formValue.priceDetails) {
+      payload.priceDetails = formValue.priceDetails;
+    }
+
+    if (formValue.videoLink) {
+      payload.videoLink = formValue.videoLink;
+    }
 
     if (formValue.discountPrice) {
       payload.discountPrice = Number(formValue.discountPrice);

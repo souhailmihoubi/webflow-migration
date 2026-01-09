@@ -67,9 +67,29 @@ export class AuthModalComponent {
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage.set(
-          err.error?.message || 'Login failed. Please check your credentials.',
-        );
+        // Sanitize error - don't show raw database/internal errors to users
+        const rawMessage = err.error?.message;
+        let userMessage = 'Échec de connexion. Vérifiez vos identifiants.';
+
+        // Only show specific, user-friendly messages
+        if (typeof rawMessage === 'string') {
+          if (
+            rawMessage.includes('Utilisateur non trouvé') ||
+            rawMessage.includes('User not found')
+          ) {
+            userMessage = 'Utilisateur non trouvé';
+          } else if (
+            rawMessage.includes('Mot de passe incorrect') ||
+            rawMessage.includes('incorrect')
+          ) {
+            userMessage = 'Mot de passe incorrect';
+          } else if (rawMessage.includes('Invalid credentials')) {
+            userMessage = 'Identifiants invalides';
+          }
+          // For any other error (database errors, etc.), use generic message
+        }
+
+        this.errorMessage.set(userMessage);
       },
     });
   }

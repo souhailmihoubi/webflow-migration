@@ -7,7 +7,7 @@
           routerLink="/"
           class="text-3xl font-heading font-bold text-primary flex items-center tracking-wide"
         >
-          LARTSTOU
+          LARTISTOU
         </a>
       </div>
 
@@ -256,12 +256,14 @@
 
                   <a
                     routerLink="/profile"
+                    (click)="closeDropdowns()"
                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-cream-light transition-colors font-bold uppercase tracking-widest text-[10px]"
                   >
                     Mon Profil
                   </a>
                   <a
                     routerLink="/profile/orders"
+                    (click)="closeDropdowns()"
                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-cream-light transition-colors font-bold uppercase tracking-widest text-[10px]"
                   >
                     Mes Commandes
@@ -270,6 +272,7 @@
                   @if (currentUser()?.role === 'ADMIN') {
                     <a
                       routerLink="/admin"
+                      (click)="closeDropdowns()"
                       class="block px-4 py-2 text-sm text-accent hover:bg-cream-light transition-colors font-bold uppercase tracking-widest text-[10px]"
                     >
                       Administration

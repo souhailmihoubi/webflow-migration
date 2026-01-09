@@ -15,13 +15,25 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: JwtPayload) {
+  async validate(payload: JwtPayload & { sessionToken?: string }) {
     const user = await this.db.user.findUnique({
       where: { id: payload.sub },
     });
 
     if (!user) {
       throw new UnauthorizedException();
+    }
+
+    // Validate session token for single-session authentication
+    // If user has a session token set and it doesn't match the JWT's token,
+    // the session has been invalidated by a newer login
+    if (
+      user.currentSessionToken &&
+      payload.sessionToken !== user.currentSessionToken
+    ) {
+      throw new UnauthorizedException(
+        'Session expired. You have been logged out because this account was accessed from another device.',
+      );
     }
 
     return { userId: user.id, email: user.email, role: user.role };

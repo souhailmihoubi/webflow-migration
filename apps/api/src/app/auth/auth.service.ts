@@ -41,6 +41,9 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
+    // Generate unique session token for single-session auth
+    const sessionToken = crypto.randomBytes(32).toString('hex');
+
     const user = await this.db.user.create({
       data: {
         firstName: dto.firstName,
@@ -49,10 +52,16 @@ export class AuthService {
         email: dto.email,
         password: hashedPassword,
         role: dto.role || 'CUSTOMER',
+        currentSessionToken: sessionToken,
       },
     });
 
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      sessionToken,
+    };
     const accessToken = this.jwtService.sign(payload);
 
     return {
@@ -81,8 +90,26 @@ export class AuthService {
       throw new UnauthorizedException('Mot de passe incorrect');
     }
 
-    const payload = { sub: user.id, email: user.email, role: user.role };
+    // Generate new session token - this invalidates any previous sessions
+    const sessionToken = crypto.randomBytes(32).toString('hex');
+
+    // Update user with new session token
+    await this.db.user.update({
+      where: { id: user.id },
+      data: { currentSessionToken: sessionToken },
+    });
+
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+      sessionToken,
+    };
     const accessToken = this.jwtService.sign(payload);
+
+    this.logger.log(
+      `User ${user.email} logged in. Previous sessions invalidated.`,
+    );
 
     return {
       accessToken,

@@ -1,4 +1,11 @@
-import { Component, inject, OnInit, computed } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  computed,
+  HostListener,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -23,6 +30,7 @@ export class NavbarComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private cartService = inject(CartService);
   private router = inject(Router);
+  private elementRef = inject(ElementRef);
 
   // Expose signals from services
   currentUser = this.authService.currentUser;
@@ -39,6 +47,14 @@ export class NavbarComponent implements OnInit {
   isCategoriesDropdownOpen = false;
   isMobileMenuOpen = false;
   isSearchModalOpen = false;
+
+  // Close dropdowns when clicking outside
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.closeDropdowns();
+    }
+  }
 
   ngOnInit() {
     this.categoryService.fetchCategories().subscribe();
@@ -74,13 +90,17 @@ export class NavbarComponent implements OnInit {
     this.authService.closeAuthModal();
   }
 
-  toggleUserDropdown() {
+  toggleUserDropdown(event?: Event) {
+    if (event) event.stopPropagation();
     this.isUserDropdownOpen = !this.isUserDropdownOpen;
     if (this.isUserDropdownOpen) this.isCategoriesDropdownOpen = false;
   }
 
   toggleCategoriesDropdown(event?: Event) {
-    if (event) event.preventDefault();
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     this.isCategoriesDropdownOpen = !this.isCategoriesDropdownOpen;
     if (this.isCategoriesDropdownOpen) this.isUserDropdownOpen = false;
   }

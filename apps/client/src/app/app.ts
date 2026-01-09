@@ -6,6 +6,7 @@ import { ToastContainerComponent } from './shared/components/toast-container.com
 import { GuestInfoPopupComponent } from './shared/components/guest-info-popup/guest-info-popup.component';
 import { BackButtonComponent } from './shared/components/back-button/back-button.component';
 import { ScrollToTopComponent } from './shared/components/scroll-to-top/scroll-to-top.component';
+import { WhatsappButtonComponent } from './shared/components/whatsapp-button/whatsapp-button.component';
 
 @Component({
   imports: [
@@ -16,6 +17,7 @@ import { ScrollToTopComponent } from './shared/components/scroll-to-top/scroll-t
     GuestInfoPopupComponent,
     BackButtonComponent,
     ScrollToTopComponent,
+    WhatsappButtonComponent,
   ],
   selector: 'app-root',
   templateUrl: './app.html',
