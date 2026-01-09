@@ -143,16 +143,50 @@ export class ProductDetailComponent implements OnInit {
   }
 
   // --- Video Logic ---
-  getYoutubeEmbedUrl(): SafeResourceUrl | null {
+
+  /**
+   * Get video information for embedding (supports YouTube, Facebook, Instagram)
+   */
+  getVideoInfo(): {
+    platform: 'youtube' | 'facebook' | 'instagram';
+    embedUrl: SafeResourceUrl;
+  } | null {
     const product = this.product();
     if (!product?.videoLink) return null;
 
-    const videoId = this.extractYoutubeVideoId(product.videoLink);
-    console.log(videoId);
-    if (!videoId) return null;
+    const url = product.videoLink.trim();
 
-    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-    return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
+    // Try YouTube first
+    const youtubeId = this.extractYoutubeVideoId(url);
+    if (youtubeId) {
+      const embedUrl = `https://www.youtube.com/embed/${youtubeId}`;
+      return {
+        platform: 'youtube',
+        embedUrl: this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl),
+      };
+    }
+
+    // Try Instagram
+    const instagramId = this.extractInstagramVideoId(url);
+    if (instagramId) {
+      const embedUrl = `https://www.instagram.com/p/${instagramId}/embed`;
+      return {
+        platform: 'instagram',
+        embedUrl: this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl),
+      };
+    }
+
+    // Try Facebook
+    const facebookEmbedUrl = this.extractFacebookEmbedUrl(url);
+    if (facebookEmbedUrl) {
+      return {
+        platform: 'facebook',
+        embedUrl:
+          this.sanitizer.bypassSecurityTrustResourceUrl(facebookEmbedUrl),
+      };
+    }
+
+    return null;
   }
 
   private extractYoutubeVideoId(url: string): string | null {
@@ -176,5 +210,43 @@ export class ProductDetailComponent implements OnInit {
     }
 
     return null;
+  }
+
+  private extractInstagramVideoId(url: string): string | null {
+    // Handle Instagram URL formats:
+    // - https://www.instagram.com/reel/VIDEO_ID/
+    // - https://www.instagram.com/p/VIDEO_ID/
+    // - https://instagram.com/reel/VIDEO_ID
+    const patterns = [
+      /instagram\.com\/reel\/([a-zA-Z0-9_-]+)/,
+      /instagram\.com\/p\/([a-zA-Z0-9_-]+)/,
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+
+    return null;
+  }
+
+  private extractFacebookEmbedUrl(url: string): string | null {
+    // Handle Facebook URL formats:
+    // - https://www.facebook.com/watch?v=VIDEO_ID
+    // - https://fb.watch/VIDEO_ID/
+    // - https://www.facebook.com/reel/VIDEO_ID
+    // - https://www.facebook.com/username/videos/VIDEO_ID
+
+    // Check if it's a Facebook URL
+    if (!url.match(/facebook\.com|fb\.watch/i)) {
+      return null;
+    }
+
+    // For Facebook videos, we use the Facebook Video Embed plugin
+    // The embed URL format is: https://www.facebook.com/plugins/video.php?href=ENCODED_URL
+    const encodedUrl = encodeURIComponent(url);
+    return `https://www.facebook.com/plugins/video.php?href=${encodedUrl}&show_text=false&width=560`;
   }
 }
