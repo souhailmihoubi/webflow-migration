@@ -2,7 +2,11 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
-    "types": ["node"]
+    "target": "es2018",
+    "types": ["node"],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["scripts/**/*.ts"]
 }

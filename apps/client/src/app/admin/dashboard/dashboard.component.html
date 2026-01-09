@@ -126,10 +126,10 @@
                   </td>
                   <td class="px-6 py-4">
                     <p class="text-[11px] font-bold text-primary">
-                      {{ order.user.firstName }} {{ order.user.lastName }}
+                      {{ order.firstName }} {{ order.lastName }}
                     </p>
                     <p class="text-[9px] text-gray-400">
-                      {{ order.user.email }}
+                      {{ order.email || order.user?.email || 'N/A' }}
                     </p>
                   </td>
                   <td class="px-6 py-4 text-[11px] font-bold text-primary">

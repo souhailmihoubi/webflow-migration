@@ -215,6 +215,7 @@ export class CheckoutComponent {
         this.isSubmitted.set(true);
         this.cartService.clearCart();
         this.toast.success('Votre commande a été validée avec succès !');
+
         // Scroll to top to see success message
         window.scrollTo({ top: 0, behavior: 'smooth' });
       },

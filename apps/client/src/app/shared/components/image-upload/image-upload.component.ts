@@ -15,7 +15,10 @@ import { environment } from '../../../../environments/environment';
           class="w-24 h-24 bg-gray-50 border border-gray-100 overflow-hidden relative group"
         >
           <img
-            [src]="previewUrl || 'assets/placeholder.png'"
+            [src]="
+              previewUrl ||
+              'https://webflow-migration-assets.s3.eu-west-3.amazonaws.com/placeholder.png'
+            "
             alt="Image preview"
             class="w-full h-full object-cover transition-opacity duration-300"
             [class.opacity-50]="isUploading"

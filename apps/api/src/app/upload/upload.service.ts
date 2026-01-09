@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import sharp from 'sharp';
 import { randomUUID } from 'crypto';
@@ -7,6 +7,7 @@ import { Upload } from '@aws-sdk/lib-storage';
 
 @Injectable()
 export class UploadService {
+  private readonly logger = new Logger(UploadService.name);
   private s3Client: S3Client;
   private bucketName: string;
   private region: string;
@@ -58,7 +59,7 @@ export class UploadService {
       // Return public URL
       return `https://${this.bucketName}.s3.${this.region}.amazonaws.com/${key}`;
     } catch (error) {
-      console.error('Error uploading image to S3:', error);
+      this.logger.error('Error uploading image to S3', error);
       throw new Error('Failed to upload image');
     }
   }
@@ -86,7 +87,7 @@ export class UploadService {
         }),
       );
     } catch (error) {
-      console.error('Error deleting image from S3:', error);
+      this.logger.error('Error deleting image from S3', error);
       // Don't throw error - image might already be deleted or URL format mismatch
     }
   }

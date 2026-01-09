@@ -53,7 +53,7 @@ import { winstonConfig } from './common/logging/winston.config';
     ThrottlerModule.forRoot([
       {
         ttl: 60000, // 60 seconds
-        limit: 10, // 10 requests per ttl
+        limit: 300, // 300 requests per ttl
       },
     ]),
     DatabaseModule,

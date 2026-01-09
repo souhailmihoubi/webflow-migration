@@ -67,7 +67,6 @@ export class AuthModalComponent {
       },
       error: (err) => {
         this.isLoading = false;
-        console.error('Login error', err);
         this.errorMessage.set(
           err.error?.message || 'Login failed. Please check your credentials.',
         );

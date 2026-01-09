@@ -402,13 +402,29 @@
                   class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
                   >Images Supplémentaires</span
                 >
-                <button
-                  type="button"
-                  (click)="addImage()"
-                  class="text-accent text-[9px] font-bold uppercase tracking-widest"
-                >
-                  + Ajouter
-                </button>
+                <div class="flex items-center space-x-2">
+                  @if (isUploading()) {
+                    <div
+                      class="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin"
+                    ></div>
+                  }
+                  <input
+                    #bulkInput
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    class="hidden"
+                    (change)="onBulkImagesSelected($event)"
+                  />
+                  <button
+                    type="button"
+                    (click)="bulkInput.click()"
+                    [disabled]="isUploading()"
+                    class="text-accent text-[9px] font-bold uppercase tracking-widest disabled:opacity-50 hover:underline"
+                  >
+                    + Ajouter Images
+                  </button>
+                </div>
               </div>
 
               <div formArrayName="multiImages" class="space-y-2">

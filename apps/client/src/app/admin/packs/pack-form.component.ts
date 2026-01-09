@@ -136,15 +136,6 @@ export class PackFormComponent implements OnInit {
           ? response
           : response.data || [];
 
-        console.log('All products:', products);
-        console.log(
-          'Categories:',
-          products.map((p: Product) => ({
-            name: p.name,
-            categorySlug: p.category?.slug,
-          })),
-        );
-
         // Filter products by category slug
         this.products.set(products);
 
@@ -157,10 +148,6 @@ export class PackFormComponent implements OnInit {
         this.salonProducts.set(
           products.filter((p: Product) => p.category?.slug === 'salon'),
         );
-
-        console.log('SAM products:', this.samProducts());
-        console.log('CAC products:', this.cacProducts());
-        console.log('Salon products:', this.salonProducts());
 
         this.calculatePrice();
         this.isLoading.set(false);

@@ -3134,3 +3134,230 @@
 {"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs/:id, DELETE} route","timestamp":"2026-01-07T14:30:30.283Z"}
 {"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2026-01-07T14:30:30.300Z"}
 {"level":"info","message":"🚀 Application is running on: http://localhost:3000/api","timestamp":"2026-01-07T14:30:30.303Z"}
+{"context":"NestFactory","level":"info","message":"Starting Nest application...","timestamp":"2026-01-07T15:18:55.495Z"}
+{"context":"InstanceLoader","level":"info","message":"DatabaseModule dependencies initialized","timestamp":"2026-01-07T15:18:55.599Z"}
+{"context":"InstanceLoader","level":"info","message":"EmailModule dependencies initialized","timestamp":"2026-01-07T15:18:55.599Z"}
+{"context":"InstanceLoader","level":"info","message":"PassportModule dependencies initialized","timestamp":"2026-01-07T15:18:55.600Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigHostModule dependencies initialized","timestamp":"2026-01-07T15:18:55.602Z"}
+{"context":"InstanceLoader","level":"info","message":"ThrottlerModule dependencies initialized","timestamp":"2026-01-07T15:18:55.603Z"}
+{"context":"InstanceLoader","level":"info","message":"WinstonModule dependencies initialized","timestamp":"2026-01-07T15:18:55.603Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigModule dependencies initialized","timestamp":"2026-01-07T15:18:55.609Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigModule dependencies initialized","timestamp":"2026-01-07T15:18:55.610Z"}
+{"context":"InstanceLoader","level":"info","message":"ServeStaticModule dependencies initialized","timestamp":"2026-01-07T15:18:55.610Z"}
+{"context":"InstanceLoader","level":"info","message":"AppModule dependencies initialized","timestamp":"2026-01-07T15:18:55.613Z"}
+{"context":"InstanceLoader","level":"info","message":"JwtModule dependencies initialized","timestamp":"2026-01-07T15:18:55.613Z"}
+{"context":"InstanceLoader","level":"info","message":"CacheModule dependencies initialized","timestamp":"2026-01-07T15:18:55.613Z"}
+{"context":"InstanceLoader","level":"info","message":"OrderModule dependencies initialized","timestamp":"2026-01-07T15:18:55.614Z"}
+{"context":"InstanceLoader","level":"info","message":"AdminModule dependencies initialized","timestamp":"2026-01-07T15:18:55.614Z"}
+{"context":"InstanceLoader","level":"info","message":"UploadModule dependencies initialized","timestamp":"2026-01-07T15:18:55.614Z"}
+{"context":"InstanceLoader","level":"info","message":"PackModule dependencies initialized","timestamp":"2026-01-07T15:18:55.614Z"}
+{"context":"InstanceLoader","level":"info","message":"CatalogModule dependencies initialized","timestamp":"2026-01-07T15:18:55.614Z"}
+{"context":"InstanceLoader","level":"info","message":"AuthModule dependencies initialized","timestamp":"2026-01-07T15:18:55.614Z"}
+{"context":"RoutesResolver","level":"info","message":"AppController {/api}:","timestamp":"2026-01-07T15:18:56.169Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api, GET} route","timestamp":"2026-01-07T15:18:56.171Z"}
+{"context":"RoutesResolver","level":"info","message":"AuthController {/api/auth}:","timestamp":"2026-01-07T15:18:56.172Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/register, POST} route","timestamp":"2026-01-07T15:18:56.172Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/login, POST} route","timestamp":"2026-01-07T15:18:56.172Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/change-password, POST} route","timestamp":"2026-01-07T15:18:56.173Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/forgot-password, POST} route","timestamp":"2026-01-07T15:18:56.173Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/reset-password, POST} route","timestamp":"2026-01-07T15:18:56.173Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/profile, GET} route","timestamp":"2026-01-07T15:18:56.174Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/profile, PUT} route","timestamp":"2026-01-07T15:18:56.174Z"}
+{"context":"RoutesResolver","level":"info","message":"CatalogController {/api/catalog}:","timestamp":"2026-01-07T15:18:56.174Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories, GET} route","timestamp":"2026-01-07T15:18:56.175Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/:id, GET} route","timestamp":"2026-01-07T15:18:56.175Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/slug/:slug, GET} route","timestamp":"2026-01-07T15:18:56.175Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories, POST} route","timestamp":"2026-01-07T15:18:56.176Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/:id, PUT} route","timestamp":"2026-01-07T15:18:56.176Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/:id, DELETE} route","timestamp":"2026-01-07T15:18:56.176Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products, GET} route","timestamp":"2026-01-07T15:18:56.176Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/:id, GET} route","timestamp":"2026-01-07T15:18:56.176Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/slug/:slug, GET} route","timestamp":"2026-01-07T15:18:56.177Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products, POST} route","timestamp":"2026-01-07T15:18:56.177Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/:id, PUT} route","timestamp":"2026-01-07T15:18:56.177Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/:id, DELETE} route","timestamp":"2026-01-07T15:18:56.177Z"}
+{"context":"RoutesResolver","level":"info","message":"OrderController {/api/orders}:","timestamp":"2026-01-07T15:18:56.177Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart, GET} route","timestamp":"2026-01-07T15:18:56.177Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart/items, POST} route","timestamp":"2026-01-07T15:18:56.178Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart/items/:itemId, PUT} route","timestamp":"2026-01-07T15:18:56.178Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart/items/:itemId, DELETE} route","timestamp":"2026-01-07T15:18:56.178Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart, DELETE} route","timestamp":"2026-01-07T15:18:56.178Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders, POST} route","timestamp":"2026-01-07T15:18:56.178Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders, GET} route","timestamp":"2026-01-07T15:18:56.178Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/:id, GET} route","timestamp":"2026-01-07T15:18:56.179Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/:id/cancel, PATCH} route","timestamp":"2026-01-07T15:18:56.179Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/admin/all, GET} route","timestamp":"2026-01-07T15:18:56.179Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/:id/status, PATCH} route","timestamp":"2026-01-07T15:18:56.179Z"}
+{"context":"RoutesResolver","level":"info","message":"UploadController {/api/upload}:","timestamp":"2026-01-07T15:18:56.179Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/product-image, POST} route","timestamp":"2026-01-07T15:18:56.179Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/product-images, POST} route","timestamp":"2026-01-07T15:18:56.180Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/category-image, POST} route","timestamp":"2026-01-07T15:18:56.180Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/pack-image, POST} route","timestamp":"2026-01-07T15:18:56.180Z"}
+{"context":"RoutesResolver","level":"info","message":"AdminController {/api/admin}:","timestamp":"2026-01-07T15:18:56.180Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/dashboard/stats, GET} route","timestamp":"2026-01-07T15:18:56.180Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/users, GET} route","timestamp":"2026-01-07T15:18:56.180Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/users/:id, GET} route","timestamp":"2026-01-07T15:18:56.180Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/users/:id/role, PUT} route","timestamp":"2026-01-07T15:18:56.181Z"}
+{"context":"RoutesResolver","level":"info","message":"PackController {/api}:","timestamp":"2026-01-07T15:18:56.181Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/packs, GET} route","timestamp":"2026-01-07T15:18:56.181Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/packs/:slug, GET} route","timestamp":"2026-01-07T15:18:56.181Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs, GET} route","timestamp":"2026-01-07T15:18:56.181Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs, POST} route","timestamp":"2026-01-07T15:18:56.181Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs/:id, PUT} route","timestamp":"2026-01-07T15:18:56.181Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs/:id, DELETE} route","timestamp":"2026-01-07T15:18:56.182Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2026-01-07T15:18:56.213Z"}
+{"level":"info","message":"🚀 Application is running on: http://localhost:3000/api","timestamp":"2026-01-07T15:18:56.215Z"}
+{"context":"NestFactory","level":"info","message":"Starting Nest application...","timestamp":"2026-01-09T11:38:23.803Z"}
+{"context":"InstanceLoader","level":"info","message":"DatabaseModule dependencies initialized","timestamp":"2026-01-09T11:38:23.919Z"}
+{"context":"InstanceLoader","level":"info","message":"EmailModule dependencies initialized","timestamp":"2026-01-09T11:38:23.920Z"}
+{"context":"InstanceLoader","level":"info","message":"PassportModule dependencies initialized","timestamp":"2026-01-09T11:38:23.921Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigHostModule dependencies initialized","timestamp":"2026-01-09T11:38:23.941Z"}
+{"context":"InstanceLoader","level":"info","message":"ThrottlerModule dependencies initialized","timestamp":"2026-01-09T11:38:23.941Z"}
+{"context":"InstanceLoader","level":"info","message":"WinstonModule dependencies initialized","timestamp":"2026-01-09T11:38:23.942Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigModule dependencies initialized","timestamp":"2026-01-09T11:38:23.952Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigModule dependencies initialized","timestamp":"2026-01-09T11:38:23.953Z"}
+{"context":"InstanceLoader","level":"info","message":"ServeStaticModule dependencies initialized","timestamp":"2026-01-09T11:38:23.954Z"}
+{"context":"InstanceLoader","level":"info","message":"JwtModule dependencies initialized","timestamp":"2026-01-09T11:38:23.957Z"}
+{"context":"InstanceLoader","level":"info","message":"AppModule dependencies initialized","timestamp":"2026-01-09T11:38:23.958Z"}
+{"context":"InstanceLoader","level":"info","message":"CacheModule dependencies initialized","timestamp":"2026-01-09T11:38:23.959Z"}
+{"context":"InstanceLoader","level":"info","message":"OrderModule dependencies initialized","timestamp":"2026-01-09T11:38:23.960Z"}
+{"context":"InstanceLoader","level":"info","message":"AdminModule dependencies initialized","timestamp":"2026-01-09T11:38:23.960Z"}
+{"context":"InstanceLoader","level":"info","message":"UploadModule dependencies initialized","timestamp":"2026-01-09T11:38:23.961Z"}
+{"context":"InstanceLoader","level":"info","message":"PackModule dependencies initialized","timestamp":"2026-01-09T11:38:23.961Z"}
+{"context":"InstanceLoader","level":"info","message":"CatalogModule dependencies initialized","timestamp":"2026-01-09T11:38:23.961Z"}
+{"context":"InstanceLoader","level":"info","message":"AuthModule dependencies initialized","timestamp":"2026-01-09T11:38:23.962Z"}
+{"context":"RoutesResolver","level":"info","message":"AppController {/api}:","timestamp":"2026-01-09T11:38:24.639Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/health, GET} route","timestamp":"2026-01-09T11:38:24.646Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api, GET} route","timestamp":"2026-01-09T11:38:24.646Z"}
+{"context":"RoutesResolver","level":"info","message":"AuthController {/api/auth}:","timestamp":"2026-01-09T11:38:24.647Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/register, POST} route","timestamp":"2026-01-09T11:38:24.647Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/login, POST} route","timestamp":"2026-01-09T11:38:24.648Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/change-password, POST} route","timestamp":"2026-01-09T11:38:24.649Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/forgot-password, POST} route","timestamp":"2026-01-09T11:38:24.650Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/reset-password, POST} route","timestamp":"2026-01-09T11:38:24.650Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/profile, GET} route","timestamp":"2026-01-09T11:38:24.651Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/profile, PUT} route","timestamp":"2026-01-09T11:38:24.652Z"}
+{"context":"RoutesResolver","level":"info","message":"CatalogController {/api/catalog}:","timestamp":"2026-01-09T11:38:24.652Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories, GET} route","timestamp":"2026-01-09T11:38:24.652Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/:id, GET} route","timestamp":"2026-01-09T11:38:24.653Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/slug/:slug, GET} route","timestamp":"2026-01-09T11:38:24.653Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories, POST} route","timestamp":"2026-01-09T11:38:24.654Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/:id, PUT} route","timestamp":"2026-01-09T11:38:24.654Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/:id, DELETE} route","timestamp":"2026-01-09T11:38:24.654Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products, GET} route","timestamp":"2026-01-09T11:38:24.655Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/:id, GET} route","timestamp":"2026-01-09T11:38:24.655Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/slug/:slug, GET} route","timestamp":"2026-01-09T11:38:24.655Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products, POST} route","timestamp":"2026-01-09T11:38:24.656Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/:id, PUT} route","timestamp":"2026-01-09T11:38:24.656Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/:id, DELETE} route","timestamp":"2026-01-09T11:38:24.656Z"}
+{"context":"RoutesResolver","level":"info","message":"OrderController {/api/orders}:","timestamp":"2026-01-09T11:38:24.656Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart, GET} route","timestamp":"2026-01-09T11:38:24.657Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart/items, POST} route","timestamp":"2026-01-09T11:38:24.657Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart/items/:itemId, PUT} route","timestamp":"2026-01-09T11:38:24.657Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart/items/:itemId, DELETE} route","timestamp":"2026-01-09T11:38:24.658Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart, DELETE} route","timestamp":"2026-01-09T11:38:24.658Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders, POST} route","timestamp":"2026-01-09T11:38:24.658Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders, GET} route","timestamp":"2026-01-09T11:38:24.659Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/:id, GET} route","timestamp":"2026-01-09T11:38:24.659Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/:id/cancel, PATCH} route","timestamp":"2026-01-09T11:38:24.659Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/admin/all, GET} route","timestamp":"2026-01-09T11:38:24.660Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/:id/status, PATCH} route","timestamp":"2026-01-09T11:38:24.660Z"}
+{"context":"RoutesResolver","level":"info","message":"UploadController {/api/upload}:","timestamp":"2026-01-09T11:38:24.660Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/product-image, POST} route","timestamp":"2026-01-09T11:38:24.660Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/product-images, POST} route","timestamp":"2026-01-09T11:38:24.661Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/category-image, POST} route","timestamp":"2026-01-09T11:38:24.661Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/pack-image, POST} route","timestamp":"2026-01-09T11:38:24.661Z"}
+{"context":"RoutesResolver","level":"info","message":"AdminController {/api/admin}:","timestamp":"2026-01-09T11:38:24.661Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/dashboard/stats, GET} route","timestamp":"2026-01-09T11:38:24.662Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/users, GET} route","timestamp":"2026-01-09T11:38:24.662Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/users/:id, GET} route","timestamp":"2026-01-09T11:38:24.662Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/users/:id/role, PUT} route","timestamp":"2026-01-09T11:38:24.662Z"}
+{"context":"RoutesResolver","level":"info","message":"PackController {/api}:","timestamp":"2026-01-09T11:38:24.663Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/packs, GET} route","timestamp":"2026-01-09T11:38:24.663Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/packs/:slug, GET} route","timestamp":"2026-01-09T11:38:24.663Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs, GET} route","timestamp":"2026-01-09T11:38:24.663Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs, POST} route","timestamp":"2026-01-09T11:38:24.664Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs/:id, PUT} route","timestamp":"2026-01-09T11:38:24.664Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs/:id, DELETE} route","timestamp":"2026-01-09T11:38:24.664Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2026-01-09T11:38:24.704Z"}
+{"level":"info","message":"🚀 Application is running on: http://localhost:3000/api","timestamp":"2026-01-09T11:38:24.707Z"}
+{"context":"AllExceptionsFilter","level":"error","message":"Exception thrown at /api/auth/login: {\"statusCode\":401,\"timestamp\":\"2026-01-09T11:39:22.864Z\",\"path\":\"/api/auth/login\",\"message\":\"Mot de passe incorrect\",\"debug\":\"UnauthorizedException: Mot de passe incorrect\\n    at AuthService.login (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\apps\\\\api\\\\src\\\\app\\\\auth\\\\auth.service.ts:78:13)\"}","stack":["UnauthorizedException: Mot de passe incorrect\n    at AuthService.login (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\apps\\api\\src\\app\\auth\\auth.service.ts:78:13)"],"timestamp":"2026-01-09T11:39:22.913Z"}
+{"context":"AllExceptionsFilter","level":"error","message":"Exception thrown at /api/auth/login: {\"statusCode\":401,\"timestamp\":\"2026-01-09T11:39:28.669Z\",\"path\":\"/api/auth/login\",\"message\":\"Mot de passe incorrect\",\"debug\":\"UnauthorizedException: Mot de passe incorrect\\n    at AuthService.login (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\apps\\\\api\\\\src\\\\app\\\\auth\\\\auth.service.ts:78:13)\"}","stack":["UnauthorizedException: Mot de passe incorrect\n    at AuthService.login (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\apps\\api\\src\\app\\auth\\auth.service.ts:78:13)"],"timestamp":"2026-01-09T11:39:28.670Z"}
+{"context":"AllExceptionsFilter","level":"error","message":"Exception thrown at /api/catalog/products: {\"statusCode\":400,\"timestamp\":\"2026-01-09T11:40:23.758Z\",\"path\":\"/api/catalog/products\",\"message\":[\"property visible should not exist\"],\"debug\":\"BadRequestException: Bad Request Exception\\n    at ValidationPipe.exceptionFactory (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\common\\\\pipes\\\\validation.pipe.js:107:20)\\n    at ValidationPipe.transform (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\common\\\\pipes\\\\validation.pipe.js:74:30)\\n    at resolveParamValue (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:148:23)\\n    at async Promise.all (index 0)\\n    at pipesFn (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:151:13)\\n    at C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:37:30\"}","stack":["BadRequestException: Bad Request Exception\n    at ValidationPipe.exceptionFactory (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\common\\pipes\\validation.pipe.js:107:20)\n    at ValidationPipe.transform (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\common\\pipes\\validation.pipe.js:74:30)\n    at resolveParamValue (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:148:23)\n    at async Promise.all (index 0)\n    at pipesFn (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:151:13)\n    at C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:37:30"],"timestamp":"2026-01-09T11:40:23.760Z"}
+{"context":"AllExceptionsFilter","level":"error","message":"Exception thrown at /api/catalog/products: {\"statusCode\":400,\"timestamp\":\"2026-01-09T11:40:39.423Z\",\"path\":\"/api/catalog/products\",\"message\":[\"property visible should not exist\"],\"debug\":\"BadRequestException: Bad Request Exception\\n    at ValidationPipe.exceptionFactory (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\common\\\\pipes\\\\validation.pipe.js:107:20)\\n    at ValidationPipe.transform (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\common\\\\pipes\\\\validation.pipe.js:74:30)\\n    at resolveParamValue (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:148:23)\\n    at async Promise.all (index 0)\\n    at pipesFn (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:151:13)\\n    at C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:37:30\"}","stack":["BadRequestException: Bad Request Exception\n    at ValidationPipe.exceptionFactory (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\common\\pipes\\validation.pipe.js:107:20)\n    at ValidationPipe.transform (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\common\\pipes\\validation.pipe.js:74:30)\n    at resolveParamValue (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:148:23)\n    at async Promise.all (index 0)\n    at pipesFn (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:151:13)\n    at C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:37:30"],"timestamp":"2026-01-09T11:40:39.424Z"}
+{"context":"AllExceptionsFilter","level":"error","message":"Exception thrown at /api/catalog/products: {\"statusCode\":400,\"timestamp\":\"2026-01-09T11:41:08.308Z\",\"path\":\"/api/catalog/products\",\"message\":[\"property visible should not exist\"],\"debug\":\"BadRequestException: Bad Request Exception\\n    at ValidationPipe.exceptionFactory (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\common\\\\pipes\\\\validation.pipe.js:107:20)\\n    at ValidationPipe.transform (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\common\\\\pipes\\\\validation.pipe.js:74:30)\\n    at resolveParamValue (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:148:23)\\n    at async Promise.all (index 0)\\n    at pipesFn (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:151:13)\\n    at C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:37:30\"}","stack":["BadRequestException: Bad Request Exception\n    at ValidationPipe.exceptionFactory (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\common\\pipes\\validation.pipe.js:107:20)\n    at ValidationPipe.transform (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\common\\pipes\\validation.pipe.js:74:30)\n    at resolveParamValue (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:148:23)\n    at async Promise.all (index 0)\n    at pipesFn (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:151:13)\n    at C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:37:30"],"timestamp":"2026-01-09T11:41:08.309Z"}
+{"context":"AllExceptionsFilter","level":"error","message":"Exception thrown at /api/catalog/products: {\"statusCode\":400,\"timestamp\":\"2026-01-09T11:41:12.617Z\",\"path\":\"/api/catalog/products\",\"message\":[\"property visible should not exist\"],\"debug\":\"BadRequestException: Bad Request Exception\\n    at ValidationPipe.exceptionFactory (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\common\\\\pipes\\\\validation.pipe.js:107:20)\\n    at ValidationPipe.transform (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\common\\\\pipes\\\\validation.pipe.js:74:30)\\n    at resolveParamValue (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:148:23)\\n    at async Promise.all (index 0)\\n    at pipesFn (C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:151:13)\\n    at C:\\\\Users\\\\DELL\\\\.gemini\\\\antigravity\\\\scratch\\\\webflow-migration\\\\node_modules\\\\@nestjs\\\\core\\\\router\\\\router-execution-context.js:37:30\"}","stack":["BadRequestException: Bad Request Exception\n    at ValidationPipe.exceptionFactory (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\common\\pipes\\validation.pipe.js:107:20)\n    at ValidationPipe.transform (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\common\\pipes\\validation.pipe.js:74:30)\n    at resolveParamValue (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:148:23)\n    at async Promise.all (index 0)\n    at pipesFn (C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:151:13)\n    at C:\\Users\\DELL\\.gemini\\antigravity\\scratch\\webflow-migration\\node_modules\\@nestjs\\core\\router\\router-execution-context.js:37:30"],"timestamp":"2026-01-09T11:41:12.618Z"}
+{"context":"NestFactory","level":"info","message":"Starting Nest application...","timestamp":"2026-01-09T11:42:53.111Z"}
+{"context":"InstanceLoader","level":"info","message":"DatabaseModule dependencies initialized","timestamp":"2026-01-09T11:42:53.139Z"}
+{"context":"InstanceLoader","level":"info","message":"EmailModule dependencies initialized","timestamp":"2026-01-09T11:42:53.139Z"}
+{"context":"InstanceLoader","level":"info","message":"PassportModule dependencies initialized","timestamp":"2026-01-09T11:42:53.139Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigHostModule dependencies initialized","timestamp":"2026-01-09T11:42:53.142Z"}
+{"context":"InstanceLoader","level":"info","message":"ThrottlerModule dependencies initialized","timestamp":"2026-01-09T11:42:53.143Z"}
+{"context":"InstanceLoader","level":"info","message":"WinstonModule dependencies initialized","timestamp":"2026-01-09T11:42:53.143Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigModule dependencies initialized","timestamp":"2026-01-09T11:42:53.149Z"}
+{"context":"InstanceLoader","level":"info","message":"ConfigModule dependencies initialized","timestamp":"2026-01-09T11:42:53.150Z"}
+{"context":"InstanceLoader","level":"info","message":"ServeStaticModule dependencies initialized","timestamp":"2026-01-09T11:42:53.151Z"}
+{"context":"InstanceLoader","level":"info","message":"JwtModule dependencies initialized","timestamp":"2026-01-09T11:42:53.153Z"}
+{"context":"InstanceLoader","level":"info","message":"AppModule dependencies initialized","timestamp":"2026-01-09T11:42:53.153Z"}
+{"context":"InstanceLoader","level":"info","message":"CacheModule dependencies initialized","timestamp":"2026-01-09T11:42:53.153Z"}
+{"context":"InstanceLoader","level":"info","message":"OrderModule dependencies initialized","timestamp":"2026-01-09T11:42:53.154Z"}
+{"context":"InstanceLoader","level":"info","message":"AdminModule dependencies initialized","timestamp":"2026-01-09T11:42:53.154Z"}
+{"context":"InstanceLoader","level":"info","message":"UploadModule dependencies initialized","timestamp":"2026-01-09T11:42:53.154Z"}
+{"context":"InstanceLoader","level":"info","message":"PackModule dependencies initialized","timestamp":"2026-01-09T11:42:53.154Z"}
+{"context":"InstanceLoader","level":"info","message":"CatalogModule dependencies initialized","timestamp":"2026-01-09T11:42:53.154Z"}
+{"context":"InstanceLoader","level":"info","message":"AuthModule dependencies initialized","timestamp":"2026-01-09T11:42:53.154Z"}
+{"context":"RoutesResolver","level":"info","message":"AppController {/api}:","timestamp":"2026-01-09T11:42:53.197Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/health, GET} route","timestamp":"2026-01-09T11:42:53.202Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api, GET} route","timestamp":"2026-01-09T11:42:53.203Z"}
+{"context":"RoutesResolver","level":"info","message":"AuthController {/api/auth}:","timestamp":"2026-01-09T11:42:53.203Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/register, POST} route","timestamp":"2026-01-09T11:42:53.204Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/login, POST} route","timestamp":"2026-01-09T11:42:53.205Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/change-password, POST} route","timestamp":"2026-01-09T11:42:53.206Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/forgot-password, POST} route","timestamp":"2026-01-09T11:42:53.206Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/reset-password, POST} route","timestamp":"2026-01-09T11:42:53.207Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/profile, GET} route","timestamp":"2026-01-09T11:42:53.207Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/auth/profile, PUT} route","timestamp":"2026-01-09T11:42:53.208Z"}
+{"context":"RoutesResolver","level":"info","message":"CatalogController {/api/catalog}:","timestamp":"2026-01-09T11:42:53.208Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories, GET} route","timestamp":"2026-01-09T11:42:53.210Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/:id, GET} route","timestamp":"2026-01-09T11:42:53.211Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/slug/:slug, GET} route","timestamp":"2026-01-09T11:42:53.211Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories, POST} route","timestamp":"2026-01-09T11:42:53.211Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/:id, PUT} route","timestamp":"2026-01-09T11:42:53.212Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/categories/:id, DELETE} route","timestamp":"2026-01-09T11:42:53.212Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products, GET} route","timestamp":"2026-01-09T11:42:53.212Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/:id, GET} route","timestamp":"2026-01-09T11:42:53.212Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/slug/:slug, GET} route","timestamp":"2026-01-09T11:42:53.212Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products, POST} route","timestamp":"2026-01-09T11:42:53.213Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/:id, PUT} route","timestamp":"2026-01-09T11:42:53.213Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/products/:id, DELETE} route","timestamp":"2026-01-09T11:42:53.213Z"}
+{"context":"RoutesResolver","level":"info","message":"OrderController {/api/orders}:","timestamp":"2026-01-09T11:42:53.213Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart, GET} route","timestamp":"2026-01-09T11:42:53.214Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart/items, POST} route","timestamp":"2026-01-09T11:42:53.214Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart/items/:itemId, PUT} route","timestamp":"2026-01-09T11:42:53.214Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart/items/:itemId, DELETE} route","timestamp":"2026-01-09T11:42:53.214Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/cart, DELETE} route","timestamp":"2026-01-09T11:42:53.214Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders, POST} route","timestamp":"2026-01-09T11:42:53.214Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders, GET} route","timestamp":"2026-01-09T11:42:53.215Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/:id, GET} route","timestamp":"2026-01-09T11:42:53.215Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/:id/cancel, PATCH} route","timestamp":"2026-01-09T11:42:53.215Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/admin/all, GET} route","timestamp":"2026-01-09T11:42:53.215Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/orders/:id/status, PATCH} route","timestamp":"2026-01-09T11:42:53.215Z"}
+{"context":"RoutesResolver","level":"info","message":"UploadController {/api/upload}:","timestamp":"2026-01-09T11:42:53.216Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/product-image, POST} route","timestamp":"2026-01-09T11:42:53.216Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/product-images, POST} route","timestamp":"2026-01-09T11:42:53.216Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/category-image, POST} route","timestamp":"2026-01-09T11:42:53.216Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/upload/pack-image, POST} route","timestamp":"2026-01-09T11:42:53.217Z"}
+{"context":"RoutesResolver","level":"info","message":"AdminController {/api/admin}:","timestamp":"2026-01-09T11:42:53.217Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/dashboard/stats, GET} route","timestamp":"2026-01-09T11:42:53.217Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/users, GET} route","timestamp":"2026-01-09T11:42:53.217Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/users/:id, GET} route","timestamp":"2026-01-09T11:42:53.217Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/users/:id/role, PUT} route","timestamp":"2026-01-09T11:42:53.218Z"}
+{"context":"RoutesResolver","level":"info","message":"PackController {/api}:","timestamp":"2026-01-09T11:42:53.218Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/packs, GET} route","timestamp":"2026-01-09T11:42:53.219Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/catalog/packs/:slug, GET} route","timestamp":"2026-01-09T11:42:53.219Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs, GET} route","timestamp":"2026-01-09T11:42:53.219Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs, POST} route","timestamp":"2026-01-09T11:42:53.220Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs/:id, PUT} route","timestamp":"2026-01-09T11:42:53.220Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/api/admin/packs/:id, DELETE} route","timestamp":"2026-01-09T11:42:53.220Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2026-01-09T11:42:53.244Z"}
+{"level":"info","message":"🚀 Application is running on: http://localhost:3000/api","timestamp":"2026-01-09T11:42:53.247Z"}

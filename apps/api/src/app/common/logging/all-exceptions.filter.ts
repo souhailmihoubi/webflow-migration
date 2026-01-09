@@ -30,8 +30,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
       message:
         exception instanceof HttpException
-          ? exception.getResponse()
-          : 'Internal Server Error',
+          ? typeof exception.getResponse() === 'object' &&
+            (exception.getResponse() as any).message
+            ? (exception.getResponse() as any).message
+            : exception.getResponse()
+          : (exception as Error).message || 'Internal Server Error',
+      debug: (exception as Error).stack,
     };
 
     // Log the error

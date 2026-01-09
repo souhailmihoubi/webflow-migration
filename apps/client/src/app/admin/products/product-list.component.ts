@@ -7,6 +7,8 @@ import {
   Validators,
   FormArray,
 } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { AdminService } from '../../shared/services/admin.service';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal.component';
 import { ToastService } from '../../shared/services/toast.service';
@@ -30,6 +32,7 @@ export class ProductListComponent implements OnInit {
   private adminService = inject(AdminService);
   private fb = inject(FormBuilder);
   private toast = inject(ToastService);
+  private http = inject(HttpClient); // Inject HttpClient
 
   products = signal<Product[]>([]);
   totalItems = signal(0);
@@ -39,6 +42,7 @@ export class ProductListComponent implements OnInit {
   categories = signal<any[]>([]); // Should be Category[] but any for now to avoid breaking if not imported
   isLoading = signal(true);
   isSaving = signal(false);
+  isUploading = signal(false); // New signal for upload state
 
   // Filter properties
   searchTerm = signal('');
@@ -210,16 +214,65 @@ export class ProductListComponent implements OnInit {
     this.multiImages.at(index).markAsTouched();
   }
 
+  async onBulkImagesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+
+    const files = Array.from(input.files);
+    this.isUploading.set(true);
+    let completed = 0;
+    let errors = 0;
+
+    for (const file of files) {
+      if (file.size > 5 * 1024 * 1024) {
+        this.toast.error(`L'image ${file.name} dépasse 5MB`, 3000);
+        errors++;
+        completed++;
+        if (completed === files.length) {
+          this.isUploading.set(false);
+          input.value = '';
+        }
+        continue;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      this.http
+        .post<{
+          url: string;
+        }>(`${environment.apiUrl}/upload/product-image`, formData)
+        .subscribe({
+          next: (response) => {
+            this.multiImages.push(this.fb.control(response.url));
+            completed++;
+            if (completed === files.length) {
+              this.isUploading.set(false);
+              this.toast.success(
+                `${files.length - errors} image(s) ajoutée(s)`,
+              );
+              input.value = '';
+            }
+          },
+          error: (err) => {
+            console.error(`Error uploading ${file.name}:`, err);
+            this.toast.error(`Échec pour ${file.name}`);
+            errors++;
+            completed++;
+            if (completed === files.length) {
+              this.isUploading.set(false);
+              input.value = '';
+            }
+          },
+        });
+    }
+  }
+
   onSubmit() {
     // Prevent duplicate submissions
-    if (this.isSaving()) {
+    if (this.isSaving() || this.isUploading()) {
       return;
     }
-
-    console.log('Submitting form...');
-    console.log('Form value:', this.productForm.value);
-    console.log('Form valid:', this.productForm.valid);
-    console.log('Form errors:', this.productForm.errors);
 
     if (this.productForm.invalid) {
       this.productForm.markAllAsTouched();
@@ -245,12 +298,30 @@ export class ProductListComponent implements OnInit {
     }
 
     this.isSaving.set(true);
-    const data = this.productForm.value;
+
+    // Prepare payload matching CreateProductDto/UpdateProductDto
+    const formValue = this.productForm.value;
+    const payload: any = {
+      name: formValue.name,
+      slug: formValue.slug,
+      productDescription: formValue.productDescription,
+      price: Number(formValue.price),
+      categoryId: formValue.categoryId,
+      mainImage: formValue.mainImage,
+      showInMenu: formValue.showInMenu ?? false,
+      // visible: formValue.visible, // REMOVED: Not in DTO
+      multiImages: formValue.multiImages || [],
+    };
+
+    if (formValue.discountPrice) {
+      payload.discountPrice = Number(formValue.discountPrice);
+    }
+
     const editing = this.editingProduct();
 
     const obs = editing
-      ? this.adminService.updateProduct(editing.id, data)
-      : this.adminService.createProduct(data);
+      ? this.adminService.updateProduct(editing.id, payload)
+      : this.adminService.createProduct(payload);
 
     obs.subscribe({
       next: () => {

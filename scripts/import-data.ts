@@ -3,11 +3,11 @@ import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
 import { parse } from 'csv-parse/sync';
-import { S3Client } from '@aws-sdk/client-s3';
+import { S3Client, HeadObjectCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import axios from 'axios';
 import sharp from 'sharp';
-import { randomUUID } from 'crypto';
+import { createHash } from 'crypto';
 
 const prisma = new PrismaClient();
 
@@ -24,12 +24,39 @@ const bucketName = process.env.AWS_S3_BUCKET || '';
 async function processImage(
   url: string | undefined,
   folder: string,
+  customName?: string,
 ): Promise<string> {
   if (!url || typeof url !== 'string') return '';
 
   // Return if already an S3 URL or invalid
   if (url.includes('amazonaws.com') || !url.startsWith('http')) {
     return url;
+  }
+
+  // Generate filename: Use custom slug-based name if provided, otherwise MD5 hash
+  let fileName: string;
+  if (customName) {
+    fileName = `${customName}.jpg`;
+  } else {
+    const hash = createHash('md5').update(url).digest('hex');
+    fileName = `${hash}.jpg`;
+  }
+
+  const key = `${folder}/${fileName}`;
+  const s3Url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+
+  try {
+    // Check if file already exists in S3
+    await s3Client.send(
+      new HeadObjectCommand({ Bucket: bucketName, Key: key }),
+    );
+    console.log(`⏭️  Skipping existing image: ${key}`);
+    return s3Url;
+  } catch (error: any) {
+    // If error is NotFound (404), proceed to upload. Otherwise, only log if it's not a 404.
+    if (error.name !== 'NotFound') {
+      // Just continue to upload if HEAD fails for other reasons, or proceed
+    }
   }
 
   try {
@@ -46,10 +73,7 @@ async function processImage(
       .jpeg({ quality: 85 })
       .toBuffer();
 
-    // Upload
-    const fileName = `${randomUUID()}.jpg`;
-    const key = `${folder}/${fileName}`;
-
+    // Upload using the deterministic key
     const upload = new Upload({
       client: s3Client,
       params: {
@@ -61,7 +85,6 @@ async function processImage(
     });
 
     await upload.done();
-    const s3Url = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
     console.log(`✅ Migrated to S3: ${s3Url}`);
     return s3Url;
   } catch (error: any) {
@@ -115,7 +138,11 @@ async function main() {
   const categoryMap = new Map<string, string>();
 
   for (const cat of categoriesData) {
-    const imageUrl = await processImage(cat['Category Image'], 'categories');
+    const imageUrl = await processImage(
+      cat['Category Image'],
+      'categories',
+      cat.Slug,
+    );
 
     const created = await prisma.category.upsert({
       where: { slug: cat.Slug },
@@ -156,7 +183,11 @@ async function main() {
     }
 
     // Process Main Image
-    const mainImageUrl = await processImage(prod['Main Image'], 'products');
+    const mainImageUrl = await processImage(
+      prod['Main Image'],
+      'products',
+      prod.Slug,
+    );
 
     // Process Multi Images
     const multiImagesRaw = prod['Multi Images']
@@ -167,8 +198,14 @@ async function main() {
       : [];
 
     const multiImages: string[] = [];
+    let imgIndex = 0;
     for (const imgUrl of multiImagesRaw) {
-      const s3Url = await processImage(imgUrl, 'products');
+      imgIndex++;
+      const s3Url = await processImage(
+        imgUrl,
+        'products',
+        `${prod.Slug}-${imgIndex}`,
+      );
       if (s3Url) multiImages.push(s3Url);
     }
 
@@ -184,10 +221,12 @@ async function main() {
         price: parsePrice(prod['Prix hors promotion']),
         discountPrice: prod['Prix de promotion']
           ? parsePrice(prod['Prix de promotion'])
-          : null,
+          : parsePrice(prod['Prix hors promotion']),
         showInMenu: prod['Afficher']?.toLowerCase() === 'true',
         videoLink: prod['Video link Youtube seulement'],
-        categoryId: catId,
+        category: {
+          connect: { id: catId },
+        },
       },
       create: {
         name: prod.Name,
@@ -200,10 +239,12 @@ async function main() {
         price: parsePrice(prod['Prix hors promotion']),
         discountPrice: prod['Prix de promotion']
           ? parsePrice(prod['Prix de promotion'])
-          : null,
+          : parsePrice(prod['Prix hors promotion']),
         showInMenu: prod['Afficher']?.toLowerCase() === 'true',
         videoLink: prod['Video link Youtube seulement'],
-        categoryId: catId,
+        category: {
+          connect: { id: catId },
+        },
       },
     });
 

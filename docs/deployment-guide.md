@@ -7,6 +7,21 @@ This guide outlines the steps to deploy changes to the production environment fo
 - **Docker Desktop** must be running.
 - **AWS CLI** must be configured with authorized credentials.
 
+- **AWS CLI** must be configured with authorized credentials.
+
+---
+
+## 0. Database Configuration (Neon)
+
+Before deploying the backend, ensure your production database is ready.
+
+1.  **Create Project:** Go to [Neon.tech](https://neon.tech) and create a project.
+2.  **Get Connection String:** Copy the "Pooled Connection String".
+3.  **Configure App Runner:**
+    - In your App Runner service configuration.
+    - Add/Update the Environment Variable `DATABASE_URL`.
+    - Paste the Neon connection string.
+
 ---
 
 ## 1. Backend Deployment (API)
@@ -36,6 +51,10 @@ Tag the image with your specific ECR repository URI and push it.
 ```powershell
 # Tag
 docker tag webflow-migration-api:latest 173763384580.dkr.ecr.eu-west-3.amazonaws.com/webflow-migration-api:latest
+
+
+#login
+aws ecr get-login-password --region eu-west-3 | docker login --username AWS --password-stdin 173763384580.dkr.ecr.eu-west-3.amazonaws.com
 
 # Push (Triggers App Runner Deployment)
 docker push 173763384580.dkr.ecr.eu-west-3.amazonaws.com/webflow-migration-api:latest
@@ -71,6 +90,11 @@ To ensure users see the changes immediately (instead of the cached version), you
 
 ```powershell
 aws cloudfront create-invalidation --distribution-id E21DPUJSSE7IEO --paths "/*"
+```
+
+```powershell
+#check i app runner status command:
+aws apprunner list-services --region eu-west-3 --no-cli-pager
 ```
 
 > **Note:** The invalidation can take a minute or two to fully propagate globally.

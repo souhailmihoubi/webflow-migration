@@ -5,9 +5,8 @@ import {
   IsNumber,
   IsOptional,
   IsArray,
-  ValidateNested,
+  IsBoolean,
 } from 'class-validator';
-import { Type } from 'class-transformer';
 
 export interface Message {
   message: string;
@@ -107,57 +106,158 @@ export interface AuthResponse {
 
 // Category DTOs
 export class CreateCategoryDto {
+  @IsString()
+  @IsNotEmpty()
   name!: string;
+
+  @IsString()
+  @IsNotEmpty()
   slug!: string;
+
+  @IsOptional()
+  @IsString()
   image?: string;
+
+  @IsOptional()
+  @IsBoolean()
   showInHomePage?: boolean;
 }
 
 export class UpdateCategoryDto {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsString()
   slug?: string;
+
+  @IsOptional()
+  @IsString()
   image?: string;
+
+  @IsOptional()
+  @IsBoolean()
   showInHomePage?: boolean;
 }
 
 // Product DTOs
+// Product DTOs
 export class CreateProductDto {
+  @IsString()
+  @IsNotEmpty()
   name!: string;
+
+  @IsString()
+  @IsNotEmpty()
   slug!: string;
+
+  @IsString()
+  @IsNotEmpty()
   mainImage!: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   multiImages?: string[];
+
+  @IsOptional()
+  @IsString()
   priceDetails?: string;
+
+  @IsString()
+  @IsNotEmpty()
   productDescription!: string;
+
+  @IsOptional()
+  @IsString()
   caracteristiques?: string;
+
+  @IsNumber()
   price!: number;
+
+  @IsOptional()
+  @IsNumber()
   discountPrice?: number;
+
+  @IsOptional()
+  @IsBoolean()
   showInMenu?: boolean;
+
+  @IsOptional()
+  @IsString()
   videoLink?: string;
+
+  @IsString()
+  @IsNotEmpty()
   categoryId!: string;
 }
 
 export class UpdateProductDto {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsString()
   slug?: string;
+
+  @IsOptional()
+  @IsString()
   mainImage?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   multiImages?: string[];
+
+  @IsOptional()
+  @IsString()
   priceDetails?: string;
+
+  @IsOptional()
+  @IsString()
   productDescription?: string;
+
+  @IsOptional()
+  @IsString()
   caracteristiques?: string;
+
+  @IsOptional()
+  @IsNumber()
   price?: number;
+
+  @IsOptional()
+  @IsNumber()
   discountPrice?: number;
+
+  @IsOptional()
+  @IsBoolean()
   showInMenu?: boolean;
+
+  @IsOptional()
+  @IsString()
   videoLink?: string;
+
+  @IsOptional()
+  @IsString()
   categoryId?: string;
 }
 
 // Cart & Order DTOs
 export class AddToCartDto {
+  @IsString()
+  @IsNotEmpty()
   productId!: string;
+
+  @IsNumber()
+  @IsNotEmpty()
   quantity!: number;
 }
 
 export class UpdateCartItemDto {
+  @IsNumber()
+  @IsNotEmpty()
   quantity!: number;
 }
 
@@ -226,25 +326,74 @@ export class PlaceOrderDto {
 
 // Pack DTOs
 export class CreatePackDto {
+  @IsString()
+  @IsNotEmpty()
   name!: string;
+
+  @IsString()
+  @IsNotEmpty()
   slug!: string;
+
+  @IsOptional()
+  @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
   mainImage?: string;
+
+  @IsString()
+  @IsNotEmpty()
   productSamId!: string;
+
+  @IsString()
+  @IsNotEmpty()
   productCacId!: string;
+
+  @IsString()
+  @IsNotEmpty()
   productSalonId!: string;
+
+  @IsOptional()
+  @IsNumber()
   discountPercentage?: number;
+
+  @IsOptional()
+  @IsBoolean()
   showInMenu?: boolean;
 }
 
 export class UpdatePackDto {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
   mainImage?: string;
+
+  @IsOptional()
+  @IsString()
   productSamId?: string;
+
+  @IsOptional()
+  @IsString()
   productCacId?: string;
+
+  @IsOptional()
+  @IsString()
   productSalonId?: string;
+
+  @IsOptional()
+  @IsNumber()
   discountPercentage?: number;
+
+  @IsOptional()
+  @IsBoolean()
   showInMenu?: boolean;
 }
 

@@ -4,6 +4,7 @@ import {
   UnauthorizedException,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { DatabaseService } from '../database/database.service';
@@ -22,6 +23,8 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private readonly db: DatabaseService,
     private readonly jwtService: JwtService,
@@ -70,12 +73,12 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new NotFoundException('Utilisateur non trouvé');
     }
 
     const isMatch = await bcrypt.compare(dto.password, user.password);
     if (!isMatch) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Mot de passe incorrect');
     }
 
     const payload = { sub: user.id, email: user.email, role: user.role };
@@ -151,7 +154,7 @@ export class AuthService {
     try {
       await this.emailService.sendPasswordResetEmail(user.email, resetToken);
     } catch (error) {
-      console.error('Error sending password reset email:', error);
+      this.logger.error('Error sending password reset email', error);
       // Don't throw error to avoid revealing if email exists
     }
 
