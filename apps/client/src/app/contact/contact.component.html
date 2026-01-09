@@ -58,13 +58,16 @@
                 </div>
                 <div>
                   <h3
-                    class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1"
+                    class="text-[10px] uppercase tracking-widest text-black font-bold mb-1"
                   >
                     Showroom
                   </h3>
-                  <p class="text-sm font-heading font-medium text-primary">
+                  <a
+                    href="https://www.google.com/maps/place/L'ARTISTOU+Meubles+-+Nabeul/@36.4433125,10.7134904,17z/data=!3m1!4b1!4m6!3m5!1s0x12fd517fa9bb295d:0xcb84d2fa80b7278a!8m2!3d36.4433125!4d10.7134904!16s%2Fg%2F11f7kl8bjq?entry=ttu"
+                    class="text-sm font-heading font-medium text-primary"
+                  >
                     {{ contactInfo.address }}
-                  </p>
+                  </a>
                 </div>
               </div>
 
@@ -89,7 +92,7 @@
                 </div>
                 <div>
                   <h3
-                    class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1"
+                    class="text-[10px] uppercase tracking-widest text-black font-bold mb-1"
                   >
                     Téléphone
                   </h3>
@@ -122,7 +125,7 @@
                 </div>
                 <div>
                   <h3
-                    class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1"
+                    class="text-[10px] uppercase tracking-widest text-black font-bold mb-1"
                   >
                     Email
                   </h3>
@@ -145,7 +148,7 @@
                 <div
                   class="flex justify-between text-sm py-2 border-b border-gray-100"
                 >
-                  <span class="text-gray-500">{{ item.day }}</span>
+                  <span class="text-black">{{ item.day }}</span>
                   <span class="font-bold text-primary">{{ item.time }}</span>
                 </div>
               }
@@ -185,54 +188,115 @@
         >
           <div class="space-y-2">
             <label
-              class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-              >Votre Nom Complet</label
+              class="text-[9px] uppercase tracking-widest text-black font-bold"
+              for="name"
+              >Votre Nom Complet <span class="text-red-500">*</span></label
             >
             <input
               type="text"
+              id="name"
               formControlName="name"
               placeholder="Ex: Mohamed Ali"
               class="w-full bg-cream-light/30 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+              [class.border-red-400]="hasError('name')"
             />
+            @if (hasError('name', 'required')) {
+              <p class="text-xs text-red-500">Le nom est requis</p>
+            } @else if (hasError('name', 'minlength')) {
+              <p class="text-xs text-red-500">
+                Le nom doit contenir au moins 2 caractères
+              </p>
+            }
           </div>
-
           <div class="space-y-2">
             <label
-              class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-              >Adresse Email</label
+              class="text-[9px] uppercase tracking-widest text-black font-bold"
+              for="phone"
+              >Numéro de Téléphone <span class="text-red-500">*</span></label
+            >
+            <div class="flex items-center space-x-2">
+              <span
+                class="bg-gray-100 border border-gray-100 p-4 text-[11px] font-bold text-primary"
+                >+216</span
+              >
+              <input
+                type="tel"
+                id="phone"
+                formControlName="phone"
+                placeholder="Ex: 29 137 955"
+                class="flex-1 bg-cream-light/30 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+                [class.border-red-400]="hasError('phone')"
+              />
+            </div>
+            @if (getPhoneError(); as phoneError) {
+              <p class="text-xs text-red-500">{{ phoneError }}</p>
+            }
+          </div>
+          <div class="space-y-2">
+            <label
+              class="text-[9px] uppercase tracking-widest text-black font-bold"
+              for="email"
+              >Adresse Email (optionnel)</label
             >
             <input
               type="email"
+              id="email"
               formControlName="email"
               placeholder="Ex: mohamed.ali@email.com"
               class="w-full bg-cream-light/30 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+              [class.border-red-400]="hasError('email')"
             />
+            @if (hasError('email', 'email')) {
+              <p class="text-xs text-red-500">
+                Veuillez entrer une adresse email valide
+              </p>
+            }
           </div>
 
           <div class="space-y-2">
             <label
-              class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-              >Sujet</label
+              class="text-[9px] uppercase tracking-widest text-black font-bold"
+              for="subject"
+              >Sujet <span class="text-red-500">*</span></label
             >
             <input
               type="text"
+              id="subject"
               formControlName="subject"
               placeholder="Ex: Demande de devis"
               class="w-full bg-cream-light/30 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all"
+              [class.border-red-400]="hasError('subject')"
             />
+            @if (hasError('subject', 'required')) {
+              <p class="text-xs text-red-500">Le sujet est requis</p>
+            } @else if (hasError('subject', 'minlength')) {
+              <p class="text-xs text-red-500">
+                Le sujet doit contenir au moins 3 caractères
+              </p>
+            }
           </div>
 
           <div class="space-y-2">
             <label
-              class="text-[9px] uppercase tracking-widest text-gray-400 font-bold"
-              >Message</label
+              class="text-[9px] uppercase tracking-widest text-black font-bold"
+              for="message"
+              >Message <span class="text-red-500">*</span></label
             >
             <textarea
+              id="message"
               formControlName="message"
               rows="5"
               placeholder="Comment pouvons-nous vous aider ?"
               class="w-full bg-cream-light/30 border border-gray-100 p-4 text-[11px] font-bold text-primary focus:border-accent focus:outline-none transition-all resize-none"
+              [class.border-red-400]="hasError('message')"
             ></textarea>
+            @if (hasError('message', 'required')) {
+              <p class="text-xs text-red-500">Le message est requis</p>
+            } @else if (hasError('message', 'minlength')) {
+              <p class="text-xs text-red-500">
+                Le message doit contenir au moins 10 caractères
+              </p>
+            }
           </div>
 
           @if (submitMessage()) {
@@ -250,7 +314,7 @@
 
           <button
             type="submit"
-            [disabled]="isSubmitting() || contactForm.invalid"
+            [disabled]="isSubmitting()"
             class="w-full bg-primary text-white text-[10px] font-bold uppercase tracking-widest py-5 hover:bg-accent disabled:opacity-50 transition-all duration-300"
           >
             {{ isSubmitting() ? 'Envoi en cours...' : 'Envoyer le message' }}

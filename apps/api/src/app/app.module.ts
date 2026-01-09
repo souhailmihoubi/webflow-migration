@@ -16,6 +16,7 @@ import { OrderModule } from './order/order.module';
 import { UploadModule } from './upload/upload.module';
 import { AdminModule } from './admin/admin.module';
 import { PackModule } from './pack/pack.module';
+import { ContactModule } from './contact/contact.module';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './common/logging/winston.config';
 
@@ -64,6 +65,7 @@ import { winstonConfig } from './common/logging/winston.config';
     UploadModule,
     AdminModule,
     PackModule,
+    ContactModule,
     WinstonModule.forRoot(winstonConfig),
   ],
   controllers: [AppController],

@@ -7,6 +7,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { tunisianPhoneValidator } from '../shared/validators/phone.validator';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-contact',
@@ -16,6 +19,7 @@ import { RouterModule } from '@angular/router';
 })
 export class ContactComponent {
   private fb = inject(FormBuilder);
+  private http = inject(HttpClient);
 
   contactForm: FormGroup;
   isSubmitting = signal(false);
@@ -36,30 +40,66 @@ export class ContactComponent {
 
   constructor() {
     this.contactForm = this.fb.group({
-      name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
-      subject: ['', [Validators.required]],
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.email]],
+      phone: ['', [Validators.required, tunisianPhoneValidator]],
+      subject: ['', [Validators.required, Validators.minLength(3)]],
       message: ['', [Validators.required, Validators.minLength(10)]],
     });
   }
 
   onSubmit() {
+    // Mark all fields as touched to show validation errors
+    this.contactForm.markAllAsTouched();
+
     if (this.contactForm.invalid) return;
 
     this.isSubmitting.set(true);
     this.submitMessage.set(null);
 
-    // Simulate API call
-    setTimeout(() => {
-      this.isSubmitting.set(false);
-      this.submitMessage.set({
-        type: 'success',
-        text: 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.',
-      });
-      this.contactForm.reset();
+    const formData = this.contactForm.value;
 
-      // Clear message after 5 seconds
-      setTimeout(() => this.submitMessage.set(null), 5000);
-    }, 1500);
+    this.http.post(`${environment.apiUrl}/contact`, formData).subscribe({
+      next: () => {
+        this.isSubmitting.set(false);
+        this.submitMessage.set({
+          type: 'success',
+          text: 'Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.',
+        });
+        this.contactForm.reset();
+
+        // Clear message after 5 seconds
+        setTimeout(() => this.submitMessage.set(null), 5000);
+      },
+      error: (error) => {
+        this.isSubmitting.set(false);
+        this.submitMessage.set({
+          type: 'error',
+          text:
+            error.error?.message ||
+            'Une erreur est survenue. Veuillez réessayer plus tard.',
+        });
+      },
+    });
+  }
+
+  // Helper method to check if a field has an error
+  hasError(fieldName: string, errorType?: string): boolean {
+    const control = this.contactForm.get(fieldName);
+    if (!control || !control.touched) return false;
+    if (errorType) {
+      return control.hasError(errorType);
+    }
+    return control.invalid;
+  }
+
+  // Helper to get phone validation error message
+  getPhoneError(): string | null {
+    const control = this.contactForm.get('phone');
+    if (!control || !control.touched || !control.errors) return null;
+    if (control.errors['required']) return 'Le numéro de téléphone est requis';
+    if (control.errors['tunisianPhone'])
+      return control.errors['tunisianPhone'].message;
+    return null;
   }
 }

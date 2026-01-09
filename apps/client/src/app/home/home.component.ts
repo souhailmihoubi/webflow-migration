@@ -43,8 +43,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   // Hero Slider
   heroImages = signal([
-    'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=2000&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=2000&auto=format&fit=crop',
+    'https://webflow-migration-assets.s3.eu-west-3.amazonaws.com/webflow-assets/657aefaf5435c9e049407eb2_342527715_176869771524374_229913349902711703_n.jpg',
+    'https://webflow-migration-assets.s3.eu-west-3.amazonaws.com/webflow-assets/65be1cf0ae53a965cedbcf27_living-room-2732939_1920.jpg',
+    'https://webflow-migration-assets.s3.eu-west-3.amazonaws.com/webflow-assets/65c755a6723f67efc2866d77_pexels-gabriela-pons-7851904.jpg',
   ]);
   currentHeroSlide = signal(0);
   private heroSliderInterval: ReturnType<typeof setInterval> | undefined;
