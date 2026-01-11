@@ -14,8 +14,9 @@
                     "AWS_S3_BUCKET": "webflow-migration-assets",
                     "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
                     "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
-                    "DATABASE_URL": "postgresql://postgres:WebflowMigration2026!@webflow-migration-db.cp464au8k4rd.eu-west-3.rds.amazonaws.com:5432/webflow_migration_db",
-                    "REDIS_HOST": "webflow-migration-redis.dlfxmk.0001.euw3.cache.amazonaws.com:6379"
+                    "DATABASE_URL": "postgresql://neondb_owner:npg_s1iHYVWh5ecv@ep-winter-voice-agxandmo-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+                    "REDIS_HOST": "webflow-migration-redis.dlfxmk.0001.euw3.cache.amazonaws.com:6379",
+                    "REDIS_PORT": "6379"
                 }
             },
             "ImageRepositoryType": "ECR"
@@ -25,5 +26,11 @@
     "InstanceConfiguration": {
         "Cpu": "1024",
         "Memory": "2048"
+    },
+    "NetworkConfiguration": {
+        "EgressConfiguration": {
+            "EgressType": "VPC"
+        },
+        "IpAddressType": "IPV4"
     }
 }
